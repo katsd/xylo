@@ -26,7 +26,7 @@ vmtest: $(VMTESTTARGET)
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
-$(OUTDIR)/%.o: %.cpp
+$(OUTDIR)/%.o: %.cpp %.hpp
 	@if [ ! -e `dirname $@` ]; then mkdir -p `dirname $@`; fi
 	$(CC) $(CFLAGS) -o $@ -c $<
 
