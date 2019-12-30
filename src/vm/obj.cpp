@@ -61,9 +61,11 @@ void VM::Obj::Out()
     {
     case INT:
         printf("%ld\n", value.ival);
+        break;
 
     case FLOAT:
         printf("%f\n", value.dval);
+        break;
 
     default:
         break;
