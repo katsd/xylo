@@ -115,15 +115,15 @@ void VM::Run()
 
             break;
 
-        case YAY:
-            printf("Yay\n");
+        case OUT:
+            sc -= 1;
+            stack[sc].Out();
             pc += 1;
 
             break;
 
-        case OUT:
-            sc -= 1;
-            stack[sc].Out();
+        case YAY:
+            printf("Yay\n");
             pc += 1;
 
             break;
