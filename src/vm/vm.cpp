@@ -52,6 +52,9 @@ void VM::Run()
             break;
 
         case SET_OBJ:
+            sc -= 1;
+            obj_table[iseq[pc + 1]] = stack[sc];
+            pc += 2;
 
             break;
 
