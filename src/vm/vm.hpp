@@ -102,6 +102,9 @@ public:
 
         INPUT,
         OUT,
+
+        YAY,
+        END,
     };
 
     VM(std::vector<unsigned long> iseq, std::vector<Obj> const_table)

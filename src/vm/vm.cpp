@@ -25,6 +25,9 @@ void VM::Run()
     {
         unsigned long inst = iseq[pc];
 
+        if (inst == END)
+            break;
+
         switch (inst)
         {
         case PUSH:
@@ -112,10 +115,20 @@ void VM::Run()
 
             break;
 
-        case OUT:
-            stack[sc].Out();
-            sc -= 1;
+        case YAY:
+            printf("Yay\n");
+            pc += 1;
 
+            break;
+
+        case OUT:
+            sc -= 1;
+            stack[sc].Out();
+            pc += 1;
+
+            break;
+
+        default:
             break;
         }
     }
