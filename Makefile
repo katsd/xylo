@@ -23,7 +23,7 @@ DEPENDS := $(addprefix $(TMPDIR)/,$(patsubst %.cpp,%.d,$(SRCS)))
 
 all: $(TARGET)
 
-vmtest: $(VMTESTTARGET)
+vmtest: $(VMTESTTARGET) all
 	@./$(VMTESTTARGET)
 
 $(TARGET): $(OBJS)
