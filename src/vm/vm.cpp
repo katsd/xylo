@@ -402,7 +402,12 @@ VM::State VM::Run(unsigned long startIndex)
                 pc += 2;
             }
 
+            break;
+
         default:
+            printf("[Error] undefined instruction : #%ld %ld\n", pc, inst);
+            return State(false, Obj());
+
             break;
         }
     }
