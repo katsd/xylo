@@ -16,7 +16,7 @@ void VM::Obj::Out()
         break;
 
     case FLOAT:
-        printf("%f\n", value.dval);
+        printf("%lf\n", value.dval);
         break;
 
     default:
