@@ -387,19 +387,19 @@ VM::State VM::Run(unsigned long startIndex)
             break;
 
         case JUMP:
-            pc = GetStack(sc, stack).GetInt();
+            pc = iseq[pc + 1];
 
             break;
 
         case JUMP_IF:
             if (GetStack(sc, stack).GetInt() > 0)
             {
-                pc = GetStack(sc, stack).GetInt();
+                pc = iseq[pc + 1];
             }
             else
             {
                 GetStack(sc, stack);
-                pc += 1;
+                pc += 2;
             }
 
         default:
