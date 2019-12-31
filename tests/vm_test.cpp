@@ -86,5 +86,45 @@ int main()
             out(false);
     }
 
+    {
+        printf("loop : ");
+
+        std::vector<unsigned long> iseq = {VM::START,
+                                           VM::PUSH_CONST,
+                                           0,
+                                           VM::SET_OBJ,
+                                           0,
+                                           VM::PUSH_OBJ,
+                                           0,
+                                           VM::PUSH_CONST,
+                                           1,
+                                           VM::BOPE,
+                                           VM::ADD,
+                                           VM::SET_OBJ,
+                                           0,
+                                           VM::PUSH_OBJ,
+                                           0,
+                                           VM::PUSH_CONST,
+                                           2,
+                                           VM::BOPE,
+                                           VM::LESS_THAN,
+                                           VM::JUMP_IF,
+                                           5,
+                                           VM::PUSH_OBJ,
+                                           0,
+                                           VM::END};
+
+        std::vector<VM::Obj> const_table = {VM::Obj(0), VM::Obj(1), VM::Obj(100000)};
+
+        VM eval = VM(iseq, const_table);
+
+        VM::State state = eval.Run(0);
+
+        if (state.success && state.res.GetInt() == 100000)
+            out(true);
+        else
+            out(false);
+    }
+
     return 0;
 }
