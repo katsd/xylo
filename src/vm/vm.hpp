@@ -145,6 +145,25 @@ public:
         void Out();
     };
 
+    struct State
+    {
+    public:
+        bool success;
+        Obj res;
+
+        State(Obj res)
+        {
+            this->success = true;
+            this->res = res;
+        }
+
+        State(bool success, Obj res)
+        {
+            this->success = success;
+            this->res = res;
+        }
+    };
+
     enum Inst
     {
         PUSH,

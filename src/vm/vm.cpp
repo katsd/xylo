@@ -12,7 +12,7 @@ void VM::Run()
     Run(0);
 }
 
-void VM::Run(unsigned long startIndex)
+VM::State VM::Run(unsigned long startIndex)
 {
     std::unique_ptr<Obj[]> obj_table(new Obj[obj_table_size]);
 
@@ -23,7 +23,7 @@ void VM::Run(unsigned long startIndex)
     unsigned long sc = 0;
 
     if (iseq[pc] != START)
-        return;
+        return State(false, Obj());
 
     pc += 1;
 
@@ -406,4 +406,6 @@ void VM::Run(unsigned long startIndex)
             break;
         }
     }
+
+    return State(GetStack(sc, stack));
 }
