@@ -106,6 +106,7 @@ public:
         YAY,
 
         JUMP,
+        JUMP_IF,
 
         START,
         END,

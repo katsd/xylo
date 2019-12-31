@@ -150,6 +150,19 @@ void VM::Run(unsigned long startIndex)
 
             break;
 
+        case JUMP_IF:
+            sc -= 1;
+            if (stack[sc].GetInt() > 0)
+            {
+                sc -= 1;
+                pc = stack[sc].GetInt();
+            }
+            else
+            {
+                sc -= 1;
+                pc += 1;
+            }
+
         default:
             break;
         }
