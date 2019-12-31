@@ -126,5 +126,74 @@ int main()
             out(false);
     }
 
+    {
+        printf("fibonacci : ");
+
+        std::vector<unsigned long> iseq = {VM::START,
+                                           VM::PUSH_CONST,
+                                           0,
+                                           VM::SET_OBJ,
+                                           3,
+                                           VM::PUSH_CONST,
+                                           0,
+                                           VM::SET_OBJ,
+                                           0,
+                                           VM::PUSH_CONST,
+                                           1,
+                                           VM::SET_OBJ,
+                                           1,
+                                           /*
+                                           VM::PUSH_OBJ,
+                                           1,
+                                           VM::OUT,
+                                           */
+                                           VM::PUSH_OBJ,
+                                           1,
+                                           VM::SET_OBJ,
+                                           2,
+                                           VM::PUSH_OBJ,
+                                           0,
+                                           VM::PUSH_OBJ,
+                                           1,
+                                           VM::BOPE,
+                                           VM::ADD,
+                                           VM::SET_OBJ,
+                                           1,
+                                           VM::PUSH_OBJ,
+                                           2,
+                                           VM::SET_OBJ,
+                                           0,
+                                           VM::PUSH_OBJ,
+                                           3,
+                                           VM::PUSH_CONST,
+                                           1,
+                                           VM::BOPE,
+                                           VM::ADD,
+                                           VM::SET_OBJ,
+                                           3,
+                                           VM::PUSH_OBJ,
+                                           3,
+                                           VM::PUSH_CONST,
+                                           2,
+                                           VM::BOPE,
+                                           VM::LESS_THAN,
+                                           VM::JUMP_IF,
+                                           13,
+                                           VM::PUSH_OBJ,
+                                           1,
+                                           VM::END};
+
+        std::vector<VM::Obj> const_table = {VM::Obj(0), VM::Obj(1), VM::Obj(41)};
+
+        VM eval = VM(iseq, const_table);
+
+        VM::State state = eval.Run(0);
+
+        if (state.success && state.res.GetInt() == 267914296)
+            out(true);
+        else
+            out(false);
+    }
+
     return 0;
 }
