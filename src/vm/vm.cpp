@@ -63,61 +63,297 @@ void VM::Run(unsigned long startIndex)
 
             break;
 
-        case ADD:
+        case BOPE:
+        {
+            unsigned long ope = iseq[pc + 1];
 
-            break;
+            Obj right = GetStack(sc, stack);
+            Obj left = GetStack(sc, stack);
 
-        case SUB:
+            ObjType type;
+            if (left.Type() == INT && right.Type() == INT)
+                type = INT;
+            else
+                type = FLOAT;
 
-            break;
+            Obj obj;
 
-        case MUL:
+            switch (ope)
+            {
+            case ADD:
+                switch (type)
+                {
+                case INT:
+                    obj.SetInt(left.GetInt() + right.GetInt());
+                    break;
 
-            break;
+                case FLOAT:
+                    obj.SetFloat(left.GetFloat() + right.GetFloat());
+                    break;
 
-        case DIV:
+                default:
+                    break;
+                }
 
-            break;
+                break;
 
-        case MOD:
+            case SUB:
+                switch (type)
+                {
+                case INT:
+                    obj.SetInt(left.GetInt() - right.GetInt());
+                    break;
 
-            break;
+                case FLOAT:
+                    obj.SetFloat(left.GetFloat() - right.GetFloat());
+                    break;
 
-        case EQUAL:
+                default:
+                    break;
+                }
 
-            break;
+                break;
 
-        case NOT_EQUAL:
+            case MUL:
+                switch (type)
+                {
+                case INT:
+                    obj.SetInt(left.GetInt() * right.GetInt());
+                    break;
 
-            break;
+                case FLOAT:
+                    obj.SetFloat(left.GetFloat() * right.GetFloat());
+                    break;
 
-        case GREATER_THAN:
+                default:
+                    break;
+                }
 
-            break;
+                break;
 
-        case GREATER_THAN_OR_EQUAL:
+            case DIV:
+                switch (type)
+                {
+                case INT:
+                    if (right.GetInt() == 0)
+                    {
+                        obj.SetInt(0);
+                    }
+                    else
+                    {
+                        unsigned long lv = left.GetInt();
+                        unsigned long rv = right.GetInt();
+                        if (lv % rv == 0)
+                            obj.SetInt(lv / rv);
+                        else
+                            obj.SetFloat((double)lv / rv);
+                    }
+                    break;
 
-            break;
+                case FLOAT:
+                    if (right.GetFloat() == 0)
+                        obj.SetFloat(0);
+                    else
+                        obj.SetFloat(left.GetFloat() / right.GetFloat());
+                    break;
 
-        case LESS_THAN:
+                default:
+                    break;
+                }
 
-            break;
+                break;
 
-        case LESS_THAN_OR_EQUAL:
+            case MOD:
+                switch (type)
+                {
+                case INT:
+                    if (right.GetInt() == 0)
+                        obj.SetInt(0);
+                    else
+                        obj.SetInt(left.GetInt() % right.GetInt());
+                    break;
 
-            break;
+                case FLOAT:
+                    obj.SetFloat(0);
+                    break;
 
-        case AND:
+                default:
+                    break;
+                }
 
-            break;
+                break;
 
-        case OR:
+            case EQUAL:
+                switch (type)
+                {
+                case INT:
+                    obj.SetInt(left.GetInt() == right.GetInt() ? 1 : 0);
+                    break;
 
-            break;
+                case FLOAT:
+                    obj.SetInt(left.GetFloat() == right.GetFloat() ? 1 : 0);
+                    break;
+
+                default:
+                    break;
+                }
+
+                break;
+
+            case NOT_EQUAL:
+                switch (type)
+                {
+                case INT:
+                    obj.SetInt(left.GetInt() != right.GetInt() ? 1 : 0);
+                    break;
+
+                case FLOAT:
+                    obj.SetInt(left.GetFloat() != right.GetFloat() ? 1 : 0);
+                    break;
+
+                default:
+                    break;
+                }
+
+                break;
+
+            case GREATER_THAN:
+                switch (type)
+                {
+                case INT:
+                    obj.SetInt(left.GetInt() > right.GetInt() ? 1 : 0);
+                    break;
+
+                case FLOAT:
+                    obj.SetInt(left.GetFloat() > right.GetFloat() ? 1 : 0);
+                    break;
+
+                default:
+                    break;
+                }
+
+                break;
+
+            case GREATER_THAN_OR_EQUAL:
+                switch (type)
+                {
+                case INT:
+                    obj.SetInt(left.GetInt() >= right.GetInt() ? 1 : 0);
+                    break;
+
+                case FLOAT:
+                    obj.SetInt(left.GetFloat() >= right.GetFloat() ? 1 : 0);
+                    break;
+
+                default:
+                    break;
+                }
+
+                break;
+
+            case LESS_THAN:
+                switch (type)
+                {
+                case INT:
+                    obj.SetInt(left.GetInt() < right.GetInt() ? 1 : 0);
+                    break;
+
+                case FLOAT:
+                    obj.SetInt(left.GetFloat() < right.GetFloat() ? 1 : 0);
+                    break;
+
+                default:
+                    break;
+                }
+
+                break;
+
+            case LESS_THAN_OR_EQUAL:
+                switch (type)
+                {
+                case INT:
+                    obj.SetInt(left.GetInt() <= right.GetInt() ? 1 : 0);
+                    break;
+
+                case FLOAT:
+                    obj.SetInt(left.GetFloat() <= right.GetFloat() ? 1 : 0);
+                    break;
+
+                default:
+                    break;
+                }
+
+                break;
+
+            case AND:
+                switch (type)
+                {
+                case INT:
+                    obj.SetInt((left.GetInt() > 0 && right.GetInt() > 0) ? 1 : 0);
+                    break;
+
+                case FLOAT:
+                    obj.SetInt((left.GetFloat() > 0 + right.GetFloat() > 0) ? 1 : 0);
+                    break;
+
+                default:
+                    break;
+                }
+
+                break;
+
+            case OR:
+                switch (type)
+                {
+                case INT:
+                    obj.SetInt((left.GetInt() > 0 || right.GetInt() > 0) ? 1 : 0);
+                    break;
+
+                case FLOAT:
+                    obj.SetInt((left.GetFloat() > 0 || right.GetFloat() > 0) ? 1 : 0);
+                    break;
+
+                default:
+                    break;
+                }
+
+                break;
+
+            default:
+                break;
+            }
+
+            PushStack(sc, stack, obj);
+            pc += 2;
+        }
+
+        break;
 
         case NOT:
+        {
+            Obj left = GetStack(sc, stack);
 
-            break;
+            Obj obj;
+
+            switch (left.Type())
+            {
+            case INT:
+                obj.SetInt(left.GetInt() <= 0);
+                break;
+
+            case FLOAT:
+                obj.SetInt(left.GetFloat() <= 0);
+                break;
+
+            default:
+                break;
+            }
+
+            PushStack(sc, stack, obj);
+            pc += 1;
+        }
+
+        break;
 
         case INPUT:
 

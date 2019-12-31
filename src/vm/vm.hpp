@@ -71,6 +71,12 @@ public:
             value.ival = 0;
         };
 
+        Obj(int val)
+        {
+            type = INT;
+            value.ival = val;
+        }
+
         Obj(long val)
         {
             type = INT;
@@ -81,17 +87,60 @@ public:
         {
             type = FLOAT;
             value.dval = val;
-        }
+        };
 
-        ObjType Type();
+        inline ObjType Type()
+        {
+            return type;
+        };
 
-        void SetInt(int val);
+        void SetInt(int val)
+        {
+            type = INT;
 
-        void SetFloat(double val);
+            value.ival = val;
+        };
 
-        int GetInt();
+        void SetFloat(double val)
+        {
+            type = FLOAT;
 
-        double GetFloat();
+            value.dval = val;
+        };
+
+        int GetInt()
+        {
+            switch (type)
+            {
+            case INT:
+                return value.ival;
+
+            case FLOAT:
+                return value.dval;
+
+            default:
+                break;
+            }
+
+            return 0;
+        };
+
+        double GetFloat()
+        {
+            switch (type)
+            {
+            case INT:
+                return value.ival;
+
+            case FLOAT:
+                return value.dval;
+
+            default:
+                break;
+            }
+
+            return 0.0;
+        };
 
         void Out();
     };
@@ -103,6 +152,7 @@ public:
         PUSH_CONST,
         SET_OBJ,
 
+        BOPE,
         ADD,
         SUB,
         MUL,
