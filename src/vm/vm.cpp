@@ -7,9 +7,9 @@
 
 #include "vm.hpp"
 
-void VM::Run()
+VM::State VM::Run()
 {
-    Run(0);
+    return Run(0);
 }
 
 VM::State VM::Run(unsigned long startIndex)

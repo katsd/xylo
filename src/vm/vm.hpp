@@ -149,6 +149,7 @@ public:
     {
     public:
         bool success;
+
         Obj res;
 
         State(Obj res)
@@ -205,9 +206,9 @@ public:
         this->const_table = const_table;
     };
 
-    void Run();
+    State Run();
 
-    void Run(unsigned long startIndex);
+    State Run(unsigned long startIndex);
 };
 
 #endif /* VM_VM_HPP_ */
