@@ -13,19 +13,32 @@ constexpr unsigned long stack_size = 1024 * 128;
 
 void VM::Run()
 {
+    Run(0);
+}
+
+void VM::Run(unsigned long startIndex)
+{
     std::unique_ptr<Obj[]> obj_table(new Obj[obj_table_size]);
 
     std::unique_ptr<Obj[]> stack(new Obj[stack_size]);
 
-    unsigned long pc = 0;
+    unsigned long pc = startIndex;
 
     unsigned long sc = 0;
+
+    if (iseq[pc] != START)
+        return;
+
+    pc += 1;
 
     while (true)
     {
         unsigned long inst = iseq[pc];
 
         if (inst == END)
+            break;
+
+        if (inst == START)
             break;
 
         switch (inst)

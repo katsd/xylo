@@ -104,6 +104,8 @@ public:
         OUT,
 
         YAY,
+
+        START,
         END,
     };
 
@@ -114,6 +116,8 @@ public:
     };
 
     void Run();
+
+    void Run(unsigned long startIndex);
 };
 
 #endif /* VM_VM_HPP_ */
