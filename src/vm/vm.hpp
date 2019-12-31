@@ -34,9 +34,27 @@ private:
         Val(double d) { dval = d; }
     };
 
+    static constexpr unsigned long obj_table_size = 1024 * 128;
+
+    static constexpr unsigned long stack_size = 1024 * 128;
+
     std::vector<unsigned long> iseq;
 
     std::vector<Obj> const_table;
+
+    inline Obj GetStack(unsigned long &sc, const std::unique_ptr<Obj[]> &stack)
+    {
+        if (sc == 0)
+            return Obj();
+        return stack[--sc];
+    }
+
+    inline void PushStack(unsigned long &sc, const std::unique_ptr<Obj[]> &stack, const Obj &obj)
+    {
+        if (sc == stack_size - 1)
+            return;
+        stack[sc++] = obj;
+    }
 
 public:
     struct Obj

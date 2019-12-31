@@ -7,10 +7,6 @@
 
 #include "vm.hpp"
 
-constexpr unsigned long obj_table_size = 1024 * 128;
-
-constexpr unsigned long stack_size = 1024 * 128;
-
 void VM::Run()
 {
     Run(0);
@@ -44,29 +40,25 @@ void VM::Run(unsigned long startIndex)
         switch (inst)
         {
         case PUSH:
-            stack[sc] = Obj((long)iseq[pc + 1]);
-            sc += 1;
+            PushStack(sc, stack, Obj((long)iseq[pc + 1]));
             pc += 2;
 
             break;
 
         case PUSH_OBJ:
-            stack[sc] = obj_table[iseq[pc + 1]];
-            sc += 1;
+            PushStack(sc, stack, obj_table[iseq[pc + 1]]);
             pc += 2;
 
             break;
 
         case PUSH_CONST:
-            stack[sc] = const_table[iseq[pc + 1]];
-            sc += 1;
+            PushStack(sc, stack, const_table[iseq[pc + 1]]);
             pc += 2;
 
             break;
 
         case SET_OBJ:
-            sc -= 1;
-            obj_table[iseq[pc + 1]] = stack[sc];
+            obj_table[iseq[pc + 1]] = GetStack(sc, stack);
             pc += 2;
 
             break;
@@ -132,8 +124,7 @@ void VM::Run(unsigned long startIndex)
             break;
 
         case OUT:
-            sc -= 1;
-            stack[sc].Out();
+            GetStack(sc, stack).Out();
             pc += 1;
 
             break;
@@ -145,21 +136,18 @@ void VM::Run(unsigned long startIndex)
             break;
 
         case JUMP:
-            sc -= 1;
-            pc = stack[sc].GetInt();
+            pc = GetStack(sc, stack).GetInt();
 
             break;
 
         case JUMP_IF:
-            sc -= 1;
-            if (stack[sc].GetInt() > 0)
+            if (GetStack(sc, stack).GetInt() > 0)
             {
-                sc -= 1;
-                pc = stack[sc].GetInt();
+                pc = GetStack(sc, stack).GetInt();
             }
             else
             {
-                sc -= 1;
+                GetStack(sc, stack);
                 pc += 1;
             }
 
