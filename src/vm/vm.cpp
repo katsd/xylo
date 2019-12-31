@@ -356,8 +356,23 @@ void VM::Run(unsigned long startIndex)
         break;
 
         case INPUT:
+        {
+            double val;
+            scanf("%lf", &val);
 
-            break;
+            Obj obj;
+
+            if ((long)val == val)
+                obj.SetInt((long)val);
+            else
+                obj.SetFloat(val);
+
+            PushStack(sc, stack, obj);
+
+            pc += 1;
+        }
+
+        break;
 
         case OUT:
             GetStack(sc, stack).Out();
