@@ -105,6 +105,8 @@ public:
 
         YAY,
 
+        JUMP,
+
         START,
         END,
     };

@@ -144,6 +144,12 @@ void VM::Run(unsigned long startIndex)
 
             break;
 
+        case JUMP:
+            sc -= 1;
+            pc += stack[sc].GetInt();
+
+            break;
+
         default:
             break;
         }
