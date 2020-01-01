@@ -45,7 +45,19 @@ std::string Lexer::RemoveComment(std::string code_str)
 
 Lexer::Result Lexer::Tokenize()
 {
-    code = std::vector<std::string>();
+    success = true;
+
+    code = std::vector<Token>();
+
+    const_table = {VM::Obj()};
+
+    const_num = 0;
+
+    const_map = std::map<std::string, unsigned long>();
+
+    other_token_num = 0;
+
+    other_token_map = std::map<std::string, unsigned long>();
 
     code_str = RemoveComment(code_str);
 
@@ -138,5 +150,88 @@ Lexer::Result Lexer::Tokenize()
 
     PushToken(current);
 
-    return Result(true, code);
+    return Result(true, code, const_table);
+}
+
+void Lexer::PushToken(std::string &token)
+{
+    if (token.size() <= 0)
+    {
+        success = false;
+        return;
+    }
+
+    int first = token[0] - '0';
+    int last = token[token.size() - 1] - '0';
+
+    if (0 <= first && first <= 9 && 0 <= last && last <= 9)
+    {
+        bool is_number = true;
+
+        int dot_cnt = 0;
+
+        for (int i = 1; i < token.size() - 1; i++)
+        {
+            if (token[i] == '.')
+            {
+                dot_cnt += 1;
+                continue;
+            }
+
+            int num = token[i] - '0';
+
+            if (!(0 <= num && num <= 9))
+            {
+                is_number = false;
+                break;
+            }
+        }
+
+        if (is_number && dot_cnt <= 1)
+        {
+            bool is_int = dot_cnt = 0;
+
+            unsigned long const_id;
+
+            if (const_map[token] == 0)
+            {
+                const_num += 1;
+                const_map[token] = const_num;
+
+                const_id = const_num;
+
+                if (is_int)
+                    const_table.push_back(VM::Obj(Str2Int(token)));
+                else
+                    const_table.push_back(VM::Obj(Str2Float(token)));
+            }
+            else
+            {
+                const_id = const_map[token];
+            }
+
+            if (is_int)
+                code.push_back(Token(TokenType::CONST, TokenVal(const_id), token));
+            else
+                code.push_back(Token(TokenType::CONST, TokenVal(const_id), token));
+
+            return;
+        }
+    }
+
+    unsigned long token_id;
+
+    if (other_token_map[token] == 0)
+    {
+        other_token_num += 1;
+        other_token_map[token] = other_token_num;
+
+        token_id = other_token_num;
+    }
+    else
+    {
+        token_id = other_token_map[token];
+    }
+
+    code.push_back(Token(TokenType::OTHER, TokenVal(token_id), token));
 }
