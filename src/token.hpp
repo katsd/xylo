@@ -23,18 +23,23 @@ enum Reserved
 
 enum Symbol
 {
-    PLUS,     // +
-    MINUS,    // -
-    MUL,      // *
-    DIV,      // /
-    BAND,     // &
-    BOR,      //|
-    BXOR,     // ^
-    BNOT,     // ~
-    AND,      // &&
-    OR,       // ||
-    NOT,      // !
-    EQUAL,    // ==
+    PLUS,   // +
+    MINUS,  // -
+    MUL,    // *
+    DIV,    // /
+    BAND,   // &
+    BOR,    //|
+    BXOR,   // ^
+    BNOT,   // ~
+    AND,    // &&
+    OR,     // ||
+    NOT,    // !
+    EQUAL,  // ==
+    GRE,    // >
+    GREEQ,  // >=
+    LESS,   // <
+    LESSEQ, // <=
+
     ASSIGN,   // =
     QUE,      // ?
     COMMMA,   // ,
