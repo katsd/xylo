@@ -2,6 +2,8 @@ PROGNAME := xylo
 CC := g++
 CFLAGS := -std=c++17 -Wall -O3
 
+PROGEXT := xy
+
 SRCDIR := src
 VMSRCDIR := $(SRCDIR)/vm
 OUTDIR := build
@@ -21,7 +23,12 @@ VMTESTOBJ := $(addprefix $(OUTDIR)/,$(patsubst %.cpp,%.o,$(VMTESTSRC)))
 
 DEPENDS := $(addprefix $(TMPDIR)/,$(patsubst %.cpp,%.d,$(SRCS)))
 
+TESTSRC := $(TESTDIR)/test.xy
+
 all: $(TARGET)
+
+test: all
+	./$(OUTDIR)/$(PROGNAME)  $(TESTDIR)/test.$(PROGEXT)
 
 vmtest: $(VMTESTTARGET) all
 	@./$(VMTESTTARGET)
