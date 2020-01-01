@@ -42,7 +42,7 @@ private:
         code.push_back(Token(TokenType::RESERVED, TokenVal(token), ""));
     }
 
-    inline void PushSymbol(Reserved token)
+    inline void PushSymbol(Symbol token)
     {
         code.push_back(Token(TokenType::SYMBOL, TokenVal(token), ""));
     }
