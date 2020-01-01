@@ -21,6 +21,15 @@ private:
 
     std::string RemoveComment(std::string code_str);
 
+    inline void PushToken(std::string &token)
+    {
+        if (token != "")
+        {
+            code.push_back(token);
+            token = "";
+        }
+    }
+
 public:
     struct Result
     {
