@@ -235,3 +235,51 @@ void Lexer::PushToken(std::string &token)
 
     code.push_back(Token(TokenType::OTHER, TokenVal(token_id), token));
 }
+
+long Lexer::Str2Int(std::string str)
+{
+    long res = 0;
+
+    long d = 1;
+
+    for (int i = str.size() - 1; i >= 0; i--)
+    {
+        res += d * (str[i] - '0');
+        d *= 10;
+    }
+
+    return res;
+}
+
+double Lexer::Str2Float(std::string str)
+{
+    unsigned long dot_idx = str.size() - 1;
+
+    for (int i = 0; i < str.size(); i++)
+    {
+        if (str[i] == '.')
+        {
+            dot_idx = i;
+            break;
+        }
+    }
+
+    double res = 0;
+    double d = 1;
+
+    for (int i = dot_idx - 1; i >= 0; i--)
+    {
+        res += d * (str[i] - '0');
+        d *= 10;
+    }
+
+    d = 0.1;
+
+    for (int i = dot_idx + 1; i < str.size(); i++)
+    {
+        res += d * (str[i] - '0');
+        d *= 0.1;
+    }
+
+    return res;
+}
