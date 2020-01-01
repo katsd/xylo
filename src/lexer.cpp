@@ -21,11 +21,13 @@ std::string Lexer::RemoveComment(std::string code_str)
         {
             if (code_str[idx + 1] == '/')
             {
+                idx += 2;
                 while (idx < code_str_size && !(0 <= idx - 1 && code_str[idx - 1] == '\n'))
                     idx += 1;
             }
             else if (code_str[idx + 1] == '*')
             {
+                idx += 2;
                 while (idx < code_str_size && !(0 <= idx - 2 && code_str[idx - 2] == '*' && code_str[idx - 1] == '/'))
                     idx += 1;
             }
