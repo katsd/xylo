@@ -21,11 +21,10 @@ std::string Lexer::RemoveComment(std::string code_str)
         {
             if (code_str[index + 1] == '/')
             {
-                while (index < code_str_size && !(0 <= index - 1 && code_str[index - 1] == '/n'))
+                while (index < code_str_size && !(0 <= index - 1 && code_str[index - 1] == '\n'))
                     index += 1;
             }
-
-            if (code_str[index + 1] == '*')
+            else if (code_str[index + 1] == '*')
             {
                 while (index < code_str_size && !(0 <= index - 2 && code_str[index - 2] == '*' && code_str[index - 1] == '/'))
                     index += 1;
@@ -33,7 +32,10 @@ std::string Lexer::RemoveComment(std::string code_str)
         }
 
         if (index < code_str_size)
+        {
             new_code_str += code_str[index];
+            index += 1;
+        }
     }
 
     return new_code_str;
@@ -44,8 +46,6 @@ Lexer::Result Lexer::Tokenize()
     code = std::vector<std::string>();
 
     code_str = RemoveComment(code_str);
-
-    puts(code_str.c_str());
 
     std::string current = "";
 
