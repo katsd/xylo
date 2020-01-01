@@ -23,7 +23,13 @@ private:
 
     std::vector<Token> code;
 
+    std::vector<unsigned long> iseq;
+
     std::vector<VM::Obj> const_table;
+
+    void GenerateAST();
+
+    void GenerateIseq();
 
 public:
     Parser(std::string code_str)

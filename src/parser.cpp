@@ -6,3 +6,12 @@
 //
 
 #include "parser.hpp"
+
+Parser::Result Parser::Parse()
+{
+    GenerateAST();
+
+    GenerateIseq();
+
+    return Result(true, iseq, const_table);
+}
