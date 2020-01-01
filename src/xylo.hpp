@@ -8,7 +8,6 @@
 #ifndef XYLO_HPP_
 #define XYLO_HPP_
 
-#include "lexer.hpp"
 #include "parser.hpp"
 #include "vm/vm.hpp"
 
