@@ -37,13 +37,15 @@ private:
 
     std::string RemoveComment(std::string code_str);
 
-    inline void PushReserved(Reserved token)
+    inline void PushReserved(Reserved token, std::string &current)
     {
         code.push_back(Token(TokenType::RESERVED, TokenVal(token), ""));
+        current = "";
     }
 
-    inline void PushSymbol(Symbol token)
+    inline void PushSymbol(Symbol token, std::string &current)
     {
+        PushToken(current);
         code.push_back(Token(TokenType::SYMBOL, TokenVal(token), ""));
     }
 
@@ -52,6 +54,10 @@ private:
     long Str2Int(std::string str);
 
     double Str2Float(std::string str);
+
+    void OutCode();
+
+    void OutConstTable();
 
 public:
     struct Result

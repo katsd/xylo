@@ -82,31 +82,73 @@ Lexer::Result Lexer::Tokenize()
             break;
 
         case '<':
+            if (idx + 1 < code_str_size && code_str[idx + 1] == '=')
+            {
+                PushSymbol(Symbol::LESSEQ, current);
+                idx += 2;
+
+                break;
+            }
+
+            PushSymbol(Symbol::LESS, current);
+            idx += 1;
+
+            break;
+
         case '>':
+            if (idx + 1 < code_str_size && code_str[idx + 1] == '=')
+            {
+                PushSymbol(Symbol::GREEQ, current);
+                idx += 2;
+
+                break;
+            }
+
+            PushSymbol(Symbol::GRE, current);
+            idx += 1;
+
+            break;
+
         case '=':
             if (idx + 1 < code_str_size && code_str[idx + 1] == '=')
             {
-                PushToken(current);
-                current = {ch, '='};
-                PushToken(current);
-
+                PushSymbol(Symbol::EQUAL, current);
                 idx += 2;
 
                 break;
             }
+
+            PushSymbol(Symbol::ASSIGN, current);
+            idx += 1;
+
+            break;
 
         case '&':
-        case '|':
-            if (idx + 1 < code_str_size && code_str[idx + 1] == ch)
+            if (idx + 1 < code_str_size && code_str[idx + 1] == '&')
             {
-                PushToken(current);
-                current = {ch, ch};
-                PushToken(current);
-
+                PushSymbol(Symbol::AND, current);
                 idx += 2;
 
                 break;
             }
+
+            PushSymbol(Symbol::BAND, current);
+            idx += 1;
+
+            break;
+
+        case '|':
+            if (idx + 1 < code_str_size && code_str[idx + 1] == '|')
+            {
+                PushSymbol(Symbol::OR, current);
+                idx += 2;
+
+                break;
+            }
+
+            idx += 1;
+
+            break;
 
         case '.':
             if (0 <= idx - 1 && idx + 1 < code_str_size)
@@ -122,27 +164,83 @@ Lexer::Result Lexer::Tokenize()
                 }
             }
 
-        case '+':
-        case '-':
-        case '*':
-        case '/':
-        case '(':
-        case ')':
-        case '{':
-        case '}':
-        case ',':
-        case '!':
-        case '~':
-            PushToken(current);
-            current = {ch};
-            PushToken(current);
-            idx += 1;
+            PushSymbol(Symbol::DOT, current);
 
+            break;
+
+        case '+':
+            PushSymbol(Symbol::PLUS, current);
+            idx += 1;
+            break;
+
+        case '-':
+            PushSymbol(Symbol::MINUS, current);
+            idx += 1;
+            break;
+
+        case '*':
+            PushSymbol(Symbol::MUL, current);
+            idx += 1;
+            break;
+
+        case '/':
+            PushSymbol(Symbol::DIV, current);
+            idx += 1;
+            break;
+
+        case '(':
+            PushSymbol(Symbol::RPAREN, current);
+            idx += 1;
+            break;
+
+        case ')':
+            PushSymbol(Symbol::LPAREN, current);
+            idx += 1;
+            break;
+
+        case '{':
+            PushSymbol(Symbol::RBRACKET, current);
+            idx += 1;
+            break;
+
+        case '}':
+            PushSymbol(Symbol::LBRACKET, current);
+            idx += 1;
+            break;
+
+        case ',':
+            PushSymbol(Symbol::COMMMA, current);
+            idx += 1;
+            break;
+
+        case '!':
+            PushSymbol(Symbol::NOT, current);
+            idx += 1;
+            break;
+
+        case '~':
+            PushSymbol(Symbol::BNOT, current);
+            idx += 1;
             break;
 
         default:
             current += ch;
             idx += 1;
+
+            if (current == "func")
+                PushReserved(Reserved::FUNC, current);
+            if (current == "return")
+                PushReserved(Reserved::RETURN, current);
+            if (current == "repeat")
+                PushReserved(Reserved::REPEAT, current);
+            if (current == "for")
+                PushReserved(Reserved::FOR, current);
+            if (current == "while")
+                PushReserved(Reserved::WHILE, current);
+            if (current == "if")
+                PushReserved(Reserved::IF, current);
+            if (current == "else")
+                PushReserved(Reserved::ELSE, current);
 
             break;
         }
@@ -156,10 +254,7 @@ Lexer::Result Lexer::Tokenize()
 void Lexer::PushToken(std::string &token)
 {
     if (token.size() <= 0)
-    {
-        success = false;
         return;
-    }
 
     int first = token[0] - '0';
     int last = token[token.size() - 1] - '0';
@@ -189,7 +284,7 @@ void Lexer::PushToken(std::string &token)
 
         if (is_number && dot_cnt <= 1)
         {
-            bool is_int = dot_cnt = 0;
+            bool is_int = dot_cnt == 0;
 
             unsigned long const_id;
 
@@ -215,6 +310,8 @@ void Lexer::PushToken(std::string &token)
             else
                 code.push_back(Token(TokenType::CONST, TokenVal(const_id), token));
 
+            token = "";
+
             return;
         }
     }
@@ -234,6 +331,8 @@ void Lexer::PushToken(std::string &token)
     }
 
     code.push_back(Token(TokenType::OTHER, TokenVal(token_id), token));
+
+    token = "";
 }
 
 long Lexer::Str2Int(std::string str)
@@ -282,4 +381,46 @@ double Lexer::Str2Float(std::string str)
     }
 
     return res;
+}
+
+void Lexer::OutCode()
+{
+    puts("\n# code");
+
+    for (auto i : code)
+    {
+        switch (i.type)
+        {
+        case RESERVED:
+            printf("Reserved %d ", i.token.reserved);
+            break;
+
+        case SYMBOL:
+            printf("Symbol %d ", i.token.symbol);
+            break;
+
+        case CONST:
+            printf("Const %ld ", i.token.val);
+            break;
+
+        case OTHER:
+            printf("Other %ld ", i.token.val);
+            break;
+
+        default:
+            break;
+        }
+
+        printf("%s\n", i.str.c_str());
+    }
+}
+
+void Lexer::OutConstTable()
+{
+    puts("\n# const table");
+
+    for (auto i : const_table)
+    {
+        i.Out();
+    }
 }
