@@ -15,3 +15,11 @@ Parser::Result Parser::Parse()
 
     return Result(true, iseq, const_table);
 }
+
+bool Parser::GenerateAST()
+{
+}
+
+bool Parser::GenerateIseq()
+{
+}

@@ -19,6 +19,36 @@
 class Parser
 {
 private:
+    enum NodeType
+    {
+        Expression,
+        Statement,
+        Root,
+    };
+
+    struct Node
+    {
+        NodeType type;
+
+        Token token;
+
+        std::vector<Node> child;
+
+        Node(NodeType type, Token token)
+        {
+            this->type = type;
+            this->token = token;
+            this->child = std::vector<Node>();
+        }
+
+        Node()
+        {
+            this->type = NodeType::Root;
+            this->token = Token();
+            this->child = std::vector<Node>();
+        }
+    };
+
     std::string code_str;
 
     std::vector<Token> code;
@@ -27,9 +57,11 @@ private:
 
     std::vector<VM::Obj> const_table;
 
-    void GenerateAST();
+    Node ast;
 
-    void GenerateIseq();
+    bool GenerateAST();
+
+    bool GenerateIseq();
 
 public:
     Parser(std::string code_str)
