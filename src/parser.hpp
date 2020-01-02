@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <vector>
+#include <set>
 #include <string>
 
 #include "lexer.hpp"
@@ -89,11 +90,29 @@ private:
 
     Node ast;
 
+    unsigned long code_size;
+
+    const std::vector<std::set<Symbol>> operator_rank = {
+        {Symbol::OR},
+        {Symbol::AND},
+        {Symbol::BOR},
+        {Symbol::BXOR},
+        {Symbol::BAND},
+        {Symbol::EQUAL, Symbol::NEQUAL},
+        {Symbol::LESS, Symbol::LESSEQ, Symbol::GRE, Symbol::GREEQ},
+        {Symbol::PLUS, Symbol::MINUS},
+        {Symbol::MUL, Symbol::DIV, Symbol::MOD},
+    };
+
     bool GenerateAST();
 
     ParseResult ParseStatement(unsigned long idx);
 
     ParseResult ParseExpression(unsigned long idx);
+
+    ParseResult ParseExp(unsigned long idx, unsigned long rank);
+
+    ParseResult ParseTerm(unsigned long idx);
 
     ParseResult ParseVariable(unsigned long idx);
 
