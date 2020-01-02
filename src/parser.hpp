@@ -49,6 +49,27 @@ private:
         }
     };
 
+    struct ParseResult
+    {
+        bool success;
+
+        Node node;
+
+        unsigned long idx;
+
+        ParseResult(Node node, unsigned long idx)
+        {
+            success = true;
+            this->idx = idx;
+        }
+
+        ParseResult(bool success, Node node, unsigned long idx)
+        {
+            this->success = success;
+            this->idx = idx;
+        }
+    };
+
     std::string code_str;
 
     std::vector<Token> code;
@@ -61,7 +82,28 @@ private:
 
     bool GenerateAST();
 
+    ParseResult ParseStatement(unsigned long idx);
+
+    ParseResult ParseExpression(unsigned long idx);
+
+    ParseResult ParseVariable(unsigned long idx);
+
     bool GenerateIseq();
+
+    inline bool CompReserved(Token token, Reserved reserved)
+    {
+        return token.type == TokenType::RESERVED && token.token.reserved == reserved;
+    }
+
+    inline bool CompSymbol(Token token, Symbol symbol)
+    {
+        return token.type == TokenType::SYMBOL && token.token.symbol == symbol;
+    }
+
+    inline ParseResult FailedToParse()
+    {
+        return ParseResult(false, Node(), 0);
+    }
 
 public:
     Parser(std::string code_str)
