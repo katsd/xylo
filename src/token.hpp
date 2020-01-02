@@ -94,6 +94,13 @@ struct Token
         this->token = token;
         this->str = str;
     }
+
+    Token()
+    {
+        this->type = TokenType::OTHER;
+        this->token = TokenVal(0);
+        this->str = "";
+    }
 };
 
 #endif /* TOKEN_HPP_ */
