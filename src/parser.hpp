@@ -109,11 +109,6 @@ private:
         return token.type == TokenType::SYMBOL && token.token.symbol == symbol;
     }
 
-    inline ParseResult FailedToParse()
-    {
-        return ParseResult(false, Node(), 0);
-    }
-
 public:
     Parser(std::string code_str)
     {
