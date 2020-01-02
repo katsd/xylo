@@ -35,6 +35,7 @@ enum Symbol
     OR,     // ||
     NOT,    // !
     EQUAL,  // ==
+    NEQUAL, // !=
     GRE,    // >
     GREEQ,  // >=
     LESS,   // <
