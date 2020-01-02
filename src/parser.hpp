@@ -57,15 +57,24 @@ private:
 
         unsigned long idx;
 
+        ParseResult(bool success)
+        {
+            this->success = success;
+            this->node = Node();
+            this->idx = 0;
+        }
+
         ParseResult(Node node, unsigned long idx)
         {
-            success = true;
+            this->success = true;
+            this->node = node;
             this->idx = idx;
         }
 
         ParseResult(bool success, Node node, unsigned long idx)
         {
             this->success = success;
+            this->node = node;
             this->idx = idx;
         }
     };
