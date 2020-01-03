@@ -811,7 +811,7 @@ void Parser::Node::Out(unsigned long long indent_size, std::vector<VM::Obj> &con
         break;
 
     case TokenType::OTHER:
-        printf("Other %ld\n", token.token.val);
+        printf("Other %ld %s\n", token.token.val, token.str.c_str());
         break;
     }
 
