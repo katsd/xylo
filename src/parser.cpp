@@ -9,6 +9,18 @@
 
 Parser::Result Parser::Parse()
 {
+    auto lexer_res = Lexer(code_str).Tokenize();
+
+    if (!lexer_res.success)
+    {
+        printf("failed to tokenize\n");
+        return Result(false, iseq, const_table);
+    }
+
+    code = lexer_res.code;
+
+    const_table = lexer_res.const_table;
+
     GenerateAST();
 
     GenerateIseq();
@@ -20,9 +32,11 @@ bool Parser::GenerateAST()
 {
     ast = Node();
 
+    code_size = code.size();
+
     unsigned long idx = 0;
 
-    while (idx < 0)
+    while (idx < code_size)
     {
         ParseResult res = ParseStatement(idx);
 
@@ -47,10 +61,8 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
 {
     Node node;
 
-    code_size = code.size();
-
     if (idx >= code_size)
-        return ParseResult(false);
+        return FailedToParse(idx, "expected statement");
 
     switch (code[idx].type)
     {
@@ -103,7 +115,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
                     }
 
                     if (!ok)
-                        return ParseResult(false);
+                        return FailedToParse(idx, "expected ')'");
                 }
 
                 if (idx < code_size && CompSymbol(code[idx], Symbol::LBRACKET))
@@ -122,8 +134,12 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
                 }
                 else
                 {
-                    return ParseResult(false);
+                    return FailedToParse(idx, "expected '{'");
                 }
+            }
+            else
+            {
+                return FailedToParse(idx, "expected '('");
             }
         }
         break;
@@ -174,7 +190,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
                 }
 
                 if (!(idx < code_size && CompSymbol(code[idx], Symbol::COMMMA)))
-                    return ParseResult(false);
+                    return FailedToParse(idx, "expected ','");
 
                 idx += 1;
 
@@ -193,7 +209,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
                 }
 
                 if (!(idx < code_size && CompSymbol(code[idx], Symbol::RPAREN)))
-                    return ParseResult(false);
+                    return FailedToParse(idx, "expected ')'");
 
                 {
                     auto res = ParseStatement(idx);
@@ -211,7 +227,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
             }
             else
             {
-                return ParseResult(false);
+                return FailedToParse(idx, "expected '('");
             }
         }
         break;
@@ -337,6 +353,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
 
                 if (idx < code_size && CompSymbol(code[idx], Symbol::RBRACKET))
                 {
+                    idx += 1;
                     ok = true;
                     break;
                 }
@@ -344,13 +361,13 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
         }
 
         if (!ok)
-            return ParseResult(false);
+            return FailedToParse(idx, "expected '}'");
     }
     break;
 
     case TokenType::CONST:
     {
-        return ParseResult(false);
+        return FailedToParse(idx, "expected statement");
     }
     break;
 
@@ -436,7 +453,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
     break;
 
     default:
-        return ParseResult(false);
+        return FailedToParse(idx, "expected statement");
     }
 
     return ParseResult(node, idx);
@@ -450,7 +467,7 @@ Parser::ParseResult Parser::ParseExpression(unsigned long idx)
 Parser::ParseResult Parser::ParseExp(unsigned long idx, unsigned long rank)
 {
     if (idx >= code_size)
-        return ParseResult(false);
+        return FailedToParse(idx, "expected expression");
 
     if (rank >= operator_rank.size())
         return ParseTerm(idx);
@@ -492,7 +509,7 @@ Parser::ParseResult Parser::ParseExp(unsigned long idx, unsigned long rank)
 Parser::ParseResult Parser::ParseTerm(unsigned long idx)
 {
     if (idx >= code_size)
-        return ParseResult(false);
+        return FailedToParse(idx, "expected expression");
 
     Node node;
 
@@ -516,6 +533,15 @@ Parser::ParseResult Parser::ParseTerm(unsigned long idx)
             else
             {
                 return ParseResult(false);
+            }
+
+            if (idx < code_size && CompSymbol(code[idx], Symbol::RPAREN))
+            {
+                idx += 1;
+            }
+            else
+            {
+                return FailedToParse(idx, "expected ')'");
             }
         }
         break;
@@ -543,7 +569,7 @@ Parser::ParseResult Parser::ParseTerm(unsigned long idx)
         break;
 
         default:
-            return ParseResult(false);
+            return FailedToParse(idx, "expected expression");
         }
         break;
 
@@ -600,7 +626,7 @@ Parser::ParseResult Parser::ParseTerm(unsigned long idx)
                 }
 
                 if (!ok)
-                    return ParseResult(false);
+                    return FailedToParse(idx, "expected ')'");
             }
         }
         else
@@ -611,20 +637,20 @@ Parser::ParseResult Parser::ParseTerm(unsigned long idx)
     break;
 
     default:
-        return ParseResult(false);
+        return FailedToParse(idx, "expected expression");
     }
     }
 
-    return ParseResult(node, idx + 1);
+    return ParseResult(node, idx);
 }
 
 Parser::ParseResult Parser::ParseVariable(unsigned long idx)
 {
     if (idx >= code_size)
-        return ParseResult(false);
+        return FailedToParse(idx, "expected variable");
 
     if (code[idx].type != TokenType::OTHER)
-        return ParseResult(false);
+        return FailedToParse(idx, "expected variable");
 
     Node node;
     node.type = NodeType::Expression;
@@ -636,4 +662,29 @@ Parser::ParseResult Parser::ParseVariable(unsigned long idx)
 bool Parser::GenerateIseq()
 {
     return false;
+}
+
+void Parser::Node::Out(unsigned long long indent_size)
+{
+    std::string indent(indent_size * 2, ' ');
+
+    switch (type)
+    {
+    case Expression:
+        puts((indent + "Exp").c_str());
+        break;
+    case Statement:
+        puts((indent + "Sta").c_str());
+        break;
+    case Root:
+        puts((indent + "Root").c_str());
+        break;
+    default:
+        break;
+    }
+
+    for (auto c : child)
+    {
+        c.Out(indent_size + 1);
+    }
 }

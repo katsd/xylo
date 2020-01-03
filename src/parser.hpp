@@ -49,30 +49,7 @@ private:
             this->child = std::vector<Node>();
         }
 
-        void Out(unsigned long indent_size)
-        {
-            std::string indent(indent_size, ' ');
-
-            switch (type)
-            {
-            case Expression:
-                puts((indent + "Exp").c_str());
-                break;
-            case Statement:
-                puts((indent + "Sta").c_str());
-                break;
-            case Root:
-                puts((indent + "Root").c_str());
-                break;
-            default:
-                break;
-            }
-
-            for (auto c : child)
-            {
-                c.Out(indent_size + 1);
-            }
-        }
+        void Out(unsigned long long indent_size);
     };
 
     struct ParseResult
@@ -151,6 +128,12 @@ private:
     inline bool CompSymbol(Token token, Symbol symbol)
     {
         return token.type == TokenType::SYMBOL && token.token.symbol == symbol;
+    }
+
+    inline ParseResult FailedToParse(unsigned long idx, std::string msg)
+    {
+        printf("#%ld : %s\n", idx, msg.c_str());
+        return ParseResult(false);
     }
 
 public:
