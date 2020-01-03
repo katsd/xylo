@@ -213,6 +213,8 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
                 if (!(idx < code_size && CompSymbol(code[idx], Symbol::RPAREN)))
                     return FailedToParse(idx, "expected ')'");
 
+                idx += 1;
+
                 {
                     auto res = ParseStatement(idx);
 
