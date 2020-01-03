@@ -49,7 +49,7 @@ private:
             this->child = std::vector<Node>();
         }
 
-        void Out(unsigned long long indent_size);
+        void Out(unsigned long long indent_size, std::vector<VM::Obj> &const_table);
     };
 
     struct ParseResult

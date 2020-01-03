@@ -7,6 +7,8 @@
 
 #include "parser.hpp"
 
+#define STR(var) #var
+
 Parser::Result Parser::Parse()
 {
     auto lexer_res = Lexer(code_str).Tokenize();
@@ -52,7 +54,7 @@ bool Parser::GenerateAST()
         }
     }
 
-    ast.Out(0);
+    ast.Out(0, const_table);
 
     return true;
 }
@@ -664,27 +666,157 @@ bool Parser::GenerateIseq()
     return false;
 }
 
-void Parser::Node::Out(unsigned long long indent_size)
+void Parser::Node::Out(unsigned long long indent_size, std::vector<VM::Obj> &const_table)
 {
     std::string indent(indent_size * 2, ' ');
+
+    printf("%s ", indent.c_str());
 
     switch (type)
     {
     case Expression:
-        puts((indent + "Exp").c_str());
+        printf("%s ", (indent + "Exp").c_str());
         break;
     case Statement:
-        puts((indent + "Sta").c_str());
+        printf("%s ", (indent + "Sta").c_str());
         break;
     case Root:
-        puts((indent + "Root").c_str());
+        printf("%s ", (indent + "Root").c_str());
         break;
     default:
         break;
     }
 
+    switch (token.type)
+    {
+    case TokenType::RESERVED:
+        switch (token.token.reserved)
+        {
+        case FUNC:
+            puts(STR(MINUS));
+            break;
+        case RETURN:
+            puts(STR(RETURN));
+            break;
+        case REPEAT:
+            puts(STR(REPEAT));
+            break;
+        case FOR:
+            puts(STR(FOR));
+            break;
+        case WHILE:
+            puts(STR(WHILE));
+            break;
+        case IF:
+            puts(STR(IF));
+            break;
+        case ELSE:
+            puts(STR(ELSE));
+            break;
+        default:
+            break;
+        }
+        break;
+
+    case TokenType::SYMBOL:
+        switch (token.token.symbol)
+        {
+        case PLUS:
+            puts(STR(PLUS));
+            break;
+        case MINUS:
+            puts(STR(MINUS));
+            break;
+        case MUL:
+            puts(STR(MUL));
+            break;
+        case DIV:
+            puts(STR(DIV));
+            break;
+        case MOD:
+            puts(STR(MOD));
+            break;
+        case BAND:
+            puts(STR(BAND));
+            break;
+        case BOR:
+            puts(STR(BOR));
+            break;
+        case BXOR:
+            puts(STR(BXOR));
+            break;
+        case BNOT:
+            puts(STR(BNOT));
+            break;
+        case AND:
+            puts(STR(AND));
+            break;
+        case OR:
+            puts(STR(OR));
+            break;
+        case NOT:
+            puts(STR(NOT));
+            break;
+        case EQUAL:
+            puts(STR(EQUAL));
+            break;
+        case NEQUAL:
+            puts(STR(NEQUAL));
+            break;
+        case GRE:
+            puts(STR(GRE));
+            break;
+        case GREEQ:
+            puts(STR(GREEQ));
+            break;
+        case LESS:
+            puts(STR(LESS));
+            break;
+        case LESSEQ:
+            puts(STR(LESSEQ));
+            break;
+        case ASSIGN:
+            puts(STR(ASSIGN));
+            break;
+        case QUE:
+            puts(STR(QUE));
+            break;
+        case COMMMA:
+            puts(STR(COMMMA));
+            break;
+        case DOT:
+            puts(STR(DOT));
+            break;
+        case LPAREN:
+            puts(STR(LPAREN));
+            break;
+        case RPAREN:
+            puts(STR(RPAREN));
+            break;
+        case LBRACKET:
+            puts(STR(LBRACKET));
+            break;
+        case RBRACKET:
+            puts(STR(RBRACKET));
+            break;
+        default:
+            break;
+        }
+
+        break;
+
+    case TokenType::CONST:
+        printf("Const ");
+        const_table[token.token.val].Out();
+        break;
+
+    case TokenType::OTHER:
+        printf("Other %ld\n", token.token.val);
+        break;
+    }
+
     for (auto c : child)
     {
-        c.Out(indent_size + 1);
+        c.Out(indent_size + 1, const_table);
     }
 }
