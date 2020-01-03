@@ -248,8 +248,6 @@ Lexer::Result Lexer::Tokenize()
 
     PushToken(current);
 
-    OutCode();
-
     return Result(true, code, const_table);
 }
 
