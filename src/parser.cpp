@@ -670,7 +670,7 @@ void Parser::Node::Out(unsigned long long indent_size, std::vector<VM::Obj> &con
 {
     std::string indent(indent_size * 2, ' ');
 
-    printf("%s ", indent.c_str());
+    printf("%s", indent.c_str());
 
     switch (type)
     {
