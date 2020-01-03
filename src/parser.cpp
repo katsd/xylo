@@ -281,6 +281,11 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
 
             idx += 1;
 
+            if (!(idx < code_size && CompSymbol(code[idx], Symbol::LPAREN)))
+                return FailedToParse(idx, "expected '('");
+
+            idx += 1;
+
             {
                 auto res = ParseExpression(idx);
 
@@ -294,6 +299,11 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
                     return ParseResult(false);
                 }
             }
+
+            if (!(idx < code_size && CompSymbol(code[idx], Symbol::RPAREN)))
+                return FailedToParse(idx, "expected ')'");
+
+            idx += 1;
 
             {
                 auto res = ParseStatement(idx);
@@ -343,6 +353,13 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
         if (code[idx].token.symbol == Symbol::LBRACKET)
         {
             idx += 1;
+
+            if (idx < code_size && CompSymbol(code[idx], Symbol::RBRACKET))
+            {
+                idx += 1;
+                ok = true;
+                break;
+            }
 
             while (idx < code_size)
             {
