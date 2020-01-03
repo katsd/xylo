@@ -48,6 +48,31 @@ private:
             this->token = Token();
             this->child = std::vector<Node>();
         }
+
+        void Out(unsigned long indent_size)
+        {
+            std::string indent(indent_size, ' ');
+
+            switch (type)
+            {
+            case Expression:
+                puts((indent + "Exp").c_str());
+                break;
+            case Statement:
+                puts((indent + "Sta").c_str());
+                break;
+            case Root:
+                puts((indent + "Root").c_str());
+                break;
+            default:
+                break;
+            }
+
+            for (auto c : child)
+            {
+                c.Out(indent_size + 1);
+            }
+        }
     };
 
     struct ParseResult

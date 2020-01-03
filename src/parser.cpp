@@ -38,6 +38,8 @@ bool Parser::GenerateAST()
         }
     }
 
+    ast.Out(0);
+
     return true;
 }
 
