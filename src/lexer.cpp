@@ -189,22 +189,22 @@ Lexer::Result Lexer::Tokenize()
             break;
 
         case '(':
-            PushSymbol(Symbol::RPAREN, current);
-            idx += 1;
-            break;
-
-        case ')':
             PushSymbol(Symbol::LPAREN, current);
             idx += 1;
             break;
 
+        case ')':
+            PushSymbol(Symbol::RPAREN, current);
+            idx += 1;
+            break;
+
         case '{':
-            PushSymbol(Symbol::RBRACKET, current);
+            PushSymbol(Symbol::LBRACKET, current);
             idx += 1;
             break;
 
         case '}':
-            PushSymbol(Symbol::LBRACKET, current);
+            PushSymbol(Symbol::RBRACKET, current);
             idx += 1;
             break;
 
@@ -247,6 +247,8 @@ Lexer::Result Lexer::Tokenize()
     }
 
     PushToken(current);
+
+    OutCode();
 
     return Result(true, code, const_table);
 }
