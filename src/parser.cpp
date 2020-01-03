@@ -333,6 +333,9 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
 
     case TokenType::SYMBOL:
     {
+        node.type = NodeType::Statement;
+        node.token = code[idx];
+
         bool ok = false;
 
         if (code[idx].token.symbol == Symbol::LBRACKET)
@@ -693,7 +696,7 @@ void Parser::Node::Out(unsigned long long indent_size, std::vector<VM::Obj> &con
         switch (token.token.reserved)
         {
         case FUNC:
-            puts(STR(MINUS));
+            puts(STR(FUNC));
             break;
         case RETURN:
             puts(STR(RETURN));
