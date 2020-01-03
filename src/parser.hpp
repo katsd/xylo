@@ -112,7 +112,7 @@ private:
 
     ParseResult ParseExpression(unsigned long idx);
 
-    ParseResult ParseExp(unsigned long idx, unsigned long rank);
+    ParseResult ParseExpression(unsigned long idx, unsigned long rank);
 
     ParseResult ParseTerm(unsigned long idx);
 

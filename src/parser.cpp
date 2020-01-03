@@ -485,10 +485,10 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
 
 Parser::ParseResult Parser::ParseExpression(unsigned long idx)
 {
-    return ParseExp(idx, 0);
+    return ParseExpression(idx, 0);
 }
 
-Parser::ParseResult Parser::ParseExp(unsigned long idx, unsigned long rank)
+Parser::ParseResult Parser::ParseExpression(unsigned long idx, unsigned long rank)
 {
     if (idx >= code_size)
         return FailedToParse(idx, "expected expression");
@@ -498,7 +498,7 @@ Parser::ParseResult Parser::ParseExp(unsigned long idx, unsigned long rank)
 
     Node node;
 
-    auto left = ParseExp(idx, rank + 1);
+    auto left = ParseExpression(idx, rank + 1);
 
     if (!left.success)
         return ParseResult(false);
@@ -512,7 +512,7 @@ Parser::ParseResult Parser::ParseExp(unsigned long idx, unsigned long rank)
 
         idx += 1;
 
-        auto right = ParseExp(idx, rank);
+        auto right = ParseExpression(idx, rank);
 
         if (!right.success)
             return ParseResult(false);
