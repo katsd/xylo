@@ -842,129 +842,152 @@ bool Parser::GenerateIseq()
 
 bool Parser::GenerateInst(Node node)
 {
-
-    switch (node.token.type)
+    switch (node.type)
     {
-    case TokenType::RESERVED:
+    case NodeType::ROOT:
 
         break;
 
-    case TokenType::SYMBOL:
+    case NodeType::BLOCK:
+
+        break;
+
+    case NodeType::DEF_FUNC:
+
+        break;
+
+    case NodeType::FUNC:
+
+        break;
+
+    case NodeType::VAR:
+
+        break;
+
+    case NodeType::CONST:
+
+        PushInst(VM::Inst::PUSH_CONST);
+        PushInst(node.token.token.val);
+
+        break;
+
+    case NodeType::ASSIGN:
+
+        break;
+
+    case NodeType::UOPERATOR:
+
+        break;
+
+    case NodeType::BOPERATOR:
+
+        for (auto c : node.child)
+        {
+            if (!GenerateInst(c))
+                return false;
+        }
+
+        PushInst(VM::Inst::BOPE);
+
         switch (node.token.token.symbol)
         {
-        case Symbol::LBRACKET:
-
+        case PLUS:
+            PushInst(VM::Inst::ADD);
             break;
 
-        case Symbol::ASSIGN:
+        case Symbol::MINUS:
+            PushInst(VM::Inst::SUB);
+            break;
 
+        case Symbol::MUL:
+            PushInst(VM::Inst::MUL);
+            break;
+
+        case Symbol::DIV:
+            PushInst(VM::Inst::DIV);
+            break;
+
+        case Symbol::MOD:
+            PushInst(VM::Inst::MOD);
+            break;
+
+        case Symbol::BAND:
+            //TODO:
+            break;
+
+        case Symbol::BOR:
+            //TODO:
+            break;
+
+        case Symbol::BXOR:
+            //TODO:
+            break;
+
+        case Symbol::BNOT:
+            //TODO:
+            break;
+
+        case Symbol::AND:
+            PushInst(VM::Inst::AND);
+            break;
+
+        case Symbol::OR:
+            PushInst(VM::Inst::OR);
+            break;
+
+        case Symbol::NOT:
+            PushInst(VM::Inst::NOT);
+            break;
+
+        case Symbol::EQUAL:
+            PushInst(VM::Inst::EQUAL);
+            break;
+
+        case Symbol::NEQUAL:
+            PushInst(VM::Inst::NOT_EQUAL);
+            break;
+
+        case Symbol::GRE:
+            PushInst(VM::Inst::GREATER_THAN);
+            break;
+
+        case Symbol::GREEQ:
+            PushInst(VM::Inst::GREATER_THAN_OR_EQUAL);
+            break;
+
+        case Symbol::LESS:
+            PushInst(VM::Inst::LESS_THAN);
+            break;
+
+        case Symbol::LESSEQ:
+            PushInst(VM::Inst::LESS_THAN_OR_EQUAL);
             break;
 
         default:
-
-            for (auto c : node.child)
-            {
-                if (!GenerateInst(c))
-                    return false;
-            }
-
-            PushInst(VM::Inst::BOPE);
-
-            switch (node.token.token.symbol)
-            {
-            case PLUS:
-                PushInst(VM::Inst::ADD);
-                break;
-
-            case Symbol::MINUS:
-                PushInst(VM::Inst::SUB);
-                break;
-
-            case Symbol::MUL:
-                PushInst(VM::Inst::MUL);
-                break;
-
-            case Symbol::DIV:
-                PushInst(VM::Inst::DIV);
-                break;
-
-            case Symbol::MOD:
-                PushInst(VM::Inst::MOD);
-                break;
-
-            case Symbol::BAND:
-                //TODO:
-                break;
-
-            case Symbol::BOR:
-                //TODO:
-                break;
-
-            case Symbol::BXOR:
-                //TODO:
-                break;
-
-            case Symbol::BNOT:
-                //TODO:
-                break;
-
-            case Symbol::AND:
-                PushInst(VM::Inst::AND);
-                break;
-
-            case Symbol::OR:
-                PushInst(VM::Inst::OR);
-                break;
-
-            case Symbol::NOT:
-                PushInst(VM::Inst::NOT);
-                break;
-
-            case Symbol::EQUAL:
-                PushInst(VM::Inst::EQUAL);
-                break;
-
-            case Symbol::NEQUAL:
-                PushInst(VM::Inst::NOT_EQUAL);
-                break;
-
-            case Symbol::GRE:
-                PushInst(VM::Inst::GREATER_THAN);
-                break;
-
-            case Symbol::GREEQ:
-                PushInst(VM::Inst::GREATER_THAN_OR_EQUAL);
-                break;
-
-            case Symbol::LESS:
-                PushInst(VM::Inst::LESS_THAN);
-                break;
-
-            case Symbol::LESSEQ:
-                PushInst(VM::Inst::LESS_THAN_OR_EQUAL);
-                break;
-
-            default:
-
-                break;
-            }
 
             break;
         }
 
         break;
 
-    case TokenType::CONST:
-        PushInst(VM::Inst::PUSH_CONST);
-        PushInst(node.token.token.val);
+    case NodeType::RETURN:
 
         break;
 
-    case TokenType::OTHER:
+    case NodeType::REPEAT:
 
         break;
 
-    default:
+    case NodeType::FOR:
+
+        break;
+
+    case NodeType::WHILE:
+
+        break;
+
+    case NodeType::IF:
+
         break;
     }
 
