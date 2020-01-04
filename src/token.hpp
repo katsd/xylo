@@ -27,9 +27,9 @@ enum Symbol
     MINUS,  // -
     MUL,    // *
     DIV,    // /
-    MOD,    //%
+    MOD,    // %
     BAND,   // &
-    BOR,    //|
+    BOR,    // |
     BXOR,   // ^
     BNOT,   // ~
     AND,    // &&
