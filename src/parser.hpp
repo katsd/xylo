@@ -131,7 +131,7 @@ private:
 
     bool GenerateIseq();
 
-    bool GenerateInst(Node node);
+    bool GenerateInst(Node node, const Node &par);
 
     inline void PushInst(unsigned long inst)
     {

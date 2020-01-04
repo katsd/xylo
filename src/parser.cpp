@@ -837,10 +837,10 @@ bool Parser::GenerateIseq()
 {
     iseq = std::vector<unsigned long>();
 
-    return GenerateInst(ast);
+    return GenerateInst(ast, Node(NodeType::BLOCK, Token()));
 }
 
-bool Parser::GenerateInst(Node node)
+bool Parser::GenerateInst(Node node, const Node &par)
 {
     switch (node.type)
     {
@@ -853,6 +853,8 @@ bool Parser::GenerateInst(Node node)
         break;
 
     case NodeType::DEF_FUNC:
+        if (!(par.type != NodeType::ROOT))
+            return false;
 
         break;
 
@@ -879,13 +881,13 @@ bool Parser::GenerateInst(Node node)
         switch (node.token.token.symbol)
         {
         case NOT:
-            GenerateInst(node.child[0]);
+            GenerateInst(node.child[0], node);
             PushInst(VM::Inst::NOT);
             break;
 
         case MINUS:
             PushInst(VM::Inst::PUSH_ZERO);
-            GenerateInst(node.child[0]);
+            GenerateInst(node.child[0], node);
             PushInst(VM::Inst::BOPE);
             PushInst(VM::Inst::SUB);
 
@@ -901,7 +903,7 @@ bool Parser::GenerateInst(Node node)
 
         for (auto c : node.child)
         {
-            if (!GenerateInst(c))
+            if (!GenerateInst(c, node))
                 return false;
         }
 
@@ -992,7 +994,7 @@ bool Parser::GenerateInst(Node node)
         PushInst(VM::Inst::POP_TO_START);
         PushInst(VM::Inst::POP);
         PushInst(VM::Inst::JUMP);
-        GenerateInst(node.child[0]);
+        GenerateInst(node.child[0], node);
 
         break;
 
