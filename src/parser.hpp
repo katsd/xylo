@@ -22,9 +22,20 @@ class Parser
 private:
     enum NodeType
     {
-        Expression,
-        Statement,
-        Root,
+        ROOT,
+        BLOCK,
+        DEF_FUNC,
+        FUNC,
+        VAR,
+        CONST,
+        ASSIGN,
+        UOPERATOR,
+        BOPERATOR,
+        RETURN,
+        REPEAT,
+        FOR,
+        WHILE,
+        IF,
     };
 
     struct Node
@@ -44,7 +55,7 @@ private:
 
         Node()
         {
-            this->type = NodeType::Root;
+            this->type = NodeType::ROOT;
             this->token = Token();
             this->child = std::vector<Node>();
         }

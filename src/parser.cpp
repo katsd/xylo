@@ -74,7 +74,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
         {
         case Reserved::FUNC:
         {
-            node.type = NodeType::Statement;
+            node.type = NodeType::DEF_FUNC;
             node.token = code[idx];
 
             if (idx + 1 < code_size && CompSymbol(code[idx + 1], Symbol::LPAREN))
@@ -148,7 +148,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
 
         case Reserved::RETURN:
         {
-            node.type = NodeType::Statement;
+            node.type = NodeType::RETURN;
             node.token = code[idx];
 
             idx += 1;
@@ -169,7 +169,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
 
         case Reserved::FOR:
         {
-            node.type = NodeType::Statement;
+            node.type = NodeType::FOR;
             node.token = code[idx];
 
             idx += 1;
@@ -239,7 +239,11 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
         case Reserved::REPEAT:
         case Reserved::WHILE:
         {
-            node.type = NodeType::Statement;
+            if (code[idx].token.reserved == Reserved::REPEAT)
+                node.type = NodeType::REPEAT;
+            else
+                node.type = NodeType::WHILE;
+
             node.token = code[idx];
 
             idx += 1;
@@ -276,7 +280,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
 
         case Reserved::IF:
         {
-            node.type = NodeType::Statement;
+            node.type = NodeType::IF;
             node.token = code[idx];
 
             idx += 1;
@@ -345,13 +349,14 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
 
     case TokenType::SYMBOL:
     {
-        node.type = NodeType::Statement;
         node.token = code[idx];
 
         bool ok = false;
 
         if (code[idx].token.symbol == Symbol::LBRACKET)
         {
+            node.type = NodeType::BLOCK;
+
             idx += 1;
 
             if (idx < code_size && CompSymbol(code[idx], Symbol::RBRACKET))
@@ -403,7 +408,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
             {
             case Symbol::ASSIGN:
             {
-                node.type = NodeType::Expression;
+                node.type = NodeType::ASSIGN;
                 node.token = code[idx + 1];
 
                 {
@@ -507,7 +512,7 @@ Parser::ParseResult Parser::ParseExpression(unsigned long idx, unsigned long ran
 
     if (idx < code_size && code[idx].type == TokenType::SYMBOL && operator_rank[rank].count(code[idx].token.symbol) > 0)
     {
-        node.type = NodeType::Expression;
+        node.type = NodeType::BOPERATOR;
         node.token = code[idx];
 
         idx += 1;
@@ -573,7 +578,7 @@ Parser::ParseResult Parser::ParseTerm(unsigned long idx)
         case Symbol::NOT:
         case Symbol::MINUS:
         {
-            node.type = NodeType::Expression;
+            node.type = NodeType::UOPERATOR;
             node.token = code[idx];
 
             idx += 1;
@@ -599,7 +604,7 @@ Parser::ParseResult Parser::ParseTerm(unsigned long idx)
 
     case TokenType::CONST:
     {
-        node.type = NodeType::Expression;
+        node.type = NodeType::CONST;
         node.token = code[idx];
         idx += 1;
     }
@@ -607,11 +612,12 @@ Parser::ParseResult Parser::ParseTerm(unsigned long idx)
 
     case TokenType::OTHER:
     {
-        node.type = NodeType::Expression;
         node.token = code[idx];
 
         if (idx + 1 < code_size && CompSymbol(code[idx + 1], Symbol::LPAREN))
         {
+            node.type = NodeType::FUNC;
+
             idx += 2;
 
             if (CompSymbol(code[idx], Symbol::RPAREN))
@@ -655,6 +661,7 @@ Parser::ParseResult Parser::ParseTerm(unsigned long idx)
         }
         else
         {
+            node.type = NodeType::VAR;
             idx += 1;
         }
     }
@@ -677,7 +684,7 @@ Parser::ParseResult Parser::ParseVariable(unsigned long idx)
         return FailedToParse(idx, "expected variable");
 
     Node node;
-    node.type = NodeType::Expression;
+    node.type = NodeType::VAR;
     node.token = code[idx];
 
     return ParseResult(node, idx + 1);
@@ -691,144 +698,132 @@ void Parser::Node::Out(unsigned long long indent_size, std::vector<VM::Obj> &con
 
     switch (type)
     {
-    case Expression:
-        printf("%s ", (indent + "Exp").c_str());
+    case NodeType::ROOT:
+        printf("%s ", STR(ROOT));
         break;
-    case Statement:
-        printf("%s ", (indent + "Sta").c_str());
+    case NodeType::BLOCK:
+        printf("%s ", STR(BLOCK));
         break;
-    case Root:
-        printf("%s ", (indent + "Root").c_str());
+    case NodeType::DEF_FUNC:
+        printf("%s ", STR(DEF_FUNC));
         break;
-    default:
+    case NodeType::FUNC:
+        printf("%s ", STR(FUNC));
+        break;
+    case NodeType::VAR:
+        printf("%s ", STR(VAR));
+        break;
+    case NodeType::CONST:
+        printf("%s ", STR(CONST));
+        break;
+    case NodeType::ASSIGN:
+        printf("%s ", STR(ASSIGN));
+        break;
+    case NodeType::UOPERATOR:
+        printf("%s ", STR(UOPERATOR));
+        break;
+    case NodeType::BOPERATOR:
+        printf("%s ", STR(BOPERATOR));
+        break;
+    case NodeType::RETURN:
+        printf("%s ", STR(RETURN));
+        break;
+    case NodeType::REPEAT:
+        printf("%s ", STR(REPEAT));
+        break;
+    case NodeType::FOR:
+        printf("%s ", STR(FOR));
+        break;
+    case NodeType::WHILE:
+        printf("%s ", STR(WHILE));
+        break;
+    case NodeType::IF:
+        printf("%s ", STR(IF));
         break;
     }
 
-    switch (token.type)
+    switch (type)
     {
-    case TokenType::RESERVED:
-        switch (token.token.reserved)
-        {
-        case FUNC:
-            puts(STR(FUNC));
-            break;
-        case RETURN:
-            puts(STR(RETURN));
-            break;
-        case REPEAT:
-            puts(STR(REPEAT));
-            break;
-        case FOR:
-            puts(STR(FOR));
-            break;
-        case WHILE:
-            puts(STR(WHILE));
-            break;
-        case IF:
-            puts(STR(IF));
-            break;
-        case ELSE:
-            puts(STR(ELSE));
-            break;
-        default:
-            break;
-        }
-        break;
-
-    case TokenType::SYMBOL:
+    case NodeType::UOPERATOR:
+    case NodeType::BOPERATOR:
         switch (token.token.symbol)
         {
-        case PLUS:
+        case Symbol::PLUS:
             puts(STR(PLUS));
             break;
-        case MINUS:
+        case Symbol::MINUS:
             puts(STR(MINUS));
             break;
-        case MUL:
+        case Symbol::MUL:
             puts(STR(MUL));
             break;
-        case DIV:
+        case Symbol::DIV:
             puts(STR(DIV));
             break;
-        case MOD:
+        case Symbol::MOD:
             puts(STR(MOD));
             break;
-        case BAND:
+        case Symbol::BAND:
             puts(STR(BAND));
             break;
-        case BOR:
+        case Symbol::BOR:
             puts(STR(BOR));
             break;
-        case BXOR:
+        case Symbol::BXOR:
             puts(STR(BXOR));
             break;
-        case BNOT:
+        case Symbol::BNOT:
             puts(STR(BNOT));
             break;
-        case AND:
+        case Symbol::AND:
             puts(STR(AND));
             break;
-        case OR:
+        case Symbol::OR:
             puts(STR(OR));
             break;
-        case NOT:
+        case Symbol::NOT:
             puts(STR(NOT));
             break;
-        case EQUAL:
+        case Symbol::EQUAL:
             puts(STR(EQUAL));
             break;
-        case NEQUAL:
+        case Symbol::NEQUAL:
             puts(STR(NEQUAL));
             break;
-        case GRE:
+        case Symbol::GRE:
             puts(STR(GRE));
             break;
-        case GREEQ:
+        case Symbol::GREEQ:
             puts(STR(GREEQ));
             break;
-        case LESS:
+        case Symbol::LESS:
             puts(STR(LESS));
             break;
-        case LESSEQ:
+        case Symbol::LESSEQ:
             puts(STR(LESSEQ));
             break;
-        case ASSIGN:
-            puts(STR(ASSIGN));
-            break;
-        case QUE:
+        case Symbol::QUE:
             puts(STR(QUE));
             break;
-        case COMMMA:
-            puts(STR(COMMMA));
-            break;
-        case DOT:
-            puts(STR(DOT));
-            break;
-        case LPAREN:
-            puts(STR(LPAREN));
-            break;
-        case RPAREN:
-            puts(STR(RPAREN));
-            break;
-        case LBRACKET:
-            puts(STR(LBRACKET));
-            break;
-        case RBRACKET:
-            puts(STR(RBRACKET));
-            break;
         default:
+            puts("");
             break;
         }
 
         break;
 
-    case TokenType::CONST:
-        printf("Const ");
+    case NodeType::CONST:
         const_table[token.token.val].Out();
         break;
 
-    case TokenType::OTHER:
-        printf("Other %ld %s\n", token.token.val, token.str.c_str());
+    case NodeType::DEF_FUNC:
+    case NodeType::FUNC:
+    case NodeType::VAR:
+        printf("%s %ld\n", token.str.c_str(), token.token.val);
+        break;
+
+    default:
+        puts("");
         break;
     }
 
