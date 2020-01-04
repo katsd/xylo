@@ -22,8 +22,10 @@ VM::State VM::Run(unsigned long startIndex)
 
     unsigned long sc = 0;
 
-    if (iseq[pc] != START)
+    if (iseq[pc] != Inst::START)
         return State(false, Obj());
+
+    PushStack(sc, stack, Obj(Inst::START));
 
     pc += 1;
 
@@ -31,39 +33,53 @@ VM::State VM::Run(unsigned long startIndex)
     {
         unsigned long inst = iseq[pc];
 
-        if (inst == END)
+        if (inst == Inst::END)
             break;
 
-        if (inst == START)
+        if (inst == Inst::START)
             break;
 
         switch (inst)
         {
-        case PUSH:
+        case Inst::PUSH:
             PushStack(sc, stack, Obj((long)iseq[pc + 1]));
             pc += 2;
 
             break;
 
-        case PUSH_OBJ:
+        case Inst::PUSH_OBJ:
             PushStack(sc, stack, obj_table[iseq[pc + 1]]);
             pc += 2;
 
             break;
 
-        case PUSH_CONST:
+        case Inst::PUSH_CONST:
             PushStack(sc, stack, const_table[iseq[pc + 1]]);
             pc += 2;
 
             break;
 
-        case SET_OBJ:
+        case Inst::SET_OBJ:
             obj_table[iseq[pc + 1]] = GetStack(sc, stack);
             pc += 2;
 
             break;
 
-        case BOPE:
+        case Inst::POP:
+            GetStack(sc, stack);
+
+            break;
+
+        case Inst::POP_TO_START:
+            while (inst >= 0)
+            {
+                if (GetStack(sc, stack).GetInst() == Inst::START)
+                    break;
+            }
+
+            break;
+
+        case Inst::BOPE:
         {
             unsigned long ope = iseq[pc + 1];
 
@@ -80,7 +96,7 @@ VM::State VM::Run(unsigned long startIndex)
 
             switch (ope)
             {
-            case ADD:
+            case Inst::ADD:
                 switch (type)
                 {
                 case INT:
@@ -97,7 +113,7 @@ VM::State VM::Run(unsigned long startIndex)
 
                 break;
 
-            case SUB:
+            case Inst::SUB:
                 switch (type)
                 {
                 case INT:
@@ -114,7 +130,7 @@ VM::State VM::Run(unsigned long startIndex)
 
                 break;
 
-            case MUL:
+            case Inst::MUL:
                 switch (type)
                 {
                 case INT:
@@ -131,7 +147,7 @@ VM::State VM::Run(unsigned long startIndex)
 
                 break;
 
-            case DIV:
+            case Inst::DIV:
                 switch (type)
                 {
                 case INT:
@@ -163,7 +179,7 @@ VM::State VM::Run(unsigned long startIndex)
 
                 break;
 
-            case MOD:
+            case Inst::MOD:
                 switch (type)
                 {
                 case INT:
@@ -183,7 +199,7 @@ VM::State VM::Run(unsigned long startIndex)
 
                 break;
 
-            case EQUAL:
+            case Inst::EQUAL:
                 switch (type)
                 {
                 case INT:
@@ -200,7 +216,7 @@ VM::State VM::Run(unsigned long startIndex)
 
                 break;
 
-            case NOT_EQUAL:
+            case Inst::NOT_EQUAL:
                 switch (type)
                 {
                 case INT:
@@ -217,7 +233,7 @@ VM::State VM::Run(unsigned long startIndex)
 
                 break;
 
-            case GREATER_THAN:
+            case Inst::GREATER_THAN:
                 switch (type)
                 {
                 case INT:
@@ -234,7 +250,7 @@ VM::State VM::Run(unsigned long startIndex)
 
                 break;
 
-            case GREATER_THAN_OR_EQUAL:
+            case Inst::GREATER_THAN_OR_EQUAL:
                 switch (type)
                 {
                 case INT:
@@ -251,7 +267,7 @@ VM::State VM::Run(unsigned long startIndex)
 
                 break;
 
-            case LESS_THAN:
+            case Inst::LESS_THAN:
                 switch (type)
                 {
                 case INT:
@@ -268,7 +284,7 @@ VM::State VM::Run(unsigned long startIndex)
 
                 break;
 
-            case LESS_THAN_OR_EQUAL:
+            case Inst::LESS_THAN_OR_EQUAL:
                 switch (type)
                 {
                 case INT:
@@ -285,7 +301,7 @@ VM::State VM::Run(unsigned long startIndex)
 
                 break;
 
-            case AND:
+            case Inst::AND:
                 switch (type)
                 {
                 case INT:
@@ -302,7 +318,7 @@ VM::State VM::Run(unsigned long startIndex)
 
                 break;
 
-            case OR:
+            case Inst::OR:
                 switch (type)
                 {
                 case INT:
@@ -329,7 +345,7 @@ VM::State VM::Run(unsigned long startIndex)
 
         break;
 
-        case NOT:
+        case Inst::NOT:
         {
             Obj left = GetStack(sc, stack);
 
@@ -355,7 +371,7 @@ VM::State VM::Run(unsigned long startIndex)
 
         break;
 
-        case INPUT:
+        case Inst::INPUT:
         {
             double val;
             scanf("%lf", &val);
@@ -374,24 +390,24 @@ VM::State VM::Run(unsigned long startIndex)
 
         break;
 
-        case OUT:
+        case Inst::OUT:
             GetStack(sc, stack).Out();
             pc += 1;
 
             break;
 
-        case YAY:
+        case Inst::YAY:
             printf("Yay\n");
             pc += 1;
 
             break;
 
-        case JUMP:
+        case Inst::JUMP:
             pc = iseq[pc + 1];
 
             break;
 
-        case JUMP_IF:
+        case Inst::JUMP_IF:
             if (GetStack(sc, stack).GetInt() > 0)
             {
                 pc = iseq[pc + 1];

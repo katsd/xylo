@@ -17,19 +17,63 @@ class VM
 public:
     struct Obj;
 
+    enum Inst
+    {
+        PUSH,
+        PUSH_OBJ,
+        PUSH_CONST,
+        SET_OBJ,
+
+        POP,
+        POP_TO_START,
+
+        BOPE,
+        ADD,
+        SUB,
+        MUL,
+        DIV,
+        MOD,
+        EQUAL,
+        NOT_EQUAL,
+        GREATER_THAN,
+        GREATER_THAN_OR_EQUAL,
+        LESS_THAN,
+        LESS_THAN_OR_EQUAL,
+        AND,
+        OR,
+        NOT,
+
+        INPUT,
+        OUT,
+
+        YAY,
+
+        JUMP,
+        JUMP_IF,
+
+        START,
+        END,
+
+        ERROR,
+    };
+
 private:
     enum ObjType
     {
+        INST,
         INT,
         FLOAT,
     };
 
     union Val {
+        Inst inst;
+
         long ival;
 
         double dval;
 
         Val() {}
+        Val(Inst i) { inst = i; }
         Val(long i) { ival = i; }
         Val(double d) { dval = d; }
     };
@@ -71,21 +115,27 @@ public:
             value.ival = 0;
         };
 
+        Obj(Inst val)
+        {
+            type = ObjType::INST;
+            value.inst = val;
+        }
+
         Obj(int val)
         {
-            type = INT;
+            type = ObjType::INT;
             value.ival = val;
         }
 
         Obj(long val)
         {
-            type = INT;
+            type = ObjType::INT;
             value.ival = val;
         };
 
         Obj(double val)
         {
-            type = FLOAT;
+            type = ObjType::FLOAT;
             value.dval = val;
         };
 
@@ -96,14 +146,14 @@ public:
 
         void SetInt(int val)
         {
-            type = INT;
+            type = ObjType::INT;
 
             value.ival = val;
         };
 
         void SetFloat(double val)
         {
-            type = FLOAT;
+            type = ObjType::FLOAT;
 
             value.dval = val;
         };
@@ -112,10 +162,10 @@ public:
         {
             switch (type)
             {
-            case INT:
+            case ObjType::INT:
                 return value.ival;
 
-            case FLOAT:
+            case ObjType::FLOAT:
                 return value.dval;
 
             default:
@@ -129,10 +179,10 @@ public:
         {
             switch (type)
             {
-            case INT:
+            case ObjType::INT:
                 return value.ival;
 
-            case FLOAT:
+            case ObjType::FLOAT:
                 return value.dval;
 
             default:
@@ -141,6 +191,14 @@ public:
 
             return 0.0;
         };
+
+        Inst GetInst()
+        {
+            if (type == ObjType::INST)
+                return value.inst;
+
+            return Inst::ERROR;
+        }
 
         void Out();
     };
@@ -163,41 +221,6 @@ public:
             this->success = success;
             this->res = res;
         }
-    };
-
-    enum Inst
-    {
-        PUSH,
-        PUSH_OBJ,
-        PUSH_CONST,
-        SET_OBJ,
-
-        BOPE,
-        ADD,
-        SUB,
-        MUL,
-        DIV,
-        MOD,
-        EQUAL,
-        NOT_EQUAL,
-        GREATER_THAN,
-        GREATER_THAN_OR_EQUAL,
-        LESS_THAN,
-        LESS_THAN_OR_EQUAL,
-        AND,
-        OR,
-        NOT,
-
-        INPUT,
-        OUT,
-
-        YAY,
-
-        JUMP,
-        JUMP_IF,
-
-        START,
-        END,
     };
 
     VM(std::vector<unsigned long> iseq, std::vector<Obj> const_table)
