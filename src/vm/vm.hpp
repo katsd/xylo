@@ -22,6 +22,8 @@ public:
         PUSH,
         PUSH_OBJ,
         PUSH_CONST,
+        PUSH_ZERO,
+        PUSH_ONE,
         SET_OBJ,
 
         POP,

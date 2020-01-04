@@ -59,6 +59,18 @@ VM::State VM::Run(unsigned long startIndex)
 
             break;
 
+        case Inst::PUSH_ZERO:
+            PushStack(sc, stack, Obj(0));
+            pc += 1;
+
+            break;
+
+        case Inst::PUSH_ONE:
+            PushStack(sc, stack, Obj(1));
+            pc += 1;
+
+            break;
+
         case Inst::SET_OBJ:
             obj_table[iseq[pc + 1]] = GetStack(sc, stack);
             pc += 2;
