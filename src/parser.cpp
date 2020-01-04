@@ -876,6 +876,24 @@ bool Parser::GenerateInst(Node node)
         break;
 
     case NodeType::UOPERATOR:
+        switch (node.token.token.symbol)
+        {
+        case NOT:
+            GenerateInst(node.child[0]);
+            PushInst(VM::Inst::NOT);
+            break;
+
+        case MINUS:
+            PushInst(VM::Inst::PUSH_ZERO);
+            GenerateInst(node.child[0]);
+            PushInst(VM::Inst::BOPE);
+            PushInst(VM::Inst::SUB);
+
+            break;
+
+        default:
+            return false;
+        }
 
         break;
 
