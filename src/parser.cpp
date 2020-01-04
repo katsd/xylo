@@ -989,6 +989,10 @@ bool Parser::GenerateInst(Node node)
         break;
 
     case NodeType::RETURN:
+        PushInst(VM::Inst::POP_TO_START);
+        PushInst(VM::Inst::POP);
+        PushInst(VM::Inst::JUMP);
+        GenerateInst(node.child[0]);
 
         break;
 
