@@ -120,6 +120,13 @@ private:
 
     bool GenerateIseq();
 
+    bool GenerateInst(Node node);
+
+    inline void PushInst(unsigned long inst)
+    {
+        iseq.push_back(inst);
+    }
+
     inline bool CompReserved(Token token, Reserved reserved)
     {
         return token.type == TokenType::RESERVED && token.token.reserved == reserved;

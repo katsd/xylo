@@ -683,11 +683,6 @@ Parser::ParseResult Parser::ParseVariable(unsigned long idx)
     return ParseResult(node, idx + 1);
 }
 
-bool Parser::GenerateIseq()
-{
-    return false;
-}
-
 void Parser::Node::Out(unsigned long long indent_size, std::vector<VM::Obj> &const_table)
 {
     std::string indent(indent_size * 2, ' ');
@@ -841,4 +836,142 @@ void Parser::Node::Out(unsigned long long indent_size, std::vector<VM::Obj> &con
     {
         c.Out(indent_size + 1, const_table);
     }
+}
+
+bool Parser::GenerateIseq()
+{
+    iseq = std::vector<unsigned long>();
+
+    return GenerateInst(ast);
+}
+
+bool Parser::GenerateInst(Node node)
+{
+
+    switch (node.token.type)
+    {
+    case TokenType::RESERVED:
+
+        break;
+
+    case TokenType::SYMBOL:
+        switch (node.token.token.symbol)
+        {
+        case Symbol::LBRACKET:
+
+            break;
+
+        case Symbol::ASSIGN:
+
+            break;
+
+        default:
+
+            for (auto c : node.child)
+            {
+                if (!GenerateInst(c))
+                    return false;
+            }
+
+            PushInst(VM::Inst::BOPE);
+
+            switch (node.token.token.symbol)
+            {
+            case PLUS:
+                PushInst(VM::Inst::ADD);
+                break;
+
+            case Symbol::MINUS:
+                PushInst(VM::Inst::SUB);
+                break;
+
+            case Symbol::MUL:
+                PushInst(VM::Inst::MUL);
+                break;
+
+            case Symbol::DIV:
+                PushInst(VM::Inst::DIV);
+                break;
+
+            case Symbol::MOD:
+                PushInst(VM::Inst::MOD);
+                break;
+
+            case Symbol::BAND:
+                //TODO:
+                break;
+
+            case Symbol::BOR:
+                //TODO:
+                break;
+
+            case Symbol::BXOR:
+                //TODO:
+                break;
+
+            case Symbol::BNOT:
+                //TODO:
+                break;
+
+            case Symbol::AND:
+                PushInst(VM::Inst::AND);
+                break;
+
+            case Symbol::OR:
+                PushInst(VM::Inst::OR);
+                break;
+
+            case Symbol::NOT:
+                PushInst(VM::Inst::NOT);
+                break;
+
+            case Symbol::EQUAL:
+                PushInst(VM::Inst::EQUAL);
+                break;
+
+            case Symbol::NEQUAL:
+                PushInst(VM::Inst::NOT_EQUAL);
+                break;
+
+            case Symbol::GRE:
+                PushInst(VM::Inst::GREATER_THAN);
+                break;
+
+            case Symbol::GREEQ:
+                PushInst(VM::Inst::GREATER_THAN_OR_EQUAL);
+                break;
+
+            case Symbol::LESS:
+                PushInst(VM::Inst::LESS_THAN);
+                break;
+
+            case Symbol::LESSEQ:
+                PushInst(VM::Inst::LESS_THAN_OR_EQUAL);
+                break;
+
+            default:
+
+                break;
+            }
+
+            break;
+        }
+
+        break;
+
+    case TokenType::CONST:
+        PushInst(VM::Inst::PUSH_CONST);
+        PushInst(node.token.token.val);
+
+        break;
+
+    case TokenType::OTHER:
+
+        break;
+
+    default:
+        break;
+    }
+
+    return false;
 }
