@@ -9,6 +9,7 @@
 #define PARSER_HPP_
 
 #include <stdio.h>
+#include <map>
 #include <vector>
 #include <set>
 #include <string>
@@ -103,6 +104,8 @@ private:
 
     Node ast;
 
+    std::map<unsigned long, bool> var_decleared;
+
     unsigned long code_size;
 
     const std::vector<std::set<Symbol>> operator_rank = {
@@ -137,6 +140,8 @@ private:
     {
         iseq.push_back(inst);
     }
+
+    bool PushVar(const unsigned long var_address, const std::string &var_name);
 
     inline bool CompReserved(Token token, Reserved reserved)
     {

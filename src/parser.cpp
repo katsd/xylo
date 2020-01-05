@@ -842,6 +842,8 @@ bool Parser::GenerateIseq()
 
 bool Parser::GenerateInst(Node node, const Node &par)
 {
+    std::vector<unsigned long> block_var_address;
+
     switch (node.type)
     {
     case NodeType::ROOT:
@@ -863,6 +865,8 @@ bool Parser::GenerateInst(Node node, const Node &par)
         break;
 
     case NodeType::VAR:
+        if (!PushVar(node.token.token.val, node.token.str))
+            return false;
 
         break;
 
@@ -1015,5 +1019,24 @@ bool Parser::GenerateInst(Node node, const Node &par)
         break;
     }
 
+    for (auto address : block_var_address)
+    {
+        var_decleared[address] = false;
+    }
+
     return false;
+}
+
+bool Parser::PushVar(const unsigned long var_address, const std::string &var_name)
+{
+    if (!var_decleared[var_address])
+    {
+        printf("variable %s is not declared.\n", var_name.c_str());
+        return false;
+    }
+
+    PushInst(VM::Inst::PUSH_OBJ);
+    PushInst(var_address);
+
+    return true;
 }
