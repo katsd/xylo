@@ -53,6 +53,12 @@ VM::State VM::Run(unsigned long startIndex)
 
             break;
 
+        case Inst::PUSH_GLOBAL_OBJ:
+            PushStack(sc, stack, global_obj_table[iseq[pc + 1]]);
+            pc += 2;
+
+            break;
+
         case Inst::PUSH_CONST:
             PushStack(sc, stack, const_table[iseq[pc + 1]]);
             pc += 2;
@@ -73,6 +79,12 @@ VM::State VM::Run(unsigned long startIndex)
 
         case Inst::SET_OBJ:
             obj_table[iseq[pc + 1]] = GetStack(sc, stack);
+            pc += 2;
+
+            break;
+
+        case Inst::SET_GLOBAL_OBJ:
+            global_obj_table[iseq[pc + 1]] = GetStack(sc, stack);
             pc += 2;
 
             break;

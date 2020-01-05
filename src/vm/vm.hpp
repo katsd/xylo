@@ -21,10 +21,12 @@ public:
     {
         PUSH,
         PUSH_OBJ,
+        PUSH_GLOBAL_OBJ,
         PUSH_CONST,
         PUSH_ZERO,
         PUSH_ONE,
         SET_OBJ,
+        SET_GLOBAL_OBJ,
 
         POP,
         POP_TO_START,
@@ -87,6 +89,8 @@ private:
     std::vector<unsigned long> iseq;
 
     std::vector<Obj> const_table;
+
+    std::vector<Obj> global_obj_table;
 
     inline Obj GetStack(unsigned long &sc, const std::unique_ptr<Obj[]> &stack)
     {
