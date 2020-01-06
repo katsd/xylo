@@ -26,6 +26,7 @@ public:
         PUSH_CONST,
         PUSH_ZERO,
         PUSH_ONE,
+        PUSH_START,
         SET_OBJ,
         SET_GLOBAL_OBJ,
 
