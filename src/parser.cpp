@@ -988,7 +988,7 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
         if (par.type != NodeType::ROOT)
             return false;
 
-        FuncData func = FuncData(node.token.token.val, node.child.size() - 1);
+        FuncData func = FuncData(node.child[0].token.token.val, node.child.size() - 2);
 
         func_start_idx[func] = iseq.size();
 
@@ -1029,9 +1029,9 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
             break;
         }
 
-        FuncData func = FuncData(node.token.token.val, node.child.size() - 1);
+        FuncData func = FuncData(node.token.token.val, node.child.size());
 
-        for (int i = 0; i < node.child.size() - 1; i++)
+        for (int i = 0; i < node.child.size(); i++)
         {
             GenerateInst(node.child[i], node, block_id);
         }
