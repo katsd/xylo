@@ -1262,7 +1262,6 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
         GenerateInst(node.child[1], node, block_id);
 
         GenerateInst(node.child[0], node, block_id);
-        PushInst(VM::Inst::NOT);
         PushInst(VM::Inst::JUMP_IF);
         PushInst(return_pos);
 
