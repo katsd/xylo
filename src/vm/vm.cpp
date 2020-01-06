@@ -440,6 +440,11 @@ VM::State VM::Run(unsigned long startIndex)
 
             break;
 
+        case Inst::JUMP2:
+            pc = GetStack(sc, stack).GetInt();
+
+            break;
+
         case Inst::JUMP_IF:
             if (GetStack(sc, stack).GetInt() > 0)
             {

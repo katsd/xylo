@@ -54,6 +54,7 @@ public:
         YAY,
 
         JUMP,
+        JUMP2,
         JUMP_IF,
 
         START,
