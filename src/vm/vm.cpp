@@ -622,7 +622,7 @@ void VM::OutIseq()
                 break;
 
             case Inst::EQUAL:
-                printf("EQUAL");
+                printf("EQUAL\n");
 
                 break;
 
