@@ -96,19 +96,19 @@ private:
 
     struct FuncData
     {
-        unsigned long address;
+        unsigned long name;
 
         unsigned long arg_num;
 
-        FuncData(unsigned long address, unsigned long arg_num)
+        FuncData(unsigned long name, unsigned long arg_num)
         {
-            this->address = address;
+            this->name = name;
             this->arg_num = arg_num;
         }
 
         bool operator<(const FuncData &r) const
         {
-            return address == r.address ? (address < r.address) : arg_num < r.arg_num;
+            return name == r.name ? (name < r.name) : arg_num < r.arg_num;
         }
     };
 
@@ -133,6 +133,10 @@ private:
     std::map<unsigned long, unsigned long> var_block_id;
 
     std::set<FuncData> func_data;
+
+    std::map<FuncData, unsigned long> func_start_idx;
+
+    std::map<FuncData, unsigned long> unassigned_func_start_idx;
 
     unsigned long code_size;
 

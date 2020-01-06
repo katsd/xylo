@@ -861,6 +861,10 @@ bool Parser::GenerateIseq()
 
     func_data = std::set<FuncData>();
 
+    func_start_idx = std::map<FuncData, unsigned long>();
+
+    unassigned_func_start_idx = std::map<FuncData, unsigned long>();
+
     iseq = std::vector<unsigned long>();
 
     for (Node n : ast.child)
@@ -873,6 +877,13 @@ bool Parser::GenerateIseq()
     }
 
     return GenerateInst(ast, Node(NodeType::BLOCK, Token()), block_cnt);
+
+    for (auto i : unassigned_func_start_idx)
+    {
+        iseq[i.second] = func_start_idx[i.first];
+    }
+
+    return true;
 }
 
 bool Parser::DefineFunc(Node node)
@@ -921,12 +932,62 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
     {
         if (!(par.type != NodeType::ROOT))
             return false;
+
+        FuncData func = FuncData(node.token.token.val, node.child.size() - 1);
+
+        func_start_idx[func] = iseq.size();
+
+        PushInst(VM::Inst::START);
+
+        for (int i = node.child.size() - 2; i >= 0; i--)
+        {
+            if (node.child[i].type != NodeType::VAR)
+                return false;
+
+            unsigned long var_name = node.child[i].token.token.val;
+
+            if (IsVarDeclared(var_name))
+            {
+                printf("variable %s is already declared\n", node.child[i].token.str.c_str());
+                return false;
+            }
+
+            unsigned long address = DeclareVar(var_name, block_id + 1);
+
+            PushInst(VM::Inst::SET_OBJ);
+            PushInst(address);
+        }
+
+        GenerateInst(node.child[node.child.size() - 1], node, block_id);
+
+        PushInst(VM::Inst::END);
     }
     break;
 
     case NodeType::FUNC:
+    {
+        FuncData func = FuncData(node.token.token.val, node.child.size() - 1);
 
-        break;
+        for (int i = 0; i < node.child.size() - 1; i++)
+        {
+            GenerateInst(node.child[i], node, block_id);
+        }
+
+        PushInst(VM::Inst::PUSH_CONST2);
+        PushInst(VM::Inst::ERROR);
+
+        unsigned long pos = iseq.size() - 1;
+
+        PushInst(VM::Inst::PUSH_START);
+
+        PushInst(VM::Inst::JUMP);
+        PushInst(VM::Inst::ERROR);
+        unassigned_func_start_idx[func] = iseq.size() - 1;
+
+        iseq[pos] = iseq.size();
+    }
+
+    break;
 
     case NodeType::VAR:
         if (!PushVar(node.token.token.val, node.token.str))
@@ -1074,12 +1135,26 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
         break;
 
     case NodeType::RETURN:
+    {
         PushInst(VM::Inst::POP_TO_START);
         PushInst(VM::Inst::POP);
-        PushInst(VM::Inst::JUMP);
+
+        unsigned long tmp_var_address = GetTmpVar();
+
+        PushInst(VM::Inst::SET_OBJ);
+        PushInst(tmp_var_address);
+
         GenerateInst(node.child[0], node, block_id);
 
-        break;
+        PushInst(VM::Inst::PUSH_OBJ);
+        PushInst(tmp_var_address);
+
+        PushInst(VM::Inst::JUMP2);
+
+        ReturnTmpVar();
+    }
+
+    break;
 
     case NodeType::REPEAT:
     {
