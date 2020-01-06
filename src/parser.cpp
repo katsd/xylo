@@ -876,7 +876,8 @@ bool Parser::GenerateIseq()
             return false;
     }
 
-    return GenerateInst(ast, Node(NodeType::BLOCK, Token()), block_cnt);
+    if (!GenerateInst(ast, Node(NodeType::BLOCK, Token()), block_cnt))
+        return false;
 
     for (auto i : unassigned_func_start_idx)
     {
