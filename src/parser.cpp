@@ -35,6 +35,11 @@ Parser::Result Parser::Parse()
         return Result(false, std::vector<unsigned long>(), std::vector<VM::Obj>());
     }
 
+    /*
+    for (auto i : iseq)
+        printf("%ld\n", i);
+    */
+
     return Result(true, iseq, const_table);
 }
 
@@ -939,7 +944,7 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
 
     case NodeType::DEF_FUNC:
     {
-        if (!(par.type != NodeType::ROOT))
+        if (par.type != NodeType::ROOT)
             return false;
 
         FuncData func = FuncData(node.token.token.val, node.child.size() - 1);
@@ -975,6 +980,14 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
 
     case NodeType::FUNC:
     {
+        if (node.token.str == "print")
+        {
+            GenerateInst(node.child[0], node, block_id);
+            PushInst(VM::Inst::OUT);
+
+            break;
+        }
+
         FuncData func = FuncData(node.token.token.val, node.child.size() - 1);
 
         for (int i = 0; i < node.child.size() - 1; i++)
