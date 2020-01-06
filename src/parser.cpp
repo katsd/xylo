@@ -1222,28 +1222,43 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
 
         unsigned long cnt_var_address = DeclareVar(cnt_var_name, block_id + 1);
 
-        GenerateInst(node.child[0], node, block_id);
+        unsigned long max_var_address = GetTmpVar();
+
+        GenerateInst(node.child[1], node, block_id);
         PushInst(VM::Inst::SET_OBJ);
+        PushInst(max_var_address);
+
+        PushInst(VM::Inst::PUSH_ZERO);
         PushInst(cnt_var_address);
 
         unsigned long return_pos = iseq.size();
 
         PushInst(VM::Inst::PUSH_OBJ);
         PushInst(cnt_var_address);
-        PushInst(VM::Inst::PUSH_ZERO);
+        PushInst(VM::Inst::PUSH_OBJ);
+        PushInst(max_var_address);
         PushInst(VM::Inst::BOPE);
-        PushInst(VM::Inst::LESS_THAN_OR_EQUAL);
+        PushInst(VM::Inst::GREATER_THAN_OR_EQUAL);
         PushInst(VM::Inst::JUMP_IF);
         PushInst(VM::Inst::ERROR);
 
         unsigned long pos = iseq.size() - 1;
 
-        GenerateInst(node.child[1], node, block_id);
+        GenerateInst(node.child[2], node, block_id);
 
+        PushInst(VM::Inst::PUSH_OBJ);
+        PushInst(cnt_var_address);
+        PushInst(VM::Inst::PUSH_ONE);
+        PushInst(VM::Inst::BOPE);
+        PushInst(VM::Inst::ADD);
+        PushInst(VM::Inst::SET_OBJ);
+        PushInst(cnt_var_address);
         PushInst(VM::Inst::JUMP);
         PushInst(return_pos);
 
         iseq[pos] = iseq.size();
+
+        ReturnTmpVar();
     }
 
     break;
