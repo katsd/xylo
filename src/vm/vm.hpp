@@ -20,6 +20,7 @@ public:
     enum Inst
     {
         PUSH,
+        PUSH_TOP,
         PUSH_OBJ,
         PUSH_GLOBAL_OBJ,
         PUSH_CONST,
