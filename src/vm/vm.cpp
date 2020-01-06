@@ -95,7 +95,7 @@ VM::State VM::Run(unsigned long startIndex)
             break;
 
         case Inst::PUSH_START:
-            PushStack(sc, stack, Obj(VM::Inst::START));
+            PushStack(sc, stack, Obj(Inst::START));
             pc += 1;
 
             break;
@@ -119,14 +119,23 @@ VM::State VM::Run(unsigned long startIndex)
             break;
 
         case Inst::POP_TO_START:
-            while (inst >= 0)
+            while (true)
             {
-                if (GetStack(sc, stack).GetInst() == Inst::START)
+                bool brk = false;
+                if (sc == 0)
+                    brk = true;
+
+                Inst ist = GetStack(sc, stack).GetInst();
+
+                if (ist == Inst::START)
                 {
-                    pc += 1;
                     break;
                 }
+
+                if (brk)
+                    break;
             }
+
             pc += 1;
 
             break;
@@ -471,7 +480,6 @@ VM::State VM::Run(unsigned long startIndex)
             }
             else
             {
-                GetStack(sc, stack);
                 pc += 2;
             }
 
