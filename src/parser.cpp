@@ -16,16 +16,24 @@ Parser::Result Parser::Parse()
     if (!lexer_res.success)
     {
         printf("failed to tokenize\n");
-        return Result(false, iseq, const_table);
+        return Result(false, std::vector<unsigned long>(), std::vector<VM::Obj>());
     }
 
     code = lexer_res.code;
 
     const_table = lexer_res.const_table;
 
-    GenerateAST();
+    if (!GenerateAST())
+    {
+        printf("failed to parse\n");
+        return Result(false, std::vector<unsigned long>(), std::vector<VM::Obj>());
+    }
 
-    GenerateIseq();
+    if (!GenerateIseq())
+    {
+        printf("failed to generate iseq\n");
+        return Result(false, std::vector<unsigned long>(), std::vector<VM::Obj>());
+    }
 
     return Result(true, iseq, const_table);
 }
