@@ -36,11 +36,13 @@ VM::State VM::Run(unsigned long startIndex)
         if (inst == Inst::END)
             break;
 
-        if (inst == Inst::START)
-            break;
-
         switch (inst)
         {
+        case Inst::START:
+            pc += 1;
+
+            break;
+
         case Inst::PUSH:
             PushStack(sc, stack, Obj((long)iseq[pc + 1]));
             pc += 2;
@@ -76,7 +78,7 @@ VM::State VM::Run(unsigned long startIndex)
 
         case Inst::PUSH_CONST2:
             PushStack(sc, stack, Obj((long)iseq[pc + 1]));
-            pc += 1;
+            pc += 2;
 
             break;
 
@@ -535,7 +537,7 @@ void VM::OutIseq()
 
         case Inst::PUSH_CONST2:
             printf("PUSH_CONST2\n");
-            pc += 1;
+            pc += 2;
 
             break;
 
