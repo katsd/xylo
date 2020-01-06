@@ -62,6 +62,11 @@ private:
         }
 
         void Out(unsigned long long indent_size, std::vector<VM::Obj> &const_table);
+
+        static inline Node BlockNode()
+        {
+            return Node(NodeType::BLOCK, Token());
+        }
     };
 
     struct ParseResult

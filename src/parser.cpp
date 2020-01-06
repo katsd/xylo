@@ -242,12 +242,22 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
                 idx += 1;
 
                 {
+                    bool in_bracket = idx < code_size && CompSymbol(code[idx], Symbol::LBRACKET);
+
                     auto res = ParseStatement(idx);
 
                     if (res.success)
                     {
                         idx = res.idx;
-                        node.child.push_back(res.node);
+                        if (in_bracket)
+                        {
+                            node.child.push_back(res.node);
+                        }
+                        else
+                        {
+                            node.child.push_back(Node::BlockNode());
+                            node.child[2].child.push_back(res.node);
+                        }
                     }
                     else
                     {
@@ -289,12 +299,22 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
             }
 
             {
+                bool in_bracket = idx < code_size && CompSymbol(code[idx], Symbol::LBRACKET);
+
                 auto res = ParseStatement(idx);
 
                 if (res.success)
                 {
                     idx = res.idx;
-                    node.child.push_back(res.node);
+                    if (in_bracket)
+                    {
+                        node.child.push_back(res.node);
+                    }
+                    else
+                    {
+                        node.child.push_back(Node::BlockNode());
+                        node.child[1].child.push_back(res.node);
+                    }
                 }
                 else
                 {
@@ -336,12 +356,22 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
             idx += 1;
 
             {
+                bool in_bracket = idx < code_size && CompSymbol(code[idx], Symbol::LBRACKET);
+
                 auto res = ParseStatement(idx);
 
                 if (res.success)
                 {
                     idx = res.idx;
-                    node.child.push_back(res.node);
+                    if (in_bracket)
+                    {
+                        node.child.push_back(res.node);
+                    }
+                    else
+                    {
+                        node.child.push_back(Node::BlockNode());
+                        node.child[1].child.push_back(res.node);
+                    }
                 }
                 else
                 {
@@ -352,12 +382,23 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
             if (idx < code_size && CompReserved(code[idx], Reserved::ELSE))
             {
                 idx += 1;
+
+                bool in_bracket = idx < code_size && CompSymbol(code[idx], Symbol::LBRACKET);
+
                 auto res = ParseStatement(idx);
 
                 if (res.success)
                 {
                     idx = res.idx;
-                    node.child.push_back(res.node);
+                    if (in_bracket)
+                    {
+                        node.child.push_back(res.node);
+                    }
+                    else
+                    {
+                        node.child.push_back(Node::BlockNode());
+                        node.child[2].child.push_back(res.node);
+                    }
                 }
                 else
                 {
