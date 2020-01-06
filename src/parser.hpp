@@ -94,6 +94,24 @@ private:
         }
     };
 
+    struct FuncData
+    {
+        unsigned long address;
+
+        unsigned long arg_num;
+
+        FuncData(unsigned long address, unsigned long arg_num)
+        {
+            this->address = address;
+            this->arg_num = arg_num;
+        }
+
+        bool operator<(const FuncData &r) const
+        {
+            return address == r.address ? (address < r.address) : arg_num < r.arg_num;
+        }
+    };
+
     std::string code_str;
 
     std::vector<Token> code;
@@ -104,7 +122,17 @@ private:
 
     Node ast;
 
-    std::map<unsigned long, bool> var_decleared;
+    unsigned long block_cnt;
+
+    std::map<unsigned long, bool> block_is_alive;
+
+    unsigned long var_cnt;
+
+    std::map<unsigned long, unsigned long> var_address;
+
+    std::map<unsigned long, unsigned long> var_block_id;
+
+    std::set<FuncData> func_data;
 
     unsigned long code_size;
 
@@ -134,14 +162,39 @@ private:
 
     bool GenerateIseq();
 
-    bool GenerateInst(Node node, const Node &par);
+    bool GenerateInst(Node node, const Node &par, unsigned long block_id);
+
+    bool DefineFunc(Node node);
 
     inline void PushInst(unsigned long inst)
     {
         iseq.push_back(inst);
     }
 
-    bool PushVar(const unsigned long var_address, const std::string &var_name);
+    bool PushVar(const unsigned long var_name, const std::string &var_name_str);
+
+    bool IsVarDeclared(const unsigned long var_name);
+
+    inline unsigned long DeclareVar(unsigned long var_name, unsigned long block_id)
+    {
+        var_cnt += 1;
+
+        var_address[var_name] = var_cnt;
+
+        var_block_id[var_cnt] = block_id;
+
+        return var_cnt;
+    }
+
+    inline unsigned long GetTmpVar()
+    {
+        return ++var_cnt;
+    }
+
+    inline void ReturnTmpVar()
+    {
+        var_cnt--;
+    }
 
     inline bool CompReserved(Token token, Reserved reserved)
     {
