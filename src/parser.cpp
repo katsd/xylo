@@ -943,11 +943,11 @@ bool Parser::GenerateIseq()
 
 bool Parser::DefineFunc(Node node)
 {
-    unsigned long func_address = node.child[0].token.token.val;
+    unsigned long func_name = node.child[0].token.token.val;
 
     unsigned long arg_num = node.child.size() - 2;
 
-    FuncData func = FuncData(func_address, arg_num);
+    FuncData func = FuncData(func_name, arg_num);
 
     if (func_data.count(func) > 0)
     {

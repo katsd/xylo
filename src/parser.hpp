@@ -113,7 +113,7 @@ private:
 
         bool operator<(const FuncData &r) const
         {
-            return name == r.name ? (name < r.name) : arg_num < r.arg_num;
+            return name == r.name ? arg_num < r.arg_num : (name < r.name);
         }
     };
 
