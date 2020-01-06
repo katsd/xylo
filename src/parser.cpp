@@ -953,7 +953,7 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
 
         PushInst(VM::Inst::START);
 
-        for (int i = node.child.size() - 2; i >= 0; i--)
+        for (int i = node.child.size() - 3; i >= 0; i--)
         {
             if (node.child[i].type != NodeType::VAR)
                 return false;
