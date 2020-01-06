@@ -114,6 +114,7 @@ VM::State VM::Run(unsigned long startIndex)
 
         case Inst::POP:
             GetStack(sc, stack);
+            pc += 1;
 
             break;
 
@@ -121,8 +122,12 @@ VM::State VM::Run(unsigned long startIndex)
             while (inst >= 0)
             {
                 if (GetStack(sc, stack).GetInst() == Inst::START)
+                {
+                    pc += 1;
                     break;
+                }
             }
+            pc += 1;
 
             break;
 
@@ -489,6 +494,8 @@ void VM::OutIseq()
 
     while (pc < iseq.size())
     {
+        printf("#%ld ", pc);
+
         unsigned long inst = iseq[pc];
 
         switch (inst)
@@ -536,7 +543,7 @@ void VM::OutIseq()
             break;
 
         case Inst::PUSH_CONST2:
-            printf("PUSH_CONST2\n");
+            printf("PUSH_CONST2 %ld\n", iseq[pc + 1]);
             pc += 2;
 
             break;
@@ -573,11 +580,13 @@ void VM::OutIseq()
 
         case Inst::POP:
             printf("POP\n");
+            pc += 1;
 
             break;
 
         case Inst::POP_TO_START:
             printf("POP_TO_START\n");
+            pc += 1;
 
             break;
 
