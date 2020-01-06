@@ -480,3 +480,230 @@ VM::State VM::Run(unsigned long startIndex)
 
     return State(GetStack(sc, stack));
 }
+
+void VM::OutIseq()
+{
+    unsigned long pc = 0;
+
+    while (pc < iseq.size())
+    {
+        unsigned long inst = iseq[pc];
+
+        switch (inst)
+        {
+        case Inst::START:
+            printf("START\n");
+            pc += 1;
+
+            break;
+
+        case Inst::END:
+            printf("END\n");
+            pc += 1;
+
+            break;
+
+        case Inst::PUSH:
+            printf("PUSH %ld\n", iseq[pc + 1]);
+            pc += 2;
+
+            break;
+
+        case Inst::PUSH_TOP:
+            printf("PUSH_TOP\n");
+            pc += 1;
+
+            break;
+
+        case Inst::PUSH_OBJ:
+            printf("PUSH_OBJ %ld\n", iseq[pc + 1]);
+            pc += 2;
+
+            break;
+
+        case Inst::PUSH_GLOBAL_OBJ:
+            printf("PUSH_GLOBAL_OBJ %ld\n", iseq[pc + 1]);
+            pc += 2;
+
+            break;
+
+        case Inst::PUSH_CONST:
+            printf("PUSH_CONST %ld\n", iseq[pc + 1]);
+            pc += 2;
+
+            break;
+
+        case Inst::PUSH_CONST2:
+            printf("PUSH_CONST2\n");
+            pc += 1;
+
+            break;
+
+        case Inst::PUSH_ZERO:
+            printf("PUSH_ZERO\n");
+            pc += 1;
+
+            break;
+
+        case Inst::PUSH_ONE:
+            printf("PUSH_ONE\n");
+            pc += 1;
+
+            break;
+
+        case Inst::PUSH_START:
+            printf("PUSH_START\n");
+            pc += 1;
+
+            break;
+
+        case Inst::SET_OBJ:
+            printf("SET_OBJ %ld\n", iseq[pc + 1]);
+            pc += 2;
+
+            break;
+
+        case Inst::SET_GLOBAL_OBJ:
+            printf("SET_GLOBAL_OBJ %ld\n", iseq[pc + 1]);
+            pc += 2;
+
+            break;
+
+        case Inst::POP:
+            printf("POP\n");
+
+            break;
+
+        case Inst::POP_TO_START:
+            printf("POP_TO_START\n");
+
+            break;
+
+        case Inst::BOPE:
+        {
+            unsigned long ope = iseq[pc + 1];
+
+            switch (ope)
+            {
+            case Inst::ADD:
+                printf("ADD\n");
+
+                break;
+
+            case Inst::SUB:
+                printf("SUB\n");
+
+                break;
+
+            case Inst::MUL:
+                printf("MUL\n");
+
+                break;
+
+            case Inst::DIV:
+                printf("DIV\n");
+
+                break;
+
+            case Inst::MOD:
+                printf("MOD\n");
+
+                break;
+
+            case Inst::EQUAL:
+                printf("EQUAL");
+
+                break;
+
+            case Inst::NOT_EQUAL:
+                printf("NOT_EQUAL\n");
+
+                break;
+
+            case Inst::GREATER_THAN:
+                printf("GREATER_THAN\n");
+
+                break;
+
+            case Inst::GREATER_THAN_OR_EQUAL:
+                printf("GREATER_THAN_EQUAL\n");
+
+                break;
+
+            case Inst::LESS_THAN:
+                printf("LESS_THAN\n");
+
+                break;
+
+            case Inst::LESS_THAN_OR_EQUAL:
+                printf("LESS_THAN_OR_EQUAL\n");
+
+                break;
+
+            case Inst::AND:
+                printf("ADD\n");
+
+                break;
+
+            case Inst::OR:
+                printf("OR\n");
+
+                break;
+
+            default:
+                break;
+            }
+
+            pc += 2;
+        }
+
+        break;
+
+        case Inst::NOT:
+            printf("NOT\n");
+            pc += 1;
+
+            break;
+
+        case Inst::INPUT:
+            printf("INPUT\n");
+            pc += 1;
+
+            break;
+
+        case Inst::OUT:
+            printf("OUT\n");
+            pc += 1;
+
+            break;
+
+        case Inst::YAY:
+            printf("YAY\n");
+            pc += 1;
+
+            break;
+
+        case Inst::JUMP:
+            printf("JUMP %ld\n", iseq[pc + 1]);
+            pc += 2;
+
+            break;
+
+        case Inst::JUMP2:
+            printf("JUMP2\n");
+            pc += 1;
+
+            break;
+
+        case Inst::JUMP_IF:
+            printf("JUMP_IF %ld\n", iseq[pc + 1]);
+            pc += 2;
+
+            break;
+
+        default:
+            printf("[Error] undefined instruction : #%ld %ld\n", pc, inst);
+            return;
+        }
+    }
+}

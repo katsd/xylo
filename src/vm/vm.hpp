@@ -242,6 +242,8 @@ public:
     State Run();
 
     State Run(unsigned long startIndex);
+
+    void OutIseq();
 };
 
 #endif /* VM_VM_HPP_ */
