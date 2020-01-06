@@ -917,7 +917,7 @@ bool Parser::GenerateIseq()
 
     func_start_idx = std::map<FuncData, unsigned long>();
 
-    unassigned_func_start_idx = std::map<FuncData, unsigned long>();
+    unassigned_func_start_idx = std::map<unsigned long, FuncData>();
 
     iseq = std::vector<unsigned long>();
 
@@ -935,7 +935,7 @@ bool Parser::GenerateIseq()
 
     for (auto i : unassigned_func_start_idx)
     {
-        iseq[i.second] = func_start_idx[i.first];
+        iseq[i.first] = func_start_idx[i.second];
     }
 
     return true;
@@ -1031,7 +1031,7 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
 
         FuncData func = FuncData(node.token.token.val, node.child.size());
 
-        PushInst(VM::Inst::PUSH_CONST2);
+        PushInst(VM::Inst::PUSH);
         PushInst(VM::Inst::ERROR);
 
         unsigned long pos = iseq.size() - 1;
@@ -1045,7 +1045,7 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
 
         PushInst(VM::Inst::JUMP);
         PushInst(VM::Inst::ERROR);
-        unassigned_func_start_idx[func] = iseq.size() - 1;
+        unassigned_func_start_idx[iseq.size() - 1] = func;
 
         iseq[pos] = iseq.size();
     }
@@ -1200,7 +1200,6 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
     case NodeType::RETURN:
     {
         PushInst(VM::Inst::POP_TO_START);
-        PushInst(VM::Inst::POP);
 
         unsigned long tmp_var_address = GetTmpVar();
 

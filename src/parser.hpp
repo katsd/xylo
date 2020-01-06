@@ -111,6 +111,8 @@ private:
             this->arg_num = arg_num;
         }
 
+        FuncData() {}
+
         bool operator<(const FuncData &r) const
         {
             return name == r.name ? arg_num < r.arg_num : (name < r.name);
@@ -141,7 +143,7 @@ private:
 
     std::map<FuncData, unsigned long> func_start_idx;
 
-    std::map<FuncData, unsigned long> unassigned_func_start_idx;
+    std::map<unsigned long, FuncData> unassigned_func_start_idx;
 
     unsigned long code_size;
 
