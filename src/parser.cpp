@@ -994,7 +994,7 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
 
         PushInst(VM::Inst::START);
 
-        for (int i = node.child.size() - 3; i >= 0; i--)
+        for (int i = node.child.size() - 2; i >= 1; i--)
         {
             if (node.child[i].type != NodeType::VAR)
                 return false;
@@ -1031,17 +1031,17 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
 
         FuncData func = FuncData(node.token.token.val, node.child.size());
 
-        for (int i = 0; i < node.child.size(); i++)
-        {
-            GenerateInst(node.child[i], node, block_id);
-        }
-
         PushInst(VM::Inst::PUSH_CONST2);
         PushInst(VM::Inst::ERROR);
 
         unsigned long pos = iseq.size() - 1;
 
         PushInst(VM::Inst::PUSH_START);
+
+        for (int i = 0; i < node.child.size(); i++)
+        {
+            GenerateInst(node.child[i], node, block_id);
+        }
 
         PushInst(VM::Inst::JUMP);
         PushInst(VM::Inst::ERROR);
