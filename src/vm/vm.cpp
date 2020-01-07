@@ -493,6 +493,12 @@ VM::State VM::Run(unsigned long startIndex)
 
             break;
 
+        case Inst::SET_OBJ_MIN_IDX:
+            obj_min_idx = GetStack(sc, stack).GetInt();
+            pc += 2;
+
+            break;
+
         default:
             printf("[Error] undefined instruction : #%ld %ld\n", pc, inst);
             return State(false, Obj());
@@ -730,6 +736,12 @@ void VM::OutIseq()
 
         case Inst::ADD_OBJ_MIN_IDX:
             printf("ADD_OBJ_MIN_IDX %ld\n", iseq[pc + 1]);
+            pc += 2;
+
+            break;
+
+        case Inst::SET_OBJ_MIN_IDX:
+            printf("SET_OBJ_MIN_IDX %ld\n", iseq[pc + 1]);
             pc += 2;
 
             break;

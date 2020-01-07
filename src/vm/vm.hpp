@@ -60,6 +60,7 @@ public:
 
         PUSH_OBJ_MIN_IDX,
         ADD_OBJ_MIN_IDX,
+        SET_OBJ_MIN_IDX,
 
         START,
         END,
