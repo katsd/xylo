@@ -1263,6 +1263,13 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
 
         GenerateInst(node.child[1], node, block_id);
 
+        PushInst(VM::Inst::PUSH_OBJ);
+        PushInst(time_address);
+        PushInst(VM::Inst::PUSH_ONE);
+        PushInst(VM::Inst::BOPE);
+        PushInst(VM::Inst::SUB);
+        PushInst(VM::Inst::SET_OBJ);
+        PushInst(time_address);
         PushInst(VM::Inst::JUMP);
         PushInst(return_pos);
 
@@ -1292,6 +1299,7 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
         PushInst(max_var_address);
 
         PushInst(VM::Inst::PUSH_ZERO);
+        PushInst(VM::Inst::SET_OBJ);
         PushInst(cnt_var_address);
 
         unsigned long return_pos = iseq.size();
