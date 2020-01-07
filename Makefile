@@ -54,6 +54,6 @@ depend: $(DEPENDS)
 
 $(TMPDIR)/%.d: %.cpp
 	@mkdir -p $(dir $@)
-	@$(CC) -MM $< | sed -e 's:^:$(dir $@):g' | sed -e 's/^$(TMPDIR)/$(OUTDIR)/g' > $@
+	@$(CC) -MM $< | sed -e '1 s:^:$(dir $@):g' | sed -e '1 s/^$(TMPDIR)/$(OUTDIR)/g' > $@
 
 -include $(DEPENDS)
