@@ -28,5 +28,9 @@ int main(int args, char *argv[])
 
     std::string code_str(ss.str());
 
+    auto eval = Xylo(code_str);
+
+    eval.Run(0);
+
     return 0;
 }
