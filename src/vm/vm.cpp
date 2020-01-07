@@ -22,6 +22,8 @@ VM::State VM::Run(unsigned long startIndex)
 
     unsigned long sc = 0;
 
+    unsigned long obj_min_idx = 0;
+
     if (iseq[pc] != Inst::START)
         return State(false, Obj());
 
@@ -59,7 +61,7 @@ VM::State VM::Run(unsigned long startIndex)
             break;
 
         case Inst::PUSH_OBJ:
-            PushStack(sc, stack, obj_table[iseq[pc + 1]]);
+            PushStack(sc, stack, obj_table[iseq[pc + 1] + obj_min_idx]);
             pc += 2;
 
             break;
@@ -72,12 +74,6 @@ VM::State VM::Run(unsigned long startIndex)
 
         case Inst::PUSH_CONST:
             PushStack(sc, stack, const_table[iseq[pc + 1]]);
-            pc += 2;
-
-            break;
-
-        case Inst::PUSH_CONST2:
-            PushStack(sc, stack, Obj((long)iseq[pc + 1]));
             pc += 2;
 
             break;
@@ -101,7 +97,7 @@ VM::State VM::Run(unsigned long startIndex)
             break;
 
         case Inst::SET_OBJ:
-            obj_table[iseq[pc + 1]] = GetStack(sc, stack);
+            obj_table[iseq[pc + 1] + obj_min_idx] = GetStack(sc, stack);
             pc += 2;
 
             break;
@@ -546,12 +542,6 @@ void VM::OutIseq()
 
         case Inst::PUSH_CONST:
             printf("PUSH_CONST %ld\n", iseq[pc + 1]);
-            pc += 2;
-
-            break;
-
-        case Inst::PUSH_CONST2:
-            printf("PUSH_CONST2 %ld\n", iseq[pc + 1]);
             pc += 2;
 
             break;
