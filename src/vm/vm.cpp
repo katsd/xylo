@@ -495,7 +495,7 @@ VM::State VM::Run(unsigned long startIndex)
 
         case Inst::SET_OBJ_MIN_IDX:
             obj_min_idx = GetStack(sc, stack).GetInt();
-            pc += 2;
+            pc += 1;
 
             break;
 
@@ -741,8 +741,8 @@ void VM::OutIseq()
             break;
 
         case Inst::SET_OBJ_MIN_IDX:
-            printf("SET_OBJ_MIN_IDX %ld\n", iseq[pc + 1]);
-            pc += 2;
+            printf("SET_OBJ_MIN_IDX\n");
+            pc += 1;
 
             break;
 
