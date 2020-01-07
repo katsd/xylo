@@ -58,6 +58,9 @@ public:
         JUMP2,
         JUMP_IF,
 
+        PUSH_OBJ_MIN_IDX,
+        ADD_OBJ_MIN_IDX,
+
         START,
         END,
 
@@ -71,7 +74,6 @@ private:
         INT,
         FLOAT,
     };
-
     union Val {
         Inst inst;
 

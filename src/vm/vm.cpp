@@ -481,6 +481,18 @@ VM::State VM::Run(unsigned long startIndex)
 
             break;
 
+        case Inst::PUSH_OBJ_MIN_IDX:
+            PushStack(sc, stack, Obj((long)obj_min_idx));
+            pc += 1;
+
+            break;
+
+        case Inst::ADD_OBJ_MIN_IDX:
+            obj_min_idx += iseq[pc + 1];
+            pc += 2;
+
+            break;
+
         default:
             printf("[Error] undefined instruction : #%ld %ld\n", pc, inst);
             return State(false, Obj());
@@ -706,6 +718,18 @@ void VM::OutIseq()
 
         case Inst::JUMP_IF:
             printf("JUMP_IF %ld\n", iseq[pc + 1]);
+            pc += 2;
+
+            break;
+
+        case Inst::PUSH_OBJ_MIN_IDX:
+            printf("PUSH_OBJ_MIN_IDX\n");
+            pc += 1;
+
+            break;
+
+        case Inst::ADD_OBJ_MIN_IDX:
+            printf("ADD_OBJ_MIN_IDX %ld\n", iseq[pc + 1]);
             pc += 2;
 
             break;
