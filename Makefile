@@ -28,7 +28,7 @@ TESTSRC := $(TESTDIR)/test.xy
 all: $(TARGET)
 
 test: all
-	./$(OUTDIR)/$(PROGNAME)  $(TESTDIR)/test.$(PROGEXT)
+	@./$(OUTDIR)/$(PROGNAME)  $(TESTDIR)/test.$(PROGEXT)
 
 vmtest: $(VMTESTTARGET) all
 	@./$(VMTESTTARGET)
