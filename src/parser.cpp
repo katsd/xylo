@@ -67,7 +67,7 @@ bool Parser::GenerateAST()
         }
     }
 
-    ast.Out(0, const_table);
+    //ast.Out(0, const_table);
 
     return true;
 }
