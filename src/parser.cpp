@@ -1036,6 +1036,8 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
 
         unsigned long pos = iseq.size() - 1;
 
+        PushInst(VM::Inst::PUSH_OBJ_MIN_IDX);
+
         PushInst(VM::Inst::PUSH_START);
 
         for (int i = 0; i < node.child.size(); i++)
@@ -1043,11 +1045,16 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
             GenerateInst(node.child[i], node, block_id);
         }
 
+        PushInst(VM::Inst::ADD_OBJ_MIN_IDX);
+        PushInst(var_cnt + 1);
+
         PushInst(VM::Inst::JUMP);
         PushInst(VM::Inst::ERROR);
         unassigned_func_start_idx[iseq.size() - 1] = func;
 
         iseq[pos] = iseq.size();
+
+        PushInst(VM::Inst::SET_OBJ_MIN_IDX);
     }
 
     break;
@@ -1199,20 +1206,36 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
 
     case NodeType::RETURN:
     {
-        PushInst(VM::Inst::POP_TO_START);
-
-        unsigned long tmp_var_address = GetTmpVar();
-
-        PushInst(VM::Inst::SET_OBJ);
-        PushInst(tmp_var_address);
+        unsigned long return_var_address = GetTmpVar();
+        unsigned long obj_min_idx_var_address = GetTmpVar();
+        unsigned long back_pc_var_address = GetTmpVar();
 
         GenerateInst(node.child[0], node, block_id);
 
+        PushInst(VM::Inst::SET_OBJ);
+        PushInst(return_var_address);
+
+        PushInst(VM::Inst::POP_TO_START);
+
+        PushInst(VM::Inst::SET_OBJ);
+        PushInst(obj_min_idx_var_address);
+
+        PushInst(VM::Inst::SET_OBJ);
+        PushInst(back_pc_var_address);
+
         PushInst(VM::Inst::PUSH_OBJ);
-        PushInst(tmp_var_address);
+        PushInst(return_var_address);
+
+        PushInst(VM::Inst::PUSH_OBJ);
+        PushInst(obj_min_idx_var_address);
+
+        PushInst(VM::Inst::PUSH_OBJ);
+        PushInst(back_pc_var_address);
 
         PushInst(VM::Inst::JUMP2);
 
+        ReturnTmpVar();
+        ReturnTmpVar();
         ReturnTmpVar();
     }
 
