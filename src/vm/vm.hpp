@@ -235,6 +235,8 @@ public:
         }
     };
 
+    VM(){};
+
     VM(std::vector<unsigned long> iseq, std::vector<Obj> const_table)
     {
         this->iseq = iseq;
