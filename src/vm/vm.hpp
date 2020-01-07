@@ -156,7 +156,7 @@ public:
             return type;
         };
 
-        void SetInt(int val)
+        void SetInt(long val)
         {
             type = ObjType::INT;
 
@@ -170,7 +170,7 @@ public:
             value.dval = val;
         };
 
-        int GetInt()
+        long GetInt()
         {
             switch (type)
             {
