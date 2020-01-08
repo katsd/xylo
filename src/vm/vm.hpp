@@ -62,6 +62,9 @@ public:
         ADD_OBJ_MIN_IDX,
         SET_OBJ_MIN_IDX,
 
+        ICR_FUNC_LEVEL,
+        DCR_FUNC_LEVEL,
+
         START,
         END,
 

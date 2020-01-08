@@ -24,6 +24,8 @@ VM::Result VM::Run(unsigned long startIndex)
 
     unsigned long obj_min_idx = 0;
 
+    long func_level = 0;
+
     if (iseq[pc] != Inst::START)
         return Result(false, Obj());
 
@@ -499,12 +501,27 @@ VM::Result VM::Run(unsigned long startIndex)
 
             break;
 
+        case Inst::ICR_FUNC_LEVEL:
+            func_level += 1;
+            pc += 1;
+
+            break;
+
+        case Inst::DCR_FUNC_LEVEL:
+            func_level -= 1;
+            pc += 1;
+
+            break;
+
         default:
             printf("[Error] undefined instruction : #%ld %ld\n", pc, inst);
             return Result(false, Obj());
 
             break;
         }
+
+        if (func_level == -1)
+            break;
     }
 
     return Result(GetStack(sc, stack));
@@ -742,6 +759,18 @@ void VM::OutIseq()
 
         case Inst::SET_OBJ_MIN_IDX:
             printf("SET_OBJ_MIN_IDX\n");
+            pc += 1;
+
+            break;
+
+        case Inst::ICR_FUNC_LEVEL:
+            printf("ICR_FUNC_LEVEL\n");
+            pc += 1;
+
+            break;
+
+        case Inst::DCR_FUNC_LEVEL:
+            printf("DCR_FUNC_LEVEL\n");
             pc += 1;
 
             break;
