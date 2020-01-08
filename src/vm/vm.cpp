@@ -7,12 +7,12 @@
 
 #include "vm.hpp"
 
-VM::State VM::Run()
+VM::Result VM::Run()
 {
     return Run(0);
 }
 
-VM::State VM::Run(unsigned long startIndex)
+VM::Result VM::Run(unsigned long startIndex)
 {
     std::unique_ptr<Obj[]> obj_table(new Obj[obj_table_size]);
 
@@ -25,7 +25,7 @@ VM::State VM::Run(unsigned long startIndex)
     unsigned long obj_min_idx = 0;
 
     if (iseq[pc] != Inst::START)
-        return State(false, Obj());
+        return Result(false, Obj());
 
     PushStack(sc, stack, Obj(Inst::START));
 
@@ -501,13 +501,13 @@ VM::State VM::Run(unsigned long startIndex)
 
         default:
             printf("[Error] undefined instruction : #%ld %ld\n", pc, inst);
-            return State(false, Obj());
+            return Result(false, Obj());
 
             break;
         }
     }
 
-    return State(GetStack(sc, stack));
+    return Result(GetStack(sc, stack));
 }
 
 void VM::OutIseq()

@@ -215,20 +215,20 @@ public:
         void Out();
     };
 
-    struct State
+    struct Result
     {
     public:
         bool success;
 
         Obj res;
 
-        State(Obj res)
+        Result(Obj res)
         {
             this->success = true;
             this->res = res;
         }
 
-        State(bool success, Obj res)
+        Result(bool success, Obj res)
         {
             this->success = success;
             this->res = res;
@@ -243,9 +243,9 @@ public:
         this->const_table = const_table;
     };
 
-    State Run();
+    Result Run();
 
-    State Run(unsigned long startIndex);
+    Result Run(unsigned long startIndex);
 
     void OutIseq();
 };
