@@ -10,9 +10,9 @@
 
 #define MIN 1e-15
 
-void out(bool state)
+void out(bool result)
 {
-    if (state)
+    if (result)
         printf("\x1b[32msuccessful\x1b[39m\n");
     else
         printf("\x1b[31mfailed\x1b[39m\n");
@@ -30,9 +30,9 @@ int main()
 
         VM eval = VM(iseq, const_table);
 
-        VM::State state = eval.Run(0);
+        VM::Result result = eval.Run(0);
 
-        if (state.success && state.res.GetInt() == 128)
+        if (result.success && result.res.GetInt() == 128)
             out(true);
         else
             out(false);
@@ -46,9 +46,9 @@ int main()
 
         VM eval = VM(iseq, const_table);
 
-        VM::State state = eval.Run(0);
+        VM::Result result = eval.Run(0);
 
-        if (state.success && state.res.GetFloat() == 3.141592)
+        if (result.success && result.res.GetFloat() == 3.141592)
             out(true);
         else
             out(false);
@@ -62,9 +62,9 @@ int main()
 
         VM eval = VM(iseq, const_table);
 
-        VM::State state = eval.Run(0);
+        VM::Result result = eval.Run(0);
 
-        if (state.success && state.res.GetInt() == 384)
+        if (result.success && result.res.GetInt() == 384)
             out(true);
         else
             out(false);
@@ -78,9 +78,9 @@ int main()
 
         VM eval = VM(iseq, const_table);
 
-        VM::State state = eval.Run(0);
+        VM::Result result = eval.Run(0);
 
-        if (state.success && (state.res.GetFloat() - 5.31) < MIN)
+        if (result.success && (result.res.GetFloat() - 5.31) < MIN)
             out(true);
         else
             out(false);
@@ -118,9 +118,9 @@ int main()
 
         VM eval = VM(iseq, const_table);
 
-        VM::State state = eval.Run(0);
+        VM::Result result = eval.Run(0);
 
-        if (state.success && state.res.GetInt() == 100000)
+        if (result.success && result.res.GetInt() == 100000)
             out(true);
         else
             out(false);
@@ -187,9 +187,9 @@ int main()
 
         VM eval = VM(iseq, const_table);
 
-        VM::State state = eval.Run(0);
+        VM::Result result = eval.Run(0);
 
-        if (state.success && state.res.GetInt() == 267914296)
+        if (result.success && result.res.GetInt() == 267914296)
             out(true);
         else
             out(false);
