@@ -258,6 +258,21 @@ VM::Result VM::Run(unsigned long startIndex)
 
                 break;
 
+            case Inst::BAND:
+                obj.SetInt(left.GetInt() & right.GetInt());
+
+                break;
+
+            case Inst::BOR:
+                obj.SetInt(left.GetInt() | right.GetInt());
+
+                break;
+
+            case Inst::BXOR:
+                obj.SetInt(left.GetInt() ^ right.GetInt());
+
+                break;
+
             case Inst::EQUAL:
                 switch (type)
                 {
@@ -425,6 +440,17 @@ VM::Result VM::Run(unsigned long startIndex)
             }
 
             PushStack(sc, stack, obj);
+            pc += 1;
+        }
+
+        break;
+
+        case Inst::BNOT:
+        {
+            Obj left = GetStack(sc, stack);
+
+            PushStack(sc, stack, Obj(~left.GetInt()));
+
             pc += 1;
         }
 
