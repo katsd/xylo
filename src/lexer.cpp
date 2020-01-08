@@ -127,6 +127,19 @@ Lexer::Result Lexer::Tokenize()
 
             break;
 
+        case '!':
+            if (idx + 1 < code_str_size && code_str[idx + 1] == '=')
+            {
+                PushSymbol(Symbol::NEQUAL, current);
+                idx += 2;
+
+                break;
+            }
+
+            PushSymbol(Symbol::NOT, current);
+            idx += 1;
+            break;
+
         case '&':
             if (idx + 1 < code_str_size && code_str[idx + 1] == '&')
             {
@@ -230,11 +243,6 @@ Lexer::Result Lexer::Tokenize()
 
         case ',':
             PushSymbol(Symbol::COMMMA, current);
-            idx += 1;
-            break;
-
-        case '!':
-            PushSymbol(Symbol::NOT, current);
             idx += 1;
             break;
 
