@@ -159,6 +159,10 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
                     {
                         return ParseResult(false);
                     }
+
+                    Node return_node = Node(NodeType::RETURN, Token());
+                    return_node.child.push_back(Node(CONST, Token(TokenType::CONST, TokenVal(0), "")));
+                    node.child[node.child.size() - 1].child.push_back(return_node);
                 }
                 else
                 {
