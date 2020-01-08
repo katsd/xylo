@@ -32,6 +32,9 @@ TEST_SRC := $(TEST_DIR)/test.xy
 
 all: $(TARGET)
 
+run: all
+	@./$(OUT_DIR)/$(PROG_NAME) $(TEST_DIR)/test.$(PROG_EXT)
+
 test: $(TEST_TARGET) $(OBJS)
 	@./$(TEST_TARGET)
 
