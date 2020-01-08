@@ -1031,6 +1031,8 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
 
         FuncData func = FuncData(node.token.token.val, node.child.size());
 
+        PushInst(VM::Inst::ICR_FUNC_LEVEL);
+
         PushInst(VM::Inst::PUSH);
         PushInst(VM::Inst::ERROR);
 
@@ -1211,6 +1213,8 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
         unsigned long back_pc_var_address = GetTmpVar();
 
         GenerateInst(node.child[0], node, block_id);
+
+        PushInst(VM::Inst::DCR_FUNC_LEVEL);
 
         PushInst(VM::Inst::SET_OBJ);
         PushInst(return_var_address);
