@@ -152,6 +152,7 @@ Lexer::Result Lexer::Tokenize()
 
             idx += 1;
 
+            PushSymbol(Symbol::BOR, current);
             break;
 
         case '.':
@@ -192,6 +193,21 @@ Lexer::Result Lexer::Tokenize()
             idx += 1;
             break;
 
+        case '%':
+            PushSymbol(Symbol::MOD, current);
+            idx += 1;
+            break;
+
+        case '^':
+            PushSymbol(Symbol::BXOR, current);
+            idx += 1;
+            break;
+
+        case '~':
+            PushSymbol(Symbol::BNOT, current);
+            idx += 1;
+            break;
+
         case '(':
             PushSymbol(Symbol::LPAREN, current);
             idx += 1;
@@ -219,11 +235,6 @@ Lexer::Result Lexer::Tokenize()
 
         case '!':
             PushSymbol(Symbol::NOT, current);
-            idx += 1;
-            break;
-
-        case '~':
-            PushSymbol(Symbol::BNOT, current);
             idx += 1;
             break;
 
