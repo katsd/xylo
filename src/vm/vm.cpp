@@ -274,36 +274,12 @@ VM::Result VM::Run(unsigned long startIndex)
                 break;
 
             case Inst::EQUAL:
-                switch (type)
-                {
-                case INT:
-                    obj.SetInt(left.GetInt() == right.GetInt() ? 1 : 0);
-                    break;
-
-                case FLOAT:
-                    obj.SetInt(left.GetFloat() == right.GetFloat() ? 1 : 0);
-                    break;
-
-                default:
-                    break;
-                }
+                obj.SetInt(Obj::Comp(left, right) ? 1 : 0);
 
                 break;
 
             case Inst::NOT_EQUAL:
-                switch (type)
-                {
-                case INT:
-                    obj.SetInt(left.GetInt() != right.GetInt() ? 1 : 0);
-                    break;
-
-                case FLOAT:
-                    obj.SetInt(left.GetFloat() != right.GetFloat() ? 1 : 0);
-                    break;
-
-                default:
-                    break;
-                }
+                obj.SetInt(Obj::Comp(left, right) ? 0 : 1);
 
                 break;
 
