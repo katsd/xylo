@@ -643,6 +643,7 @@ Parser::ParseResult Parser::ParseTerm(unsigned long idx)
         break;
 
         case Symbol::NOT:
+        case Symbol::BNOT:
         case Symbol::MINUS:
         {
             node.type = NodeType::UOPERATOR;
@@ -1101,6 +1102,12 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
             PushInst(VM::Inst::NOT);
             break;
 
+        case BNOT:
+            GenerateInst(node.child[0], node, block_id);
+            PushInst(VM::Inst::BNOT);
+
+            break;
+
         case MINUS:
             PushInst(VM::Inst::PUSH_ZERO);
             GenerateInst(node.child[0], node, block_id);
@@ -1148,19 +1155,15 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
             break;
 
         case Symbol::BAND:
-            //TODO:
+            PushInst(VM::Inst::BAND);
             break;
 
         case Symbol::BOR:
-            //TODO:
+            PushInst(VM::Inst::BOR);
             break;
 
         case Symbol::BXOR:
-            //TODO:
-            break;
-
-        case Symbol::BNOT:
-            //TODO:
+            PushInst(VM::Inst::BXOR);
             break;
 
         case Symbol::AND:
