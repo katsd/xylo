@@ -213,6 +213,8 @@ public:
         }
 
         void Out();
+
+        static bool Comp(Obj l, Obj r);
     };
 
     struct Result
