@@ -27,9 +27,9 @@ public:
             eval = VM(parser_res.iseq, parser_res.const_table);
     }
 
-    void Run(unsigned long start_idx)
+    VM::Result Run(unsigned long start_idx)
     {
-        eval.Run(start_idx);
+        return eval.Run(start_idx);
     }
 };
 
