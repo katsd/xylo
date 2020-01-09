@@ -17,6 +17,8 @@ class VM
 public:
     struct Obj;
 
+    struct Result;
+
     enum Inst
     {
         PUSH,
@@ -104,6 +106,10 @@ private:
     std::vector<Obj> const_table;
 
     std::unique_ptr<Obj[]> global_obj_table;
+
+    std::vector<unsigned long> func_start_idx;
+
+    Result Run(unsigned long start_idx);
 
     inline Obj GetStack(unsigned long &sc, const std::unique_ptr<Obj[]> &stack)
     {
@@ -246,17 +252,13 @@ public:
 
     VM(){};
 
-    VM(std::vector<unsigned long> iseq, std::vector<Obj> const_table)
-    {
-        this->iseq = iseq;
-        this->const_table = const_table;
+    VM(std::vector<unsigned long> iseq, std::vector<Obj> const_table);
 
-        global_obj_table = std::unique_ptr<Obj[]>(new Obj[obj_table_size]);
-    };
+    Result Init();
 
-    Result Run();
+    Result RunFunc();
 
-    Result Run(unsigned long startIndex);
+    Result RunFunc(unsigned long func_id);
 
     void OutIseq();
 };

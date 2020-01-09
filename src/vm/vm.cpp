@@ -7,18 +7,47 @@
 
 #include "vm.hpp"
 
-VM::Result VM::Run()
+VM::VM(std::vector<unsigned long> iseq, std::vector<Obj> const_table)
+{
+    this->iseq = iseq;
+    this->const_table = const_table;
+
+    global_obj_table = std::unique_ptr<Obj[]>(new Obj[obj_table_size]);
+
+    func_start_idx = std::vector<unsigned long>();
+
+    for (int i = 1; i < iseq.size(); i++)
+    {
+        if (iseq[i] == Inst::START)
+            func_start_idx.push_back(i);
+    }
+}
+
+VM::Result VM::Init()
 {
     return Run(0);
 }
 
-VM::Result VM::Run(unsigned long startIndex)
+VM::Result VM::RunFunc()
+{
+    return Run(func_start_idx[0]);
+}
+
+VM::Result VM::RunFunc(unsigned long func_id)
+{
+    if (func_id >= func_start_idx.size())
+        return Result(false, Obj());
+
+    return Run(func_start_idx[func_id]);
+}
+
+VM::Result VM::Run(unsigned long start_idx)
 {
     std::unique_ptr<Obj[]> obj_table(new Obj[obj_table_size]);
 
     std::unique_ptr<Obj[]> stack(new Obj[stack_size]);
 
-    unsigned long pc = startIndex;
+    unsigned long pc = start_idx;
 
     unsigned long sc = 0;
 
