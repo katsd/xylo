@@ -914,6 +914,8 @@ bool Parser::GenerateIseq()
 
     var_cnt = 0;
 
+    global_var_cnt = 0;
+
     var_address = std::map<unsigned long, unsigned long>();
 
     var_block_id = std::map<unsigned long, unsigned long>();
@@ -952,7 +954,7 @@ bool Parser::GenerateIseq()
             }
             else
             {
-                unsigned long address = DeclareVar(var_name, global_block_id);
+                unsigned long address = DeclareGlobalVar(var_name);
 
                 GenerateInst(n.child[1], n, global_block_id);
 
@@ -1474,7 +1476,7 @@ bool Parser::PushVar(const unsigned long var_name, const std::string &var_name_s
 
     unsigned long address = var_address[var_name];
 
-    if (var_block_id[var_name] == global_block_id)
+    if (var_block_id[address] == global_block_id)
         PushInst(VM::Inst::PUSH_GLOBAL_OBJ);
     else
         PushInst(VM::Inst::PUSH_OBJ);

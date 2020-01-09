@@ -137,6 +137,8 @@ private:
 
     unsigned long var_cnt;
 
+    unsigned long global_var_cnt;
+
     std::map<unsigned long, unsigned long> var_address;
 
     std::map<unsigned long, unsigned long> var_block_id;
@@ -197,6 +199,17 @@ private:
         var_block_id[var_cnt] = block_id;
 
         return var_cnt;
+    }
+
+    inline unsigned long DeclareGlobalVar(unsigned long var_name)
+    {
+        global_var_cnt += 1;
+
+        var_address[var_name] = global_var_cnt;
+
+        var_block_id[global_var_cnt] = global_block_id;
+
+        return global_var_cnt;
     }
 
     inline unsigned long GetTmpVar()
