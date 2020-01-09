@@ -26,8 +26,6 @@ public:
         if (parser_res.success)
             eval = VM(parser_res.iseq, parser_res.const_table);
 
-        eval.OutIseq();
-
         eval.Init();
     }
 
