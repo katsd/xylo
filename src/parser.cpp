@@ -926,14 +926,49 @@ bool Parser::GenerateIseq()
 
     iseq = std::vector<unsigned long>();
 
+    global_block_id = block_cnt;
+
+    block_is_alive[global_block_id] = true;
+
+    PushInst(VM::Inst::START);
+
     for (Node n : ast.child)
     {
-        if (n.type != NodeType::DEF_FUNC)
-            continue;
+        switch (n.type)
+        {
+        case NodeType::DEF_FUNC:
+            if (!DefineFunc(n))
+                return false;
 
-        if (!DefineFunc(n))
-            return false;
+            break;
+
+        case NodeType::ASSIGN:
+        {
+            unsigned long var_name = n.child[0].token.token.val;
+
+            if (IsVarDeclared(var_name))
+            {
+                return false;
+            }
+            else
+            {
+                unsigned long address = DeclareVar(var_name, global_block_id);
+
+                GenerateInst(n.child[1], n, global_block_id);
+
+                PushInst(VM::Inst::SET_GLOBAL_OBJ);
+                PushInst(address);
+            }
+        }
+
+        break;
+
+        default:
+            break;
+        }
     }
+
+    PushInst(VM::Inst::END);
 
     if (!GenerateInst(ast, Node(NodeType::BLOCK, Token()), block_cnt))
         return false;
@@ -967,6 +1002,9 @@ bool Parser::DefineFunc(Node node)
 
 bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
 {
+    if (par.type == NodeType::ROOT && node.type != NodeType::DEF_FUNC)
+        return true;
+
     switch (node.type)
     {
     case NodeType::ROOT:
@@ -1092,7 +1130,10 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
 
         GenerateInst(node.child[1], node, block_id);
 
-        PushInst(VM::Inst::SET_OBJ);
+        if (var_block_id[var_name] == global_block_id)
+            PushInst(VM::Inst::SET_GLOBAL_OBJ);
+        else
+            PushInst(VM::Inst::SET_OBJ);
         PushInst(address);
     }
 
@@ -1433,7 +1474,10 @@ bool Parser::PushVar(const unsigned long var_name, const std::string &var_name_s
 
     unsigned long address = var_address[var_name];
 
-    PushInst(VM::Inst::PUSH_OBJ);
+    if (var_block_id[var_name] == global_block_id)
+        PushInst(VM::Inst::PUSH_GLOBAL_OBJ);
+    else
+        PushInst(VM::Inst::PUSH_OBJ);
     PushInst(address);
 
     return true;

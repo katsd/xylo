@@ -131,6 +131,8 @@ private:
 
     unsigned long block_cnt;
 
+    unsigned long global_block_id;
+
     std::map<unsigned long, bool> block_is_alive;
 
     unsigned long var_cnt;
