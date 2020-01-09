@@ -103,7 +103,7 @@ private:
 
     std::vector<Obj> const_table;
 
-    std::vector<Obj> global_obj_table;
+    std::unique_ptr<Obj[]> global_obj_table;
 
     inline Obj GetStack(unsigned long &sc, const std::unique_ptr<Obj[]> &stack)
     {
@@ -250,6 +250,8 @@ public:
     {
         this->iseq = iseq;
         this->const_table = const_table;
+
+        global_obj_table = std::unique_ptr<Obj[]>(new Obj[obj_table_size]);
     };
 
     Result Run();
