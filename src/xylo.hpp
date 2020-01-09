@@ -26,12 +26,14 @@ public:
         if (parser_res.success)
             eval = VM(parser_res.iseq, parser_res.const_table);
 
-        eval.Run(0);
+        eval.OutIseq();
+
+        eval.Init();
     }
 
-    VM::Result Run(unsigned long start_idx)
+    VM::Result Run(unsigned long func_id)
     {
-        return eval.Run(start_idx);
+        return eval.RunFunc(func_id);
     }
 };
 
