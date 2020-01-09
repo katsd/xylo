@@ -25,6 +25,8 @@ public:
 
         if (parser_res.success)
             eval = VM(parser_res.iseq, parser_res.const_table);
+
+        eval.Run(0);
     }
 
     VM::Result Run(unsigned long start_idx)
