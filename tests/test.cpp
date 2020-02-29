@@ -22,7 +22,7 @@ void eval(std::string test_name, std::string code_str, VM::Obj ans)
 {
     auto eval = Xylo(code_str);
 
-    auto res = eval.Run(2);
+    auto res = eval.Run(0);
 
     printf("%s : ", test_name.c_str());
 
