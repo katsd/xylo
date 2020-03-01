@@ -572,35 +572,44 @@ Parser::ParseResult Parser::ParseExpression(unsigned long idx, unsigned long ran
     if (rank >= operator_rank.size())
         return ParseTerm(idx);
 
-    Node node;
+    auto exps = std::vector<Node>();
+    auto opes = std::vector<Token>();
 
-    auto left = ParseExpression(idx, rank + 1);
+    auto exp = ParseExpression(idx, rank + 1);
 
-    if (!left.success)
+    if (!exp.success)
         return ParseResult(false);
 
-    idx = left.idx;
+    exps.push_back(exp.node);
 
-    if (idx < code_size && code[idx].type == TokenType::SYMBOL && operator_rank[rank].count(code[idx].token.symbol) > 0)
+    idx = exp.idx;
+
+    while (idx < code_size && code[idx].type == TokenType::SYMBOL && operator_rank[rank].count(code[idx].token.symbol) > 0)
     {
-        node.type = NodeType::BOPERATOR;
-        node.token = code[idx];
-
+        opes.push_back(code[idx]);
         idx += 1;
 
-        auto right = ParseExpression(idx, rank);
+        auto exp = ParseExpression(idx, rank + 1);
 
-        if (!right.success)
+        if (!exp.success)
             return ParseResult(false);
 
-        idx = right.idx;
+        exps.push_back(exp.node);
 
-        node.child.push_back(left.node);
-        node.child.push_back(right.node);
+        idx = exp.idx;
     }
-    else
+
+    auto node = exps[0];
+
+    for (int i = 1; i < exps.size(); i++)
     {
-        node = left.node;
+        Node newNode;
+        newNode.child.push_back(node);
+        newNode.child.push_back(exps[i]);
+        newNode.type = NodeType::BOPERATOR;
+        newNode.token = opes[i - 1];
+
+        node = newNode;
     }
 
     return ParseResult(node, idx);
