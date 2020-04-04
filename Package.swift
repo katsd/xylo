@@ -16,7 +16,7 @@ let package = Package(
             publicHeadersPath: ".",
             cxxSettings: [
                 .headerSearchPath("src")
-            ],
-            cxxLanguageStandard: .cxx1z),
-    ]
+            ]),
+    ],
+    cxxLanguageStandard: .cxx1z
 )
