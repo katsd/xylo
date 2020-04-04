@@ -1,6 +1,6 @@
 PROG_NAME := xylo
 CC := g++
-CFLAGS := -std=c++17 -Wall -O3
+CFLAGS := -std=c++17 -Wall -O3 -DXYLO_EXECUTABLE
 
 PROG_EXT := xy
 
