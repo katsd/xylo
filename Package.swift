@@ -13,6 +13,7 @@ let package = Package(
         .target(
             name: "Xylo",
             path: "src",
+            exclude: ["main.cpp"],
             publicHeadersPath: ".",
             cxxSettings: [
                 .headerSearchPath("src")
