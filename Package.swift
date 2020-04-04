@@ -13,6 +13,10 @@ let package = Package(
         .target(
             name: "Xylo",
             path: "src",
-            publicHeadersPath: "."),
+            publicHeadersPath: ".",
+            cxxSettings: [
+                .headerSearchPath("src")
+            ],
+            cxxLanguageStandard: .cxx1z),
     ]
 )
