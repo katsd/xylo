@@ -12,8 +12,6 @@
 
 #include "xylo.hpp"
 
-#ifdef XYLO_EXECUTABLE
-
 int main(int args, char *argv[])
 {
     std::fstream ifs(argv[1]);
@@ -36,5 +34,3 @@ int main(int args, char *argv[])
 
     return 0;
 }
-
-#endif

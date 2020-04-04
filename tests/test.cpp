@@ -34,8 +34,6 @@ std::string in_func(std::string code_str)
     return "func main(){" + code_str + "}";
 }
 
-#ifdef XYLO_TEST
-
 int main()
 {
     eval("int", in_func("return 128"), VM::Obj(128));
@@ -61,5 +59,3 @@ int main()
 
     return 0;
 }
-
-#endif
