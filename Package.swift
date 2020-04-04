@@ -7,13 +7,11 @@ let package = Package(
     products: [
         .library(
             name: "Xylo",
-            targets: ["Xylo"]
-        ),
+            targets: ["Xylo"]),
     ],
     targets: [
         .target(
             name: "Xylo",
-            path: "src"
-        ),
+            path: "src"),
     ]
 )
