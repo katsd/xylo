@@ -12,6 +12,7 @@ let package = Package(
     targets: [
         .target(
             name: "Xylo",
-            path: "src"),
+            path: "src",
+            publicHeadersPath: "."),
     ]
 )
