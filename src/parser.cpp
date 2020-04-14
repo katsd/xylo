@@ -941,48 +941,36 @@ bool Parser::GenerateIseq()
 
     block_is_alive[global_block_id] = true;
 
+    for (Node n : ast.child)
+    {
+        if (n.type == NodeType::DEF_FUNC)
+        {
+            if (!DefineFunc(n))
+                return false;
+        }
+    }
+
     PushInst(VM::Inst::START);
 
     for (Node n : ast.child)
     {
-        switch (n.type)
-        {
-        case NodeType::DEF_FUNC:
-            if (!DefineFunc(n))
-                return false;
+        if (n.type == NodeType::DEF_FUNC)
+            continue;
 
-            break;
-
-        case NodeType::ASSIGN:
-        {
-            unsigned long var_name = n.child[0].token.token.val;
-
-            if (IsVarDeclared(var_name))
-            {
-                return false;
-            }
-            else
-            {
-                unsigned long address = DeclareGlobalVar(var_name);
-
-                GenerateInst(n.child[1], n, global_block_id);
-
-                PushInst(VM::Inst::SET_GLOBAL_OBJ);
-                PushInst(address);
-            }
-        }
-
-        break;
-
-        default:
-            break;
-        }
+        if (!GenerateInst(n, ast, global_block_id))
+            return false;
     }
 
     PushInst(VM::Inst::END);
 
-    if (!GenerateInst(ast, Node(NodeType::BLOCK, Token()), block_cnt))
-        return false;
+    for (Node n : ast.child)
+    {
+        if (n.type != NodeType::DEF_FUNC)
+            continue;
+
+        if (!GenerateInst(n, ast, global_block_id))
+            return false;
+    }
 
     for (auto i : unassigned_func_start_idx)
     {
@@ -1013,12 +1001,11 @@ bool Parser::DefineFunc(Node node)
 
 bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
 {
-    if (par.type == NodeType::ROOT && node.type != NodeType::DEF_FUNC)
-        return true;
-
     switch (node.type)
     {
     case NodeType::ROOT:
+        break;
+
     case NodeType::BLOCK:
     {
         unsigned long current_var_cnt = var_cnt;
@@ -1134,7 +1121,10 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
 
         if (!IsVarDeclared(var_name))
         {
-            DeclareVar(var_name, block_id);
+            if (block_id == global_block_id)
+                DeclareGlobalVar(var_name);
+            else
+                DeclareVar(var_name, block_id);
         }
 
         unsigned long address = var_address[var_name];

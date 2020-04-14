@@ -30,7 +30,5 @@ int main(int args, char *argv[])
 
     auto eval = Xylo(code_str);
 
-    eval.Run(0);
-
     return 0;
 }
