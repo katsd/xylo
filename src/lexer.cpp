@@ -53,7 +53,7 @@ Lexer::Result Lexer::Tokenize()
 
     code = std::vector<Token>();
 
-    const_table = {VM::Obj()};
+    const_table = { VM::Obj() };
 
     const_num = 0;
 
@@ -264,6 +264,8 @@ Lexer::Result Lexer::Tokenize()
                 PushReserved(Reserved::IF, current);
             if (current == "else")
                 PushReserved(Reserved::ELSE, current);
+            if (current == "_native")
+                PushReserved(Reserved::NATIVE, current);
 
             break;
         }
@@ -274,7 +276,7 @@ Lexer::Result Lexer::Tokenize()
     return Result(true, code, const_table);
 }
 
-void Lexer::PushToken(std::string &token)
+void Lexer::PushToken(std::string& token)
 {
     if (token.size() <= 0)
         return;

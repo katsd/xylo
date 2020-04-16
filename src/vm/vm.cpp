@@ -6,6 +6,7 @@
 //
 
 #include "vm.hpp"
+#include "../native.hpp"
 
 VM::VM(std::vector<unsigned long> iseq, std::vector<Obj> const_table)
     : iseq(std::move(iseq)), const_table(std::move(const_table))
@@ -542,6 +543,22 @@ VM::Result VM::Run(unsigned long start_idx)
 
             break;
 
+        case Inst::CALL_NATIVE:
+        {
+            auto func_id = GetStack(sc, stack).GetInt();
+            auto arg_num = GetStack(sc, stack).GetInt();
+
+            std::unique_ptr<Obj[]> args(new Obj[arg_num]);
+
+            for (int i = 0; i < arg_num; i++)
+                args[i] = GetStack(sc, stack);
+
+            PushStack(sc, stack, Native::Call(func_id, args));
+
+            pc += 1;
+        }
+            break;
+
         default:
             printf("[Error] undefined instruction : #%ld %ld\n", pc, inst);
             return Result(false, Obj());
@@ -800,6 +817,12 @@ void VM::OutIseq()
 
         case Inst::DCR_FUNC_LEVEL:
             printf("DCR_FUNC_LEVEL\n");
+            pc += 1;
+
+            break;
+
+        case Inst::CALL_NATIVE:
+            printf("CALL_NATIVE\n");
             pc += 1;
 
             break;

@@ -71,6 +71,8 @@ class VM
         ICR_FUNC_LEVEL,
         DCR_FUNC_LEVEL,
 
+        CALL_NATIVE,
+
         START,
         END,
 

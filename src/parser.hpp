@@ -20,13 +20,14 @@
 
 class Parser
 {
-private:
+ private:
     enum NodeType
     {
         ROOT,
         BLOCK,
         DEF_FUNC,
         FUNC,
+        NATIVE,
         VAR,
         CONST,
         ASSIGN,
@@ -61,7 +62,7 @@ private:
             this->child = std::vector<Node>();
         }
 
-        void Out(unsigned long long indent_size, std::vector<VM::Obj> &const_table);
+        void Out(unsigned long long indent_size, std::vector<VM::Obj>& const_table);
 
         static inline Node BlockNode()
         {
@@ -99,24 +100,35 @@ private:
         }
     };
 
-    struct FuncData
+    struct Func
     {
         unsigned long name;
 
         unsigned long arg_num;
 
-        FuncData(unsigned long name, unsigned long arg_num)
+        Func(unsigned long name, unsigned long arg_num)
         {
             this->name = name;
             this->arg_num = arg_num;
         }
 
-        FuncData() {}
+        Func()
+        {
+        }
 
-        bool operator<(const FuncData &r) const
+        bool operator<(const Func& r) const
         {
             return name == r.name ? arg_num < r.arg_num : (name < r.name);
         }
+    };
+
+    struct FuncInfo
+    {
+        unsigned long start_idx;
+
+        bool is_native_func = false;
+
+        Node native_func_id;
     };
 
     std::string code_str;
@@ -143,24 +155,24 @@ private:
 
     std::map<unsigned long, unsigned long> var_block_id;
 
-    std::set<FuncData> func_data;
+    std::set<Func> func_data;
 
-    std::map<FuncData, unsigned long> func_start_idx;
+    std::map<Func, FuncInfo> func_info;
 
-    std::map<unsigned long, FuncData> unassigned_func_start_idx;
+    std::map<unsigned long, Func> unassigned_func_start_idx;
 
     unsigned long code_size;
 
     const std::vector<std::set<Symbol>> operator_rank = {
-        {Symbol::OR},
-        {Symbol::AND},
-        {Symbol::BOR},
-        {Symbol::BXOR},
-        {Symbol::BAND},
-        {Symbol::EQUAL, Symbol::NEQUAL},
-        {Symbol::LESS, Symbol::LESSEQ, Symbol::GRE, Symbol::GREEQ},
-        {Symbol::PLUS, Symbol::MINUS},
-        {Symbol::MUL, Symbol::DIV, Symbol::MOD},
+        { Symbol::OR },
+        { Symbol::AND },
+        { Symbol::BOR },
+        { Symbol::BXOR },
+        { Symbol::BAND },
+        { Symbol::EQUAL, Symbol::NEQUAL },
+        { Symbol::LESS, Symbol::LESSEQ, Symbol::GRE, Symbol::GREEQ },
+        { Symbol::PLUS, Symbol::MINUS },
+        { Symbol::MUL, Symbol::DIV, Symbol::MOD },
     };
 
     bool GenerateAST();
@@ -177,7 +189,7 @@ private:
 
     bool GenerateIseq();
 
-    bool GenerateInst(Node node, const Node &par, unsigned long block_id);
+    bool GenerateInst(Node node, const Node& par, unsigned long block_id);
 
     bool DefineFunc(Node node);
 
@@ -186,7 +198,7 @@ private:
         iseq.push_back(inst);
     }
 
-    bool PushVar(const unsigned long var_name, const std::string &var_name_str);
+    bool PushVar(const unsigned long var_name, const std::string& var_name_str);
 
     bool IsVarDeclared(const unsigned long var_name);
 
@@ -238,7 +250,7 @@ private:
         return ParseResult(false);
     }
 
-public:
+ public:
     Parser(std::string code_str)
     {
         this->code_str = code_str;

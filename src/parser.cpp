@@ -6,11 +6,16 @@
 //
 
 #include "parser.hpp"
+#include "native.hpp"
 
 #define STR(var) #var
 
 Parser::Result Parser::Parse()
 {
+    code_str += Native::StandardLibraryCode();
+
+    puts(code_str.c_str());
+
     auto lexer_res = Lexer(code_str).Tokenize();
 
     if (!lexer_res.success)
@@ -91,6 +96,28 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
             node.token = code[idx];
 
             idx += 1;
+
+            if (idx < code.size() && CompReserved(code[idx], Reserved::NATIVE))
+            {
+                Node native;
+                native.type = NodeType::NATIVE;
+                idx += 1;
+
+                auto func_id = ParseExpression(idx);
+                idx = func_id.idx;
+
+                if (func_id.success)
+                {
+                    native.child.push_back(func_id.node);
+                }
+                else
+                {
+                    return ParseResult(false);
+                }
+
+                node.child.push_back(native);
+            }
+
             auto res = ParseVariable(idx);
 
             if (res.success)
@@ -174,7 +201,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
                 return FailedToParse(idx, "expected '('");
             }
         }
-        break;
+            break;
 
         case Reserved::RETURN:
         {
@@ -195,7 +222,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
                 return ParseResult(false);
             }
         }
-        break;
+            break;
 
         case Reserved::FOR:
         {
@@ -274,7 +301,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
                 return FailedToParse(idx, "expected '('");
             }
         }
-        break;
+            break;
 
         case Reserved::REPEAT:
         case Reserved::WHILE:
@@ -326,7 +353,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
                 }
             }
         }
-        break;
+            break;
 
         case Reserved::IF:
         {
@@ -410,13 +437,13 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
                 }
             }
         }
-        break;
+            break;
 
         default:
             break;
         }
     }
-    break;
+        break;
 
     case TokenType::SYMBOL:
     {
@@ -463,13 +490,13 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
         if (!ok)
             return FailedToParse(idx, "expected '}'");
     }
-    break;
+        break;
 
     case TokenType::CONST:
     {
         return FailedToParse(idx, "expected statement");
     }
-    break;
+        break;
 
     case TokenType::OTHER:
     {
@@ -513,7 +540,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
 
                 return ParseResult(true, node, idx);
             }
-            break;
+                break;
 
             case Symbol::LPAREN:
             {
@@ -531,7 +558,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
 
                 return ParseResult(true, node, idx);
             }
-            break;
+                break;
 
             default:
                 break;
@@ -550,7 +577,7 @@ Parser::ParseResult Parser::ParseStatement(unsigned long idx)
             return ParseResult(false);
         }
     }
-    break;
+        break;
 
     default:
         return FailedToParse(idx, "expected statement");
@@ -584,7 +611,8 @@ Parser::ParseResult Parser::ParseExpression(unsigned long idx, unsigned long ran
 
     idx = exp.idx;
 
-    while (idx < code_size && code[idx].type == TokenType::SYMBOL && operator_rank[rank].count(code[idx].token.symbol) > 0)
+    while (idx < code_size && code[idx].type == TokenType::SYMBOL
+           && operator_rank[rank].count(code[idx].token.symbol) > 0)
     {
         opes.push_back(code[idx]);
         idx += 1;
@@ -653,7 +681,7 @@ Parser::ParseResult Parser::ParseTerm(unsigned long idx)
                 return FailedToParse(idx, "expected ')'");
             }
         }
-        break;
+            break;
 
         case Symbol::NOT:
         case Symbol::BNOT:
@@ -676,7 +704,7 @@ Parser::ParseResult Parser::ParseTerm(unsigned long idx)
                 return ParseResult(false);
             }
         }
-        break;
+            break;
 
         default:
             return FailedToParse(idx, "expected expression");
@@ -689,7 +717,7 @@ Parser::ParseResult Parser::ParseTerm(unsigned long idx)
         node.token = code[idx];
         idx += 1;
     }
-    break;
+        break;
 
     case TokenType::OTHER:
     {
@@ -746,7 +774,7 @@ Parser::ParseResult Parser::ParseTerm(unsigned long idx)
             idx += 1;
         }
     }
-    break;
+        break;
 
     default:
         return FailedToParse(idx, "expected expression");
@@ -771,7 +799,7 @@ Parser::ParseResult Parser::ParseVariable(unsigned long idx)
     return ParseResult(node, idx + 1);
 }
 
-void Parser::Node::Out(unsigned long long indent_size, std::vector<VM::Obj> &const_table)
+void Parser::Node::Out(unsigned long long indent_size, std::vector<VM::Obj>& const_table)
 {
     std::string indent(indent_size * 2, ' ');
 
@@ -820,6 +848,9 @@ void Parser::Node::Out(unsigned long long indent_size, std::vector<VM::Obj> &con
         break;
     case NodeType::IF:
         printf("%s ", STR(IF));
+        break;
+    case NodeType::NATIVE:
+        printf("%s ", STR(NATIVE));
         break;
     }
 
@@ -929,11 +960,11 @@ bool Parser::GenerateIseq()
 
     var_block_id = std::map<unsigned long, unsigned long>();
 
-    func_data = std::set<FuncData>();
+    func_data = std::set<Func>();
 
-    func_start_idx = std::map<FuncData, unsigned long>();
+    func_info = std::map<Func, FuncInfo>();
 
-    unassigned_func_start_idx = std::map<unsigned long, FuncData>();
+    unassigned_func_start_idx = std::map<unsigned long, Func>();
 
     iseq = std::vector<unsigned long>();
 
@@ -974,7 +1005,7 @@ bool Parser::GenerateIseq()
 
     for (auto i : unassigned_func_start_idx)
     {
-        iseq[i.first] = func_start_idx[i.second];
+        iseq[i.first] = func_info[i.second].start_idx;
     }
 
     return true;
@@ -982,11 +1013,26 @@ bool Parser::GenerateIseq()
 
 bool Parser::DefineFunc(Node node)
 {
-    unsigned long func_name = node.child[0].token.token.val;
+    bool is_native_func = false;
+    Node native_func_id;
 
-    unsigned long arg_num = node.child.size() - 2;
+    if (!node.child.empty() && node.child[0].type == NodeType::NATIVE)
+    {
+        if (node.child.empty())
+        {
+            printf("native func id is not given\n");
+            return false;
+        }
 
-    FuncData func = FuncData(func_name, arg_num);
+        is_native_func = true;
+        native_func_id = node.child[0].child[0];
+    }
+
+    unsigned long func_name = node.child[0 + is_native_func].token.token.val;
+
+    unsigned long arg_num = node.child.size() - 2 - is_native_func;
+
+    Func func = Func(func_name, arg_num);
 
     if (func_data.count(func) > 0)
     {
@@ -996,10 +1042,15 @@ bool Parser::DefineFunc(Node node)
 
     func_data.insert(func);
 
+    func_info[func].is_native_func = is_native_func;
+
+    //TODO: eval native_func_id
+    func_info[func].native_func_id = native_func_id;
+
     return true;
 }
 
-bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
+bool Parser::GenerateInst(Node node, const Node& par, unsigned long block_id)
 {
     switch (node.type)
     {
@@ -1022,20 +1073,29 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
         var_cnt = current_var_cnt;
     }
 
-    break;
+        break;
 
     case NodeType::DEF_FUNC:
     {
         if (par.type != NodeType::ROOT)
             return false;
 
-        FuncData func = FuncData(node.child[0].token.token.val, node.child.size() - 2);
+        bool is_native_func = false;
 
-        func_start_idx[func] = iseq.size();
+        if (!node.child.empty() && node.child[0].type == NodeType::NATIVE)
+        {
+            if (node.child.empty())
+            {
+                printf("native func id is not given\n");
+                return false;
+            }
+
+            is_native_func = true;
+        }
 
         PushInst(VM::Inst::START);
 
-        for (int i = node.child.size() - 2; i >= 1; i--)
+        for (int i = node.child.size() - 2; i >= 1 + is_native_func; i--)
         {
             if (node.child[i].type != NodeType::VAR)
                 return false;
@@ -1058,7 +1118,7 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
 
         PushInst(VM::Inst::END);
     }
-    break;
+        break;
 
     case NodeType::FUNC:
     {
@@ -1070,7 +1130,20 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
             break;
         }
 
-        FuncData func = FuncData(node.token.token.val, node.child.size());
+        auto func = Func(node.token.token.val, node.child.size());
+
+        if (func_info[func].is_native_func)
+        {
+            for (auto i = (long)node.child.size() - 1; i >= 0; i--)
+                GenerateInst(node.child[i], node, block_id);
+
+            PushInst(VM::Inst::PUSH);
+            PushInst(func.arg_num);
+            GenerateInst(func_info[func].native_func_id, Node(NodeType::BLOCK, Token()), block_id);
+            PushInst(VM::Inst::CALL_NATIVE);
+
+            break;
+        }
 
         PushInst(VM::Inst::ICR_FUNC_LEVEL);
 
@@ -1100,7 +1173,7 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
         PushInst(VM::Inst::SET_OBJ_MIN_IDX);
     }
 
-    break;
+        break;
 
     case NodeType::VAR:
         if (!PushVar(node.token.token.val, node.token.str))
@@ -1138,7 +1211,7 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
         PushInst(address);
     }
 
-    break;
+        break;
 
     case NodeType::UOPERATOR:
         switch (node.token.token.symbol)
@@ -1292,7 +1365,7 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
         ReturnTmpVar();
     }
 
-    break;
+        break;
 
     case NodeType::REPEAT:
     {
@@ -1331,7 +1404,7 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
         ReturnTmpVar();
     }
 
-    break;
+        break;
 
     case NodeType::FOR:
     {
@@ -1385,7 +1458,7 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
         ReturnTmpVar();
     }
 
-    break;
+        break;
 
     case NodeType::WHILE:
     {
@@ -1407,7 +1480,7 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
         iseq[pos] = iseq.size();
     }
 
-    break;
+        break;
 
     case NodeType::IF:
     {
@@ -1459,13 +1532,16 @@ bool Parser::GenerateInst(Node node, const Node &par, unsigned long block_id)
         }
     }
 
-    break;
+        break;
+
+    default:
+        break;
     }
 
     return true;
 }
 
-bool Parser::PushVar(const unsigned long var_name, const std::string &var_name_str)
+bool Parser::PushVar(const unsigned long var_name, const std::string& var_name_str)
 {
     if (!IsVarDeclared(var_name))
     {

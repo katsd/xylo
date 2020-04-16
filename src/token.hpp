@@ -19,6 +19,7 @@ enum Reserved
     WHILE,
     IF,
     ELSE,
+    NATIVE,
 };
 
 enum Symbol
@@ -61,12 +62,15 @@ enum TokenType
     OTHER,
 };
 
-union TokenVal {
+union TokenVal
+{
     Reserved reserved;
     Symbol symbol;
     unsigned long val;
 
-    TokenVal() {}
+    TokenVal()
+    {
+    }
 
     TokenVal(Reserved reserved)
     {
