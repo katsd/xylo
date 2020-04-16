@@ -14,7 +14,7 @@
 
 class VM
 {
-public:
+ public:
     struct Obj;
 
     struct Result;
@@ -77,33 +77,48 @@ public:
         ERROR,
     };
 
-private:
+ private:
     enum ObjType
     {
         INST,
         INT,
         FLOAT,
     };
-    union Val {
+    union Val
+    {
         Inst inst;
 
         long ival;
 
         double dval;
 
-        Val() {}
-        Val(Inst i) { inst = i; }
-        Val(long i) { ival = i; }
-        Val(double d) { dval = d; }
+        Val()
+        {
+        }
+
+        explicit Val(Inst i)
+        {
+            inst = i;
+        }
+
+        explicit Val(long i)
+        {
+            ival = i;
+        }
+
+        explicit Val(double d)
+        {
+            dval = d;
+        }
     };
 
     static constexpr unsigned long obj_table_size = 1024 * 128;
 
     static constexpr unsigned long stack_size = 1024 * 128;
 
-    std::vector<unsigned long> iseq;
+    const std::vector<unsigned long> iseq;
 
-    std::vector<Obj> const_table;
+    const std::vector<Obj> const_table;
 
     std::unique_ptr<Obj[]> global_obj_table;
 
@@ -111,29 +126,29 @@ private:
 
     Result Run(unsigned long start_idx);
 
-    inline Obj GetStack(unsigned long &sc, const std::unique_ptr<Obj[]> &stack)
+    inline Obj GetStack(unsigned long& sc, const std::unique_ptr<Obj[]>& stack)
     {
         if (sc == 0)
             return Obj();
         return stack[--sc];
     }
 
-    inline void PushStack(unsigned long &sc, const std::unique_ptr<Obj[]> &stack, const Obj &obj)
+    inline void PushStack(unsigned long& sc, const std::unique_ptr<Obj[]>& stack, const Obj& obj)
     {
         if (sc == stack_size - 1)
             return;
         stack[sc++] = obj;
     }
 
-public:
+ public:
     struct Obj
     {
-    private:
+     private:
         ObjType type;
 
         Val value;
 
-    public:
+     public:
         Obj()
         {
             type = INT;
@@ -232,12 +247,12 @@ public:
 
     struct Result
     {
-    public:
+     public:
         bool success;
 
         Obj res;
 
-        Result(Obj res)
+        explicit Result(Obj res)
         {
             this->success = true;
             this->res = res;
@@ -249,8 +264,6 @@ public:
             this->res = res;
         }
     };
-
-    VM(){};
 
     VM(std::vector<unsigned long> iseq, std::vector<Obj> const_table);
 

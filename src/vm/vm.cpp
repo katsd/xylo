@@ -7,18 +7,18 @@
 
 #include "vm.hpp"
 
-VM::VM(std::vector<unsigned long> iseq, std::vector<Obj> const_table)
-{
-    this->iseq = iseq;
-    this->const_table = const_table;
+#include <utility>
 
+VM::VM(std::vector<unsigned long> iseq, std::vector<Obj> const_table)
+    : iseq(std::move(iseq)), const_table(std::move(const_table))
+{
     global_obj_table = std::unique_ptr<Obj[]>(new Obj[obj_table_size]);
 
     func_start_idx = std::vector<unsigned long>();
 
-    for (int i = 1; i < iseq.size(); i++)
+    for (int i = 1; i < this->iseq.size(); i++)
     {
-        if (iseq[i] == Inst::START)
+        if (this->iseq[i] == Inst::START)
             func_start_idx.push_back(i);
     }
 }
@@ -422,7 +422,7 @@ VM::Result VM::Run(unsigned long start_idx)
             pc += 2;
         }
 
-        break;
+            break;
 
         case Inst::NOT:
         {
@@ -448,7 +448,7 @@ VM::Result VM::Run(unsigned long start_idx)
             pc += 1;
         }
 
-        break;
+            break;
 
         case Inst::BNOT:
         {
@@ -459,7 +459,7 @@ VM::Result VM::Run(unsigned long start_idx)
             pc += 1;
         }
 
-        break;
+            break;
 
         case Inst::INPUT:
         {
@@ -478,7 +478,7 @@ VM::Result VM::Run(unsigned long start_idx)
             pc += 1;
         }
 
-        break;
+            break;
 
         case Inst::OUT:
             GetStack(sc, stack).Out();
@@ -732,7 +732,7 @@ void VM::OutIseq()
             pc += 2;
         }
 
-        break;
+            break;
 
         case Inst::NOT:
             printf("NOT\n");
