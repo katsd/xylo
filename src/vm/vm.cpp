@@ -245,8 +245,8 @@ VM::Result VM::Run(unsigned long start_idx)
                     }
                     else
                     {
-                        unsigned long lv = left.GetInt();
-                        unsigned long rv = right.GetInt();
+                        long lv = left.GetInt();
+                        long rv = right.GetInt();
                         if (lv % rv == 0)
                             obj.SetInt(lv / rv);
                         else
