@@ -7,8 +7,6 @@
 
 #include "vm.hpp"
 
-#include <utility>
-
 VM::VM(std::vector<unsigned long> iseq, std::vector<Obj> const_table)
     : iseq(std::move(iseq)), const_table(std::move(const_table))
 {
