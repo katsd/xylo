@@ -9,7 +9,7 @@
 #include <string>
 #include <tuple>
 
-#include "AST/Token.hpp"
+#include "Token/Token.hpp"
 
 namespace xylo
 {

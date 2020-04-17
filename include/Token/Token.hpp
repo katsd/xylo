@@ -7,9 +7,9 @@
 
 #include <string>
 
-#include "AST/TokenType.hpp"
-#include "AST/TokenValue.hpp"
-#include "AST/SourcePos.hpp"
+#include "TokenType.hpp"
+#include "TokenValue.hpp"
+#include "SourcePos.hpp"
 
 namespace xylo
 {

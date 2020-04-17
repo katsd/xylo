@@ -7,8 +7,8 @@
 
 #include <cstdint>
 
-#include "AST/Reserved.hpp"
-#include "AST/Symbol.hpp"
+#include "Reserved.hpp"
+#include "Symbol.hpp"
 
 namespace xylo
 {
