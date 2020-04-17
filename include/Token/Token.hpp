@@ -25,17 +25,41 @@ namespace xylo
 
 		SourcePos pos;
 
-		uint64_t GetInt();
+		[[nodiscard]]
+		inline uint64_t GetInt() const
+		{
+			return value.ival;
+		}
 
-		double GetFloat();
+		[[nodiscard]]
+		inline double GetFloat() const
+		{
+			return value.dval;
+		}
 
-		std::string GetString();
+		[[nodiscard]]
+		inline std::string GetString() const
+		{
+			return source;
+		}
 
-		Symbol GetSymbol();
+		[[nodiscard]]
+		inline Symbol GetSymbol() const
+		{
+			return value.symbol;
+		}
 
-		Reserved GetReserved();
+		[[nodiscard]]
+		inline Reserved GetReserved() const
+		{
+			return value.reserved;
+		}
 
-		std::string GetName();
+		[[nodiscard]]
+		inline std::string GetName() const
+		{
+			return source;
+		}
 
 		inline void Set(int64_t ival, const std::string& src)
 		{
