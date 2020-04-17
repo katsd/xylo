@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <string>
+#include <tuple>
 
 #include "AST/Token.hpp"
 
@@ -30,9 +31,13 @@ namespace xylo
 
 		bool Divide();
 
-		void PushSourceUnit(std::string& source, uint64_t line, uint64_t col);
+		void PushSourceUnit(std::string& src, uint64_t line, uint64_t col);
 
-		void PushToken(Token token);
+		void PushToken(const Token& token);
+
+		static std::tuple<bool, int64_t> Str2Int(const std::string& str);
+
+		static std::tuple<bool, double> Str2Float(const std::string& str);
 
 	 public:
 		struct Result
@@ -42,7 +47,7 @@ namespace xylo
 			std::vector<Token> tokens;
 		};
 
-		Lexer(std::string source);
+		explicit Lexer(std::string source);
 
 		Result Tokenize();
 	};

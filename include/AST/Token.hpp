@@ -37,6 +37,48 @@ namespace xylo
 
 		std::string GetName();
 
+		inline void Set(int64_t ival, const std::string& src)
+		{
+			type = TokenType::INT;
+			value = ival;
+		}
+
+		inline void Set(double dval, const std::string& src)
+		{
+			type = TokenType::FLOAT;
+			value = dval;
+		}
+
+		// "**" -> STRING
+		// **** -> NAME
+		inline void Set(const std::string& src)
+		{
+			if (!src.empty() && src[0] == '"' && src[src.size() - 1] == '"')
+			{
+				type = TokenType::STRING;
+				source = src.substr(1, src.size() - 2);
+			}
+			else
+			{
+				type = TokenType::NAME;
+				source = src;
+			}
+		}
+
+		inline void Set(Symbol symbol, const std::string& src)
+		{
+			type = TokenType::SYMBOL;
+			value = symbol;
+			source = src;
+		}
+
+		inline void Set(Reserved reserved, const std::string& src)
+		{
+			type = TokenType::RESERVED;
+			value = reserved;
+			source = src;
+		}
+
 	};
 }
 
