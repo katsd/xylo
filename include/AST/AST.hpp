@@ -5,9 +5,6 @@
 #ifndef _AST_HPP_
 #define _AST_HPP_
 
-namespace xylo
-{
-
-}
+#include "Root.hpp"
 
 #endif //_AST_HPP_
