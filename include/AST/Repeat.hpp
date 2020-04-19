@@ -14,6 +14,9 @@ namespace xylo::node
 {
 struct Stmt;
 
+/*
+ * repeat(Exp) Stmt
+ */
 struct Repeat
 {
 	std::unique_ptr<Exp> time;

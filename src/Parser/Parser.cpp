@@ -55,7 +55,29 @@ std::unique_ptr<node::Assign> Parser::ParseAssign()
 
 std::unique_ptr<node::Repeat> Parser::ParseRepeat()
 {
+	if (end <= cur)
+		return nullptr;
 
+	auto pos = cur->pos;
+
+	if (!CheckReserved(Reserved::REPEAT))
+		return nullptr;
+
+	if (!CheckSymbol(Symbol::LPAREN))
+		return nullptr;
+
+	auto exp_nd = ParseExp();
+	if (exp_nd == nullptr)
+		return nullptr;
+
+	if (!CheckSymbol(Symbol::RPAREN))
+		return nullptr;
+
+	auto stmt_nd = ParseStmt();
+	if (stmt_nd == nullptr)
+		return nullptr;
+
+	return std::make_unique<node::Repeat>(node::Repeat{ std::move(exp_nd), std::move(stmt_nd), pos });
 }
 
 std::unique_ptr<node::For> Parser::ParseFor()
