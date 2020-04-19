@@ -6,6 +6,7 @@
 #define _VALUE_HPP_
 
 #include <variant>
+#include <memory>
 
 #include "Int.hpp"
 #include "Float.hpp"
@@ -14,7 +15,12 @@
 
 namespace xylo::node
 {
-typedef std::variant<Int, Float, String, Variable> Value;
+typedef std::variant<
+	std::unique_ptr<Int>,
+	std::unique_ptr<Float>,
+	std::unique_ptr<String>,
+	std::unique_ptr<Variable>
+> Value;
 }
 
 #endif //_VALUE_HPP_

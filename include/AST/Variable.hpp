@@ -15,8 +15,6 @@ struct Variable
 {
 	std::string name;
 
-	std::string source;
-
 	SourcePos pos;
 };
 }
