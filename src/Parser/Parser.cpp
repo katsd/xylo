@@ -106,6 +106,19 @@ std::unique_ptr<node::For> Parser::ParseFor()
 	if (exp_nd == nullptr)
 		return nullptr;
 
+	if (end <= cur)
+	{
+		MakeError("expected ) at the end of source");
+		return nullptr;
+	}
+
+	if (!CompSymbol(Symbol::RPAREN))
+	{
+		MakeError("expected )", cur->pos);
+		return nullptr;
+	}
+
+	cur++;
 	auto stmt_nd = ParseStmt();
 	if (stmt_nd == nullptr)
 		return nullptr;
