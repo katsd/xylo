@@ -5,15 +5,23 @@
 #ifndef _ASSIGN_HPP_
 #define _ASSIGN_HPP_
 
+#include <memory>
+
 #include "Exp.hpp"
+#include "Token/SourcePos.hpp"
 
 namespace xylo::node
 {
+/*
+ * Variable = Exp
+ */
 struct Assign
 {
-	Variable var;
+	std::unique_ptr<Variable> var;
 
-	Exp exp;
+	std::unique_ptr<Exp> exp;
+
+	SourcePos pos;
 };
 }
 
