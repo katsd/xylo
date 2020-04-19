@@ -17,7 +17,7 @@ Parser::Parser(std::string source)
 std::unique_ptr<node::Root> Parser::Parse()
 {
 	auto lex_result = Lexer(source).Tokenize();
-
+	`
 	if (!lex_result.success)
 	{
 		printf("failed to parse\n");
@@ -65,6 +65,26 @@ std::unique_ptr<node::For> Parser::ParseFor()
 
 std::unique_ptr<node::While> Parser::ParseWhile()
 {
+	if (end <= cur)
+		return nullptr;
+
+	if (!CompReserved(Reserved::WHILE))
+	{
+		MakeError("expected \"while\"", cur->pos);
+		return nullptr;
+	}
+
+	auto pos = cur->pos;
+
+	auto exp_nd = ParseExp();
+	if (exp_nd == nullptr)
+		return nullptr;
+
+	auto stmt_nd = ParseStmt();
+	if (stmt_nd == nullptr)
+		return nullptr;
+
+	return std::make_unique<node::While>(node::While{ std::move(exp_nd), std::move(stmt_nd), pos });
 }
 
 std::unique_ptr<node::Return> Parser::ParseReturn()
@@ -72,7 +92,7 @@ std::unique_ptr<node::Return> Parser::ParseReturn()
 	if (end <= cur)
 		return nullptr;
 
-	if (CompReserved(Reserved::RETURN))
+	if (!CompReserved(Reserved::RETURN))
 	{
 		MakeError("expected \"return\"", cur->pos);
 		return nullptr;
