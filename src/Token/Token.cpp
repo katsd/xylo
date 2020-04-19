@@ -69,5 +69,23 @@ std::string Token::Symbol2Str(Symbol symbol)
 
 std::string Token::Reserved2Str(Reserved reserved)
 {
-
+	switch (reserved)
+	{
+	case Reserved::FUNC:
+		return "func";
+	case Reserved::RETURN:
+		return "return";
+	case Reserved::REPEAT:
+		return "repeat";
+	case Reserved::FOR:
+		return "for";
+	case Reserved::WHILE:
+		return "while";
+	case Reserved::IF:
+		return "if";
+	case Reserved::ELSE:
+		return "else";
+	default:
+		return "";
+	}
 }
