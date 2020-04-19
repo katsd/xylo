@@ -15,9 +15,12 @@ namespace xylo::node
 {
 struct Stmt;
 
+/*
+ * for(Variable,Exp) Stmt
+ */
 struct For
 {
-	Variable var;
+	std::unique_ptr<Variable> var;
 
 	std::unique_ptr<Exp> time;
 

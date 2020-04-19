@@ -17,7 +17,7 @@ Parser::Parser(std::string source)
 std::unique_ptr<node::Root> Parser::Parse()
 {
 	auto lex_result = Lexer(source).Tokenize();
-	`
+
 	if (!lex_result.success)
 	{
 		printf("failed to parse\n");
@@ -60,7 +60,57 @@ std::unique_ptr<node::Repeat> Parser::ParseRepeat()
 
 std::unique_ptr<node::For> Parser::ParseFor()
 {
+	if (end <= cur)
+		return nullptr;
 
+	if (!CompReserved(Reserved::FOR))
+	{
+		MakeError("expected \"for\"", cur->pos);
+		return nullptr;
+	}
+
+	auto pos = cur->pos;
+
+	cur++;
+	if (end <= cur)
+	{
+		MakeError("expected ( at the end of source");
+		return nullptr;
+	}
+
+	if (!CompSymbol(Symbol::LPAREN))
+	{
+		MakeError("expected (", cur->pos);
+		return nullptr;
+	}
+
+	cur++;
+	auto var_nd = ParseVariable();
+	if (var_nd == nullptr)
+		return nullptr;
+
+	if (end <= cur)
+	{
+		MakeError("expected , at the end of source");
+		return nullptr;
+	}
+
+	if (!CompSymbol(Symbol::COMMA))
+	{
+		MakeError("expected ,", cur->pos);
+		return nullptr;
+	}
+
+	cur++;
+	auto exp_nd = ParseExp();
+	if (exp_nd == nullptr)
+		return nullptr;
+
+	auto stmt_nd = ParseStmt();
+	if (stmt_nd == nullptr)
+		return nullptr;
+
+	return std::make_unique<node::For>(node::For{ std::move(var_nd), std::move(exp_nd), std::move(stmt_nd), pos });
 }
 
 std::unique_ptr<node::While> Parser::ParseWhile()
