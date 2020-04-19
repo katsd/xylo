@@ -47,6 +47,30 @@ std::unique_ptr<node::Func> Parser::ParseFunc()
 
 std::unique_ptr<node::Block> Parser::ParseBlock()
 {
+	if (end <= cur)
+		return nullptr;
+
+	auto pos = cur->pos;
+
+	if (!CheckSymbol(Symbol::LBRACKET))
+		return nullptr;
+
+	std::vector<std::unique_ptr<node::Stmt>> stmts;
+
+	while (true)
+	{
+		if (CheckSymbol(Symbol::RBRACKET))
+			break;
+
+		auto stmt_nd = ParseStmt();
+		if (stmt_nd == nullptr)
+			return nullptr;
+
+		stmts.push_back(std::move(stmt_nd));
+	}
+
+	return std::make_unique<node::Block>(node::Block{ std::move(stmts), pos });
+
 }
 
 std::unique_ptr<node::Assign> Parser::ParseAssign()
