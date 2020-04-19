@@ -29,6 +29,7 @@ enum BOperatorType
 	GREATER_EQ,
 	LESS,
 	LESS_EQ,
+	NONE,
 };
 
 struct Exp;
@@ -42,6 +43,46 @@ struct BOperator
 	std::unique_ptr<Exp> right;
 
 	SourcePos pos;
+
+	static BOperatorType Symbol2BOperator(Symbol symbol)
+	{
+		switch (symbol)
+		{
+		case Symbol::OR:
+			return BOperatorType::OR;
+		case Symbol::AND:
+			return BOperatorType::AND;
+		case Symbol::BIN_OR:
+			return BOperatorType::BIN_OR;
+		case Symbol::BIN_XOR:
+			return BOperatorType::BIN_XOR;
+		case Symbol::BIN_AND:
+			return BOperatorType::BIN_AND;
+		case Symbol::EQUAL:
+			return BOperatorType::EQUAL;
+		case Symbol::NOT_EQUAL:
+			return BOperatorType::NOT_EQUAL;
+		case Symbol::LESS_EQ:
+			return BOperatorType::LESS_EQ;
+		case Symbol::GREATER:
+			return BOperatorType::GREATER;
+		case Symbol::GREATER_EQ:
+			return BOperatorType::GREATER_EQ;
+		case Symbol::PLUS:
+			return BOperatorType::ADD;
+		case Symbol::MINUS:
+			return BOperatorType::SUB;
+		case Symbol::MUL:
+			return BOperatorType::MUL;
+		case Symbol::DIV:
+			return BOperatorType::DIV;
+		case Symbol::MOD:
+			return BOperatorType::MOD;
+		default:
+			return BOperatorType::NONE;
+		}
+
+	}
 };
 }
 
