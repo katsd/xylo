@@ -14,6 +14,9 @@ namespace xylo::node
 {
 struct Stmt;
 
+/*
+ * while(Exp) Stmt
+ */
 struct While
 {
 	std::unique_ptr<Exp> exp;

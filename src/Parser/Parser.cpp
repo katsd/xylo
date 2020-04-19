@@ -126,9 +126,36 @@ std::unique_ptr<node::While> Parser::ParseWhile()
 
 	auto pos = cur->pos;
 
+	cur++;
+	if (end <= cur)
+	{
+		MakeError("expected ( at the end of source");
+		return nullptr;
+	}
+
+	if (!CompSymbol(Symbol::LPAREN))
+	{
+		MakeError("expected (", cur->pos);
+		return nullptr;
+	}
+
 	auto exp_nd = ParseExp();
 	if (exp_nd == nullptr)
 		return nullptr;
+
+	if (end <= cur)
+	{
+		MakeError("expected ) at the end of source");
+		return nullptr;
+	}
+
+	if (!CompSymbol(Symbol::RPAREN))
+	{
+		MakeError("expected ) at the end of source");
+		return nullptr;
+	}
+
+	cur++;
 
 	auto stmt_nd = ParseStmt();
 	if (stmt_nd == nullptr)
