@@ -394,6 +394,42 @@ std::unique_ptr<node::String> Parser::ParseString()
 	return std::make_unique<node::String>(node::String{ cur->GetString(), cur->pos });
 }
 
+bool Parser::CheckSymbol(Symbol symbol)
+{
+	if (cur <= end)
+	{
+		MakeError(("expected " + Token::Symbol2Str(symbol) + " at the end of source").c_str());
+		return false;
+	}
+
+	if (!CompSymbol(symbol))
+	{
+		MakeError(("expected " + Token::Symbol2Str(symbol)).c_str(), cur->pos);
+		return false;
+	}
+
+	cur++;
+	return true;
+}
+
+bool Parser::CheckReserved(Reserved reserved)
+{
+	if (cur <= end)
+	{
+		MakeError(("expected " + Token::Reserved2Str(reserved) + " at the end of source").c_str());
+		return false;
+	}
+
+	if (!CompReserved(reserved))
+	{
+		MakeError(("expected " + Token::Reserved2Str(reserved)).c_str(), cur->pos);
+		return false;
+	}
+
+	cur++;
+	return true;
+}
+
 void Parser::MakeError(const char* msg)
 {
 	printf("%s\n", msg);
