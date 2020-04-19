@@ -63,62 +63,28 @@ std::unique_ptr<node::For> Parser::ParseFor()
 	if (end <= cur)
 		return nullptr;
 
-	if (!CompReserved(Reserved::FOR))
-	{
-		MakeError("expected \"for\"", cur->pos);
-		return nullptr;
-	}
-
 	auto pos = cur->pos;
 
-	cur++;
-	if (end <= cur)
-	{
-		MakeError("expected ( at the end of source");
+	if (!CheckReserved(Reserved::FOR))
 		return nullptr;
-	}
 
-	if (!CompSymbol(Symbol::LPAREN))
-	{
-		MakeError("expected (", cur->pos);
+	if (!CheckSymbol(Symbol::LPAREN))
 		return nullptr;
-	}
 
-	cur++;
 	auto var_nd = ParseVariable();
 	if (var_nd == nullptr)
 		return nullptr;
 
-	if (end <= cur)
-	{
-		MakeError("expected , at the end of source");
+	if (!CheckSymbol(Symbol::COMMA))
 		return nullptr;
-	}
 
-	if (!CompSymbol(Symbol::COMMA))
-	{
-		MakeError("expected ,", cur->pos);
-		return nullptr;
-	}
-
-	cur++;
 	auto exp_nd = ParseExp();
 	if (exp_nd == nullptr)
 		return nullptr;
 
-	if (end <= cur)
-	{
-		MakeError("expected ) at the end of source");
+	if (!CheckSymbol(Symbol::RPAREN))
 		return nullptr;
-	}
 
-	if (!CompSymbol(Symbol::RPAREN))
-	{
-		MakeError("expected )", cur->pos);
-		return nullptr;
-	}
-
-	cur++;
 	auto stmt_nd = ParseStmt();
 	if (stmt_nd == nullptr)
 		return nullptr;
@@ -131,44 +97,20 @@ std::unique_ptr<node::While> Parser::ParseWhile()
 	if (end <= cur)
 		return nullptr;
 
-	if (!CompReserved(Reserved::WHILE))
-	{
-		MakeError("expected \"while\"", cur->pos);
-		return nullptr;
-	}
-
 	auto pos = cur->pos;
 
-	cur++;
-	if (end <= cur)
-	{
-		MakeError("expected ( at the end of source");
+	if (!CheckReserved(Reserved::WHILE))
 		return nullptr;
-	}
 
-	if (!CompSymbol(Symbol::LPAREN))
-	{
-		MakeError("expected (", cur->pos);
+	if (!CheckSymbol(Symbol::LPAREN))
 		return nullptr;
-	}
 
 	auto exp_nd = ParseExp();
 	if (exp_nd == nullptr)
 		return nullptr;
 
-	if (end <= cur)
-	{
-		MakeError("expected ) at the end of source");
+	if (!CheckSymbol(Symbol::RPAREN))
 		return nullptr;
-	}
-
-	if (!CompSymbol(Symbol::RPAREN))
-	{
-		MakeError("expected ) at the end of source");
-		return nullptr;
-	}
-
-	cur++;
 
 	auto stmt_nd = ParseStmt();
 	if (stmt_nd == nullptr)
@@ -182,13 +124,10 @@ std::unique_ptr<node::Return> Parser::ParseReturn()
 	if (end <= cur)
 		return nullptr;
 
-	if (!CompReserved(Reserved::RETURN))
-	{
-		MakeError("expected \"return\"", cur->pos);
-		return nullptr;
-	}
-
 	auto pos = cur->pos;
+
+	if (!CheckReserved(Reserved::RETURN))
+		return nullptr;
 
 	auto nd = ParseExp();
 	if (nd == nullptr)
@@ -251,18 +190,8 @@ std::unique_ptr<node::Exp> Parser::ParseFactor()
 
 			auto nd = ParseExp();
 
-			if (end <= cur)
-			{
-				MakeError("expected ( at the end of source");
+			if (!CheckSymbol(Symbol::RPAREN))
 				return nullptr;
-			}
-
-			if (CompSymbol(Symbol::RPAREN))
-			{
-				MakeError("expected (", cur->pos);
-				return nullptr;
-			}
-			cur++;
 
 			return nd;
 		}
@@ -416,13 +345,13 @@ bool Parser::CheckReserved(Reserved reserved)
 {
 	if (cur <= end)
 	{
-		MakeError(("expected " + Token::Reserved2Str(reserved) + " at the end of source").c_str());
+		MakeError(("expected \"" + Token::Reserved2Str(reserved) + "\" at the end of source").c_str());
 		return false;
 	}
 
 	if (!CompReserved(reserved))
 	{
-		MakeError(("expected " + Token::Reserved2Str(reserved)).c_str(), cur->pos);
+		MakeError(("expected \"" + Token::Reserved2Str(reserved) + "\"").c_str(), cur->pos);
 		return false;
 	}
 
