@@ -139,7 +139,7 @@ std::unique_ptr<node::Stmt> Parser::ParseStmt()
 
 std::unique_ptr<node::FuncDef> Parser::ParseFuncDef()
 {
-	if (end <= cur)
+	if (end < cur)
 		return nullptr;
 
 	auto pos = cur->pos;
@@ -181,7 +181,7 @@ std::unique_ptr<node::FuncDef> Parser::ParseFuncDef()
 
 std::unique_ptr<node::Func> Parser::ParseFunc()
 {
-	if (end <= cur)
+	if (end < cur)
 		return nullptr;
 
 	if (cur->type != TokenType::IDENTIFIER)
@@ -218,7 +218,7 @@ std::unique_ptr<node::Func> Parser::ParseFunc()
 
 std::unique_ptr<node::Block> Parser::ParseBlock()
 {
-	if (end <= cur)
+	if (end < cur)
 		return nullptr;
 
 	auto pos = cur->pos;
@@ -245,7 +245,7 @@ std::unique_ptr<node::Block> Parser::ParseBlock()
 
 std::unique_ptr<node::Assign> Parser::ParseAssign()
 {
-	if (end <= cur)
+	if (end < cur)
 		return nullptr;
 
 	auto pos = cur->pos;
@@ -266,7 +266,7 @@ std::unique_ptr<node::Assign> Parser::ParseAssign()
 
 std::unique_ptr<node::Repeat> Parser::ParseRepeat()
 {
-	if (end <= cur)
+	if (end < cur)
 		return nullptr;
 
 	auto pos = cur->pos;
@@ -293,7 +293,7 @@ std::unique_ptr<node::Repeat> Parser::ParseRepeat()
 
 std::unique_ptr<node::For> Parser::ParseFor()
 {
-	if (end <= cur)
+	if (end < cur)
 		return nullptr;
 
 	auto pos = cur->pos;
@@ -327,7 +327,7 @@ std::unique_ptr<node::For> Parser::ParseFor()
 
 std::unique_ptr<node::While> Parser::ParseWhile()
 {
-	if (end <= cur)
+	if (end < cur)
 		return nullptr;
 
 	auto pos = cur->pos;
@@ -354,7 +354,7 @@ std::unique_ptr<node::While> Parser::ParseWhile()
 
 std::unique_ptr<node::Return> Parser::ParseReturn()
 {
-	if (end <= cur)
+	if (end < cur)
 		return nullptr;
 
 	auto pos = cur->pos;
@@ -391,7 +391,7 @@ std::unique_ptr<node::Exp> Parser::ParseExp(uint8_t ope_rank)
 
 std::unique_ptr<node::Exp> Parser::ParseExpTail(uint8_t ope_rank, std::unique_ptr<node::Exp> left)
 {
-	if (end <= cur || cur->type != TokenType::SYMBOL)
+	if (end < cur || cur->type != TokenType::SYMBOL)
 		return left;
 
 	auto opes = operators[ope_rank];
@@ -436,7 +436,7 @@ std::unique_ptr<node::Exp> Parser::ParseFactor()
 	}
 
 	if (cur->type == TokenType::IDENTIFIER &&
-		(cur + 1) >= end &&
+		(cur + 1) <= end &&
 		CompSymbol(cur + 1, Symbol::LPAREN))
 	{
 		auto nd = ParseFunc();
@@ -516,7 +516,7 @@ std::unique_ptr<node::Value> Parser::ParseValue()
 
 std::unique_ptr<node::Variable> Parser::ParseVariable()
 {
-	if (end <= cur)
+	if (end < cur)
 		return nullptr;
 
 	if (cur->type != TokenType::IDENTIFIER)
@@ -527,7 +527,7 @@ std::unique_ptr<node::Variable> Parser::ParseVariable()
 
 std::unique_ptr<node::Int> Parser::ParseInt()
 {
-	if (end <= cur)
+	if (end < cur)
 		return nullptr;
 
 	if (cur->type != TokenType::INT)
@@ -538,7 +538,7 @@ std::unique_ptr<node::Int> Parser::ParseInt()
 
 std::unique_ptr<node::Float> Parser::ParseFloat()
 {
-	if (end <= cur)
+	if (end < cur)
 		return nullptr;
 
 	if (cur->type != TokenType::FLOAT)
@@ -557,7 +557,7 @@ std::unique_ptr<node::String> Parser::ParseString()
 
 bool Parser::CheckSymbol(Symbol symbol, bool out_error)
 {
-	if (cur <= end)
+	if (end < cur)
 	{
 		if (out_error)
 			MakeError(("expected " + Token::Symbol2Str(symbol) + " at the end of source").c_str());
@@ -577,7 +577,7 @@ bool Parser::CheckSymbol(Symbol symbol, bool out_error)
 
 bool Parser::CheckReserved(Reserved reserved, bool out_error)
 {
-	if (cur <= end)
+	if (end < cur)
 	{
 		if (out_error)
 			MakeError(("expected \"" + Token::Reserved2Str(reserved) + "\" at the end of source").c_str());
@@ -597,7 +597,7 @@ bool Parser::CheckReserved(Reserved reserved, bool out_error)
 
 bool Parser::CheckIdentifier(std::string& identifier, bool out_error)
 {
-	if (cur <= end)
+	if (end < cur)
 	{
 		if (out_error)
 			MakeError("expected an identifier at the end of source");
