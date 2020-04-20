@@ -83,7 +83,7 @@ std::unique_ptr<node::Func> Parser::ParseFunc()
 	if (end <= cur)
 		return nullptr;
 
-	if (cur->type != TokenType::NAME)
+	if (cur->type != TokenType::IDENTIFIER)
 		return nullptr;
 
 	auto pos = cur->pos;
@@ -334,7 +334,7 @@ std::unique_ptr<node::Exp> Parser::ParseFactor()
 		return std::make_unique<node::Exp>(node::Exp{ std::move(nd) });
 	}
 
-	if (cur->type == TokenType::NAME &&
+	if (cur->type == TokenType::IDENTIFIER &&
 		(cur + 1) >= end &&
 		CompSymbol(cur + 1, Symbol::LPAREN))
 	{
@@ -402,7 +402,7 @@ std::unique_ptr<node::Value> Parser::ParseValue()
 		if (res == nullptr) return nullptr;
 		return std::make_unique<node::Value>(std::move(res));
 	}
-	case TokenType::NAME:
+	case TokenType::IDENTIFIER:
 	{
 		auto res = ParseVariable();
 		if (res == nullptr) return nullptr;
@@ -418,10 +418,10 @@ std::unique_ptr<node::Variable> Parser::ParseVariable()
 	if (end <= cur)
 		return nullptr;
 
-	if (cur->type != TokenType::NAME)
+	if (cur->type != TokenType::IDENTIFIER)
 		return nullptr;
 
-	return std::make_unique<node::Variable>(node::Variable{ cur->GetName(), cur->pos });
+	return std::make_unique<node::Variable>(node::Variable{ cur->GetIdentifier(), cur->pos });
 }
 
 std::unique_ptr<node::Int> Parser::ParseInt()
@@ -503,14 +503,14 @@ bool Parser::CheckIdentifier(std::string& identifier, bool out_error)
 		return false;
 	}
 
-	if (cur->type != TokenType::NAME)
+	if (cur->type != TokenType::IDENTIFIER)
 	{
 		if (out_error)
 			MakeError("expected an identifier", cur->pos);
 		return false;
 	}
 
-	identifier = cur->GetName();
+	identifier = cur->GetIdentifier();
 	cur++;
 	return true;
 }

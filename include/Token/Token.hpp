@@ -56,7 +56,7 @@ struct Token
 	}
 
 	[[nodiscard]]
-	inline std::string GetName() const
+	inline std::string GetIdentifier() const
 	{
 		return source;
 	}
@@ -74,7 +74,7 @@ struct Token
 	}
 
 	// "**" -> STRING
-	// **** -> NAME
+	// **** -> Identifier
 	inline void Set(const std::string& src)
 	{
 		if (!src.empty() && src[0] == '"' && src[src.size() - 1] == '"')
@@ -84,7 +84,7 @@ struct Token
 		}
 		else
 		{
-			type = TokenType::NAME;
+			type = TokenType::IDENTIFIER;
 			source = src;
 		}
 	}

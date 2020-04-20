@@ -14,7 +14,7 @@ namespace xylo
 		STRING,
 		SYMBOL,
 		RESERVED,
-		NAME,
+		IDENTIFIER,
 	};
 }
 
