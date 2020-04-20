@@ -24,8 +24,10 @@ std::unique_ptr<node::Root> Parser::Parse()
 		return nullptr;
 	}
 
-	cur = &lex_result.tokens[0];
+	if (lex_result.tokens.empty())
+		return std::make_unique<node::Root>(node::Root());
 
+	cur = &lex_result.tokens[0];
 	end = &lex_result.tokens[lex_result.tokens.size() - 1];
 
 	auto root_nd = ParseRoot();
