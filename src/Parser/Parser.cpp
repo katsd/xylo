@@ -61,6 +61,9 @@ std::unique_ptr<node::Func> Parser::ParseFunc()
 
 	while (true)
 	{
+		if (CheckSymbol(Symbol::RPAREN, false))
+			break;
+
 		auto arg_nd = ParseExp();
 		if (arg_nd == nullptr)
 			return nullptr;
