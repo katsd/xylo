@@ -22,10 +22,7 @@ struct Int : Node
 	{
 	}
 
-	std::string Node2Str() override
-	{
-		return "Int";
-	}
+	std::string Node2Str(uint64_t indent) override;
 };
 
 }

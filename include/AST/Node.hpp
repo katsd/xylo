@@ -13,6 +13,8 @@ namespace xylo::node
 {
 struct Node
 {
+	static constexpr uint64_t indent_size = 2;
+
 	SourcePos pos;
 
 	Node(SourcePos pos)
@@ -20,7 +22,12 @@ struct Node
 	{
 	}
 
-	virtual std::string Node2Str() = 0;
+	virtual std::string Node2Str(uint64_t indent) = 0;
+
+	inline static std::string IndentStr(uint64_t indent)
+	{
+		return std::string(indent * indent_size, ' ');
+	}
 };
 }
 

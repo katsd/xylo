@@ -30,10 +30,7 @@ struct If : Node
 	{
 	}
 
-	std::string Node2Str() override
-	{
-		return "If";
-	}
+	std::string Node2Str(uint64_t indent) override;
 };
 }
 

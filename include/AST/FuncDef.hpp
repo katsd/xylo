@@ -32,10 +32,7 @@ struct FuncDef : Node
 	{
 	}
 
-	std::string Node2Str() override
-	{
-		return "FuncDef";
-	}
+	std::string Node2Str(uint64_t indent) override;
 };
 }
 

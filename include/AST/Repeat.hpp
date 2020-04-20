@@ -27,10 +27,7 @@ struct Repeat : Node
 	{
 	}
 
-	std::string Node2Str() override
-	{
-		return "Repeat";
-	}
+	std::string Node2Str(uint64_t indent) override;
 };
 }
 

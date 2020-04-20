@@ -27,10 +27,7 @@ struct While : Node
 	{
 	}
 
-	std::string Node2Str() override
-	{
-		return "While";
-	}
+	std::string Node2Str(uint64_t indent) override;
 };
 }
 

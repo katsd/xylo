@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "Node.hpp"
+#include "Token/Token.hpp"
 #include "Token/SourcePos.hpp"
 
 namespace xylo::node

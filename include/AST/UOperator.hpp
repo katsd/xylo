@@ -29,10 +29,7 @@ struct UOperator : Node
 	{
 	}
 
-	std::string Node2Str() override
-	{
-		return "UOperator";
-	}
+	std::string Node2Str(uint64_t indent) override;
 };
 }
 

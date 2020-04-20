@@ -22,10 +22,7 @@ struct Return : Node
 	{
 	}
 
-	std::string Node2Str() override
-	{
-		return "Return";
-	}
+	std::string Node2Str(uint64_t indent) override;
 };
 }
 

@@ -21,10 +21,7 @@ struct Variable : Node
 	{
 	}
 
-	std::string Node2Str() override
-	{
-		return "Variable";
-	}
+	std::string Node2Str(uint64_t indent) override;
 };
 }
 

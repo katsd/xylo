@@ -27,11 +27,7 @@ struct Block : Node
 	{
 	}
 
-	std::string Node2Str() override
-	{
-		return "Stmt";
-	}
-
+	std::string Node2Str(uint64_t indent) override;
 };
 }
 

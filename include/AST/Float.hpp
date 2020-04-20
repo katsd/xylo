@@ -21,11 +21,7 @@ struct Float : Node
 	{
 	}
 
-	std::string Node2Str() override
-	{
-		return "Float";
-	}
-
+	std::string Node2Str(uint64_t indent) override;
 };
 }
 

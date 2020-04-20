@@ -30,10 +30,7 @@ struct For : Node
 	{
 	}
 
-	std::string Node2Str() override
-	{
-		return "For";
-	}
+	std::string Node2Str(uint64_t indent) override;
 };
 }
 

@@ -28,11 +28,7 @@ struct Func : Node
 	{
 	}
 
-	std::string Node2Str() override
-	{
-		return "Func";
-	}
-
+	std::string Node2Str(uint64_t indent) override;
 };
 }
 

@@ -33,10 +33,7 @@ struct Value : Node
 	{
 	}
 
-	std::string Node2Str() override
-	{
-		return "Value";
-	}
+	std::string Node2Str(uint64_t indent) override;
 };
 }
 
