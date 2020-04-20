@@ -67,7 +67,7 @@ std::unique_ptr<node::Root> Parser::ParseRoot()
 std::unique_ptr<node::Stmt> Parser::ParseStmt()
 {
 	// Block
-	if (CheckSymbol(Symbol::LBRACKET, false))
+	if (cur->type == TokenType::SYMBOL && cur->GetSymbol() == Symbol::LBRACKET)
 	{
 		auto nd = ParseBlock();
 		if (nd == nullptr)
@@ -248,7 +248,7 @@ std::unique_ptr<node::Block> Parser::ParseBlock()
 
 	while (true)
 	{
-		if (CheckSymbol(Symbol::RBRACKET))
+		if (CheckSymbol(Symbol::RBRACKET, false))
 			break;
 
 		auto stmt_nd = ParseStmt();
