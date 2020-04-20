@@ -14,6 +14,7 @@
 #include "While.hpp"
 #include "Repeat.hpp"
 #include "For.hpp"
+#include "If.hpp"
 #include "Return.hpp"
 
 namespace xylo::node
