@@ -16,36 +16,52 @@ std::string BOperator::Node2Str(uint64_t indent)
 	{
 	case OR:
 		res += "||";
+		break;
 	case AND:
 		res += "&&";
+		break;
 	case BIN_OR :
 		res += "|";
+		break;
 	case BIN_XOR:
 		res += "^";
+		break;
 	case BIN_AND:
 		res += "&";
+		break;
 	case EQUAL:
 		res += "==";
+		break;
 	case NOT_EQUAL:
 		res += "!=";
+		break;
 	case LESS:
 		res += "<";
+		break;
 	case LESS_EQ:
 		res += "<=";
+		break;
 	case GREATER:
 		res += ">";
+		break;
 	case GREATER_EQ:
 		res += ">=";
+		break;
 	case ADD:
 		res += "+";
+		break;
 	case SUB:
 		res += "-";
+		break;
 	case MUL:
-		return "*";
+		res += "*";
+		break;
 	case DIV:
-		return "/";
+		res += "/";
+		break;
 	case MOD:
-		return "%";
+		res += "%";
+		break;
 	default:
 		break;
 	}
