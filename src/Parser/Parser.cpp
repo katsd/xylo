@@ -46,7 +46,7 @@ std::unique_ptr<node::Root> Parser::ParseRoot()
 
 	while (cur <= end)
 	{
-		if (CheckReserved(Reserved::FUNC, false))
+		if (cur->type == TokenType::RESERVED && cur->GetReserved() == Reserved::FUNC)
 		{
 			auto nd = ParseFuncDef();
 			if (nd == nullptr)
