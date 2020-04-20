@@ -33,7 +33,84 @@ std::unique_ptr<node::Root> Parser::Parse()
 
 std::unique_ptr<node::Stmt> Parser::ParseStmt()
 {
+	// Block
+	if (CheckSymbol(Symbol::LBRACKET, false))
+	{
+		auto nd = ParseBlock();
+		if (nd == nullptr)
+			return nullptr;
+		return std::make_unique<node::Stmt>(node::Stmt{ std::move(nd) });
+	}
 
+	// Assign
+	if (cur->type == TokenType::IDENTIFIER)
+	{
+		auto nd = ParseAssign();
+		if (nd == nullptr)
+			return nullptr;
+		return std::make_unique<node::Stmt>(node::Stmt{ std::move(nd) });
+	}
+
+	if (cur->type != TokenType::RESERVED)
+	{
+		MakeError("expected statement", cur->pos);
+		return nullptr;
+	}
+
+	node::Stmt::StmtType stmt;
+
+	switch (cur->GetReserved())
+	{
+	case Reserved::FUNC:
+	{
+		auto nd = ParseFunc();
+		if (nd == nullptr)
+			return nullptr;
+		stmt = std::move(nd);
+	}
+		break;
+
+	case Reserved::WHILE:
+	{
+		auto nd = ParseWhile();
+		if (nd == nullptr)
+			return nullptr;
+		stmt = std::move(nd);
+	}
+		break;
+
+	case Reserved::REPEAT:
+	{
+		auto nd = ParseRepeat();
+		if (nd == nullptr)
+			return nullptr;
+		stmt = std::move(nd);
+	}
+		break;
+
+	case Reserved::FOR:
+	{
+		auto nd = ParseFor();
+		if (nd == nullptr)
+			return nullptr;
+		stmt = std::move(nd);
+	}
+		break;
+
+	case Reserved::RETURN:
+	{
+		auto nd = ParseReturn();
+		if (nd == nullptr)
+			return nullptr;
+		stmt = std::move(nd);
+	}
+		break;
+
+	default:
+		return nullptr;
+	}
+
+	return std::make_unique<node::Stmt>(node::Stmt{ std::move(stmt) });
 }
 
 std::unique_ptr<node::FuncDef> Parser::ParseFuncDef()
