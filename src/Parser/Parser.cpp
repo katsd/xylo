@@ -66,10 +66,19 @@ std::unique_ptr<node::Stmt> Parser::ParseStmt()
 		return std::make_unique<node::Stmt>(node::Stmt{ std::move(nd) });
 	}
 
-	// Assign
 	if (cur->type == TokenType::IDENTIFIER)
 	{
-		auto nd = ParseAssign();
+		// ASSIGN
+		if (cur + 1 <= end && CompSymbol(cur + 1, Symbol::ASSIGN))
+		{
+			auto nd = ParseAssign();
+			if (nd == nullptr)
+				return nullptr;
+			return std::make_unique<node::Stmt>(node::Stmt{ std::move(nd) });
+		}
+
+		// Func
+		auto nd = ParseFunc();
 		if (nd == nullptr)
 			return nullptr;
 		return std::make_unique<node::Stmt>(node::Stmt{ std::move(nd) });
@@ -85,15 +94,6 @@ std::unique_ptr<node::Stmt> Parser::ParseStmt()
 
 	switch (cur->GetReserved())
 	{
-	case Reserved::FUNC:
-	{
-		auto nd = ParseFunc();
-		if (nd == nullptr)
-			return nullptr;
-		stmt = std::move(nd);
-	}
-		break;
-
 	case Reserved::WHILE:
 	{
 		auto nd = ParseWhile();
