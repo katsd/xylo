@@ -281,14 +281,8 @@ std::unique_ptr<node::Repeat> Parser::ParseRepeat()
 	if (!CheckReserved(Reserved::REPEAT))
 		return nullptr;
 
-	if (!CheckSymbol(Symbol::LPAREN))
-		return nullptr;
-
 	auto exp_nd = ParseExp();
 	if (exp_nd == nullptr)
-		return nullptr;
-
-	if (!CheckSymbol(Symbol::RPAREN))
 		return nullptr;
 
 	auto stmt_nd = ParseStmt();
@@ -308,9 +302,6 @@ std::unique_ptr<node::For> Parser::ParseFor()
 	if (!CheckReserved(Reserved::FOR))
 		return nullptr;
 
-	if (!CheckSymbol(Symbol::LPAREN))
-		return nullptr;
-
 	auto var_nd = ParseVariable();
 	if (var_nd == nullptr)
 		return nullptr;
@@ -320,9 +311,6 @@ std::unique_ptr<node::For> Parser::ParseFor()
 
 	auto exp_nd = ParseExp();
 	if (exp_nd == nullptr)
-		return nullptr;
-
-	if (!CheckSymbol(Symbol::RPAREN))
 		return nullptr;
 
 	auto stmt_nd = ParseStmt();
@@ -342,14 +330,8 @@ std::unique_ptr<node::While> Parser::ParseWhile()
 	if (!CheckReserved(Reserved::WHILE))
 		return nullptr;
 
-	if (!CheckSymbol(Symbol::LPAREN))
-		return nullptr;
-
 	auto exp_nd = ParseExp();
 	if (exp_nd == nullptr)
-		return nullptr;
-
-	if (!CheckSymbol(Symbol::RPAREN))
 		return nullptr;
 
 	auto stmt_nd = ParseStmt();
