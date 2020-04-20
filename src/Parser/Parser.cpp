@@ -71,7 +71,11 @@ std::unique_ptr<node::FuncDef> Parser::ParseFuncDef()
 			return nullptr;
 	}
 
-	return std::make_unique<node::FuncDef>(node::FuncDef{ func_name, std::move(args), pos });
+	auto stmt_nd = ParseStmt();
+	if (stmt_nd == nullptr)
+		return nullptr;
+
+	return std::make_unique<node::FuncDef>(node::FuncDef{ func_name, std::move(args), std::move(stmt_nd), pos });
 }
 
 std::unique_ptr<node::Func> Parser::ParseFunc()
