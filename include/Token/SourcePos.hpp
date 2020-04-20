@@ -9,12 +9,12 @@
 
 namespace xylo
 {
-	struct SourcePos
-	{
-		uint64_t line;
+struct SourcePos
+{
+	uint64_t line = 0;
 
-		uint64_t col;
-	};
+	uint64_t col = 0;
+};
 }
 
 #endif //_SOURCEPOS_HPP_
