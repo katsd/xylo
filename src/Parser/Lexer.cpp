@@ -303,7 +303,7 @@ Lexer::Result Lexer::Tokenize()
 		{
 			token.Set(Symbol::PLUS, unit.source);
 		}
-		else if (unit.source == "+-")
+		else if (unit.source == "-")
 		{
 			token.Set(Symbol::MINUS, unit.source);
 		}
