@@ -171,12 +171,30 @@ bool Lexer::Divide()
 				break;
 			}
 
+		case '&':
+		case '|':
+			PushSourceUnit(cur, line, col - cur.size());
+
+			if (idx < source.size() - 1 && source[idx + 1] == ch)
+			{
+				cur = source.substr(idx, 2);
+				PushSourceUnit(cur, line, col);
+				idx += 2;
+				col += 2;
+			}
+			else
+			{
+				cur = source[idx];
+				PushSourceUnit(cur, line, col);
+				idx++;
+				col++;
+			}
+			break;
+
 		case '+':
 		case '-':
 		case '*':
 		case '%':
-		case '&':
-		case '|':
 		case '~':
 		case '?':
 		case ',':
