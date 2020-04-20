@@ -5,6 +5,7 @@
 #ifndef _FUNCDEF_HPP_
 #define _FUNCDEF_HPP_
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -14,13 +15,17 @@
 
 namespace xylo::node
 {
+
+/*
+ * func Symbol::NAME(Symbol::Name, .., Symbol::NAME)
+ */
 struct FuncDef
 {
 	std::string name;
 
-	std::vector<Variable> args;
+	std::vector<std::unique_ptr<Variable>> args;
 
-	Stmt stmt;
+	std::unique_ptr<Stmt> stmt;
 
 	SourcePos pos;
 };

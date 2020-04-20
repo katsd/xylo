@@ -96,6 +96,8 @@ class Parser
 
 	bool CheckReserved(Reserved reserved, bool out_error = true);
 
+	bool CheckIdentifier(std::string& identifier, bool out_error = true);
+
 	inline bool CompSymbol(Symbol symbol)
 	{
 		return CompSymbol(cur, symbol);

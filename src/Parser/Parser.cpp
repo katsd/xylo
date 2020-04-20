@@ -38,7 +38,40 @@ std::unique_ptr<node::Stmt> Parser::ParseStmt()
 
 std::unique_ptr<node::FuncDef> Parser::ParseFuncDef()
 {
+	if (end <= cur)
+		return nullptr;
 
+	auto pos = cur->pos;
+
+	if (!CheckReserved(Reserved::FUNC))
+		return nullptr;
+
+	std::string func_name;
+	if (!CheckIdentifier(func_name))
+		return nullptr;
+
+	if (!CheckSymbol(Symbol::LPAREN))
+		return nullptr;
+
+	std::vector<std::unique_ptr<node::Variable>> args;
+
+	while (true)
+	{
+		if (CheckSymbol(Symbol::RPAREN, false))
+			break;;
+
+		auto arg_nd = ParseVariable();
+		if (arg_nd == nullptr)
+			return nullptr;
+
+		if (CheckSymbol(Symbol::RPAREN, false))
+			break;
+
+		if (!CheckSymbol(Symbol::COMMA))
+			return nullptr;
+	}
+
+	return std::make_unique<node::FuncDef>(node::FuncDef{ func_name, std::move(args), pos });
 }
 
 std::unique_ptr<node::Func> Parser::ParseFunc()
@@ -454,6 +487,27 @@ bool Parser::CheckReserved(Reserved reserved, bool out_error)
 		return false;
 	}
 
+	cur++;
+	return true;
+}
+
+bool Parser::CheckIdentifier(std::string& identifier, bool out_error)
+{
+	if (cur <= end)
+	{
+		if (out_error)
+			MakeError("expected an identifier at the end of source");
+		return false;
+	}
+
+	if (cur->type != TokenType::NAME)
+	{
+		if (out_error)
+			MakeError("expected an identifier", cur->pos);
+		return false;
+	}
+
+	identifier = cur->GetName();
 	cur++;
 	return true;
 }
