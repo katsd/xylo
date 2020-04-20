@@ -175,7 +175,7 @@ std::unique_ptr<node::FuncDef> Parser::ParseFuncDef()
 	while (true)
 	{
 		if (CheckSymbol(Symbol::RPAREN, false))
-			break;;
+			break;
 
 		auto arg_nd = ParseVariable();
 		if (arg_nd == nullptr)
@@ -447,7 +447,6 @@ std::unique_ptr<node::Exp> Parser::ParseFactor()
 	{
 		if (CompSymbol(Symbol::LPAREN))
 		{
-			auto factor_pos = cur->pos;
 			cur++;
 
 			auto nd = ParseExp();
