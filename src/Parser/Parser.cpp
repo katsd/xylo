@@ -552,7 +552,10 @@ std::unique_ptr<node::Variable> Parser::ParseVariable()
 	if (cur->type != TokenType::IDENTIFIER)
 		return nullptr;
 
-	return std::make_unique<node::Variable>(node::Variable{ cur->GetIdentifier(), cur->pos });
+	std::string identifier = cur->GetIdentifier();
+	cur++;
+
+	return std::make_unique<node::Variable>(node::Variable{ identifier, cur->pos });
 }
 
 std::unique_ptr<node::Int> Parser::ParseInt()
