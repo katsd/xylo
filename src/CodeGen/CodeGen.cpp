@@ -4,3 +4,11 @@
 
 #include "CodeGen/CodeGen.hpp"
 
+using namespace xylo;
+
+std::vector<uint64_t> CodeGen::GenerateCode()
+{
+	code = std::vector<uint64_t>();
+
+	return code;
+}
