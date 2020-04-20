@@ -28,7 +28,14 @@ std::unique_ptr<node::Root> Parser::Parse()
 
 	end = &lex_result.tokens[lex_result.tokens.size() - 1];
 
-	return nullptr;
+	auto root_nd = ParseRoot();
+	if (root_nd == nullptr)
+	{
+		printf("failed to parse\n");
+		return nullptr;
+	}
+
+	return root_nd;
 }
 
 std::unique_ptr<node::Root> Parser::ParseRoot()
