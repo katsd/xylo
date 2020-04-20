@@ -565,15 +565,11 @@ std::unique_ptr<node::Value> Parser::ParseValue()
 
 std::unique_ptr<node::Variable> Parser::ParseVariable()
 {
-	if (end < cur)
+	std::string identifier;
+	if (!CheckIdentifier(identifier))
 		return nullptr;
 
-	if (cur->type != TokenType::IDENTIFIER)
-		return nullptr;
-
-	auto pos = cur->pos;
-	std::string identifier = cur->GetIdentifier();
-	cur++;
+	auto pos = (cur - 1)->pos;
 
 	return std::make_unique<node::Variable>(node::Variable{ identifier, pos });
 }
