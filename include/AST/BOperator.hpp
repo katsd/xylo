@@ -66,6 +66,8 @@ struct BOperator : Node
 			return BOperatorType::EQUAL;
 		case Symbol::NOT_EQUAL:
 			return BOperatorType::NOT_EQUAL;
+		case Symbol::LESS:
+			return LESS;
 		case Symbol::LESS_EQ:
 			return BOperatorType::LESS_EQ;
 		case Symbol::GREATER:
@@ -88,10 +90,7 @@ struct BOperator : Node
 
 	}
 
-	std::string Node2Str() override
-	{
-		return "BOperator";
-	}
+	std::string Node2Str(uint64_t indent) override;
 };
 }
 
