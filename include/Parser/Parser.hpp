@@ -53,6 +53,8 @@ class Parser
 	// last node
 	Token* end = nullptr;
 
+	std::unique_ptr<node::Root> ParseRoot();
+
 	std::unique_ptr<node::Stmt> ParseStmt();
 
 	std::unique_ptr<node::FuncDef> ParseFuncDef();

@@ -31,6 +31,30 @@ std::unique_ptr<node::Root> Parser::Parse()
 	return nullptr;
 }
 
+std::unique_ptr<node::Root> Parser::ParseRoot()
+{
+	std::vector<node::Root::RootStmt> stmts;
+
+	while (cur <= end)
+	{
+		if (CheckReserved(Reserved::FUNC, false))
+		{
+			auto nd = ParseFuncDef();
+			if (nd == nullptr)
+				return nullptr;
+			stmts.emplace_back(std::move(nd));
+			continue;
+		}
+
+		auto nd = ParseStmt();
+		if (nd == nullptr)
+			return nullptr;
+		stmts.emplace_back(std::move(nd));
+	}
+
+	return std::make_unique<node::Root>(node::Root{ std::move(stmts) });
+}
+
 std::unique_ptr<node::Stmt> Parser::ParseStmt()
 {
 	// Block
