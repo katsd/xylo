@@ -552,10 +552,11 @@ std::unique_ptr<node::Variable> Parser::ParseVariable()
 	if (cur->type != TokenType::IDENTIFIER)
 		return nullptr;
 
+	auto pos = cur->pos;
 	std::string identifier = cur->GetIdentifier();
 	cur++;
 
-	return std::make_unique<node::Variable>(node::Variable{ identifier, cur->pos });
+	return std::make_unique<node::Variable>(node::Variable{ identifier, pos });
 }
 
 std::unique_ptr<node::Int> Parser::ParseInt()
@@ -566,7 +567,11 @@ std::unique_ptr<node::Int> Parser::ParseInt()
 	if (cur->type != TokenType::INT)
 		return nullptr;
 
-	return std::make_unique<node::Int>(node::Int{ cur->GetInt(), cur->pos });
+	auto pos = cur->pos;
+	uint64_t value = cur->GetInt();
+	cur++;
+
+	return std::make_unique<node::Int>(node::Int{ value, pos });
 }
 
 std::unique_ptr<node::Float> Parser::ParseFloat()
@@ -577,15 +582,26 @@ std::unique_ptr<node::Float> Parser::ParseFloat()
 	if (cur->type != TokenType::FLOAT)
 		return nullptr;
 
-	return std::make_unique<node::Float>(node::Float{ cur->GetFloat(), cur->pos });
+	auto pos = cur->pos;
+	double value = cur->GetFloat();
+	cur++;
+
+	return std::make_unique<node::Float>(node::Float{ value, pos });
 }
 
 std::unique_ptr<node::String> Parser::ParseString()
 {
+	if (end < cur)
+		return nullptr;
+
 	if (cur->type != TokenType::STRING)
 		return nullptr;
 
-	return std::make_unique<node::String>(node::String{ cur->GetString(), cur->pos });
+	auto pos = cur->pos;
+	std::string value = cur->GetString();
+	cur++;
+
+	return std::make_unique<node::String>(node::String{ value, pos });
 }
 
 bool Parser::CheckSymbol(Symbol symbol, bool out_error)
