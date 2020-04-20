@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include "Node.hpp"
 #include "Exp.hpp"
 #include "Token/SourcePos.hpp"
 
@@ -15,13 +16,21 @@ namespace xylo::node
 /*
  * Variable = Exp
  */
-struct Assign
+struct Assign : Node
 {
 	std::unique_ptr<Variable> var;
 
 	std::unique_ptr<Exp> exp;
 
-	SourcePos pos;
+	Assign(std::unique_ptr<Variable> var, std::unique_ptr<Exp> exp, SourcePos pos)
+		: var(std::move(var)), exp(std::move(exp)), Node(pos)
+	{
+	}
+
+	std::string Node2Str() override
+	{
+		return "Assign";
+	}
 };
 }
 

@@ -7,23 +7,30 @@
 
 #include <memory>
 
+#include "Node.hpp"
 #include "Exp.hpp"
 #include "Token/SourcePos.hpp"
 
 namespace xylo::node
 {
-struct Stmt;
-
 /*
  * repeat Exp Stmt
  */
-struct Repeat
+struct Repeat : Node
 {
 	std::unique_ptr<Exp> time;
 
 	std::unique_ptr<Stmt> stmt;
 
-	SourcePos pos;
+	Repeat(std::unique_ptr<Exp> time, std::unique_ptr<Stmt> stmt, SourcePos pos)
+		: time(std::move(time)), stmt(std::move(stmt)), Node(pos)
+	{
+	}
+
+	std::string Node2Str() override
+	{
+		return "Repeat";
+	}
 };
 }
 

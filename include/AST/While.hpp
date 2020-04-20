@@ -7,23 +7,30 @@
 
 #include <string>
 
+#include "Node.hpp"
 #include "Exp.hpp"
 #include "Token/SourcePos.hpp"
 
 namespace xylo::node
 {
-struct Stmt;
-
 /*
  * while Exp Stmt
  */
-struct While
+struct While : Node
 {
 	std::unique_ptr<Exp> exp;
 
 	std::unique_ptr<Stmt> stmt;
 
-	SourcePos pos;
+	While(std::unique_ptr<Exp> exp, std::unique_ptr<Stmt> stmt, SourcePos pos)
+		: exp(std::move(exp)), stmt(std::move(stmt)), Node(pos)
+	{
+	}
+
+	std::string Node2Str() override
+	{
+		return "While";
+	}
 };
 }
 

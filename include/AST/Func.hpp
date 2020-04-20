@@ -9,21 +9,30 @@
 #include <string>
 #include <vector>
 
+#include "Node.hpp"
 #include "Token/SourcePos.hpp"
 
 namespace xylo::node
 {
-
 /*
  * TokenType::Name(Exp, Exp, .., Exp)
  */
-struct Func
+struct Func : Node
 {
 	std::string name;
 
 	std::vector<std::unique_ptr<Exp>> args;
 
-	SourcePos pos;
+	Func(std::string name, std::vector<std::unique_ptr<Exp>> args, SourcePos pos)
+		: name(std::move(name)), args(std::move(args)), Node(pos)
+	{
+	}
+
+	std::string Node2Str() override
+	{
+		return "Func";
+	}
+
 };
 }
 

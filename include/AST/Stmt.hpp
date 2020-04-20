@@ -8,6 +8,7 @@
 #include <variant>
 #include <memory>
 
+#include "Node.hpp"
 #include "Block.hpp"
 #include "Assign.hpp"
 #include "Func.hpp"
@@ -16,11 +17,11 @@
 #include "For.hpp"
 #include "If.hpp"
 #include "Return.hpp"
+#include "Token/SourcePos.hpp"
 
 namespace xylo::node
 {
-
-struct Stmt
+struct Stmt : Node
 {
 	typedef std::variant<
 		std::unique_ptr<Block>,
@@ -33,7 +34,17 @@ struct Stmt
 		std::unique_ptr<Return>
 	> StmtType;
 
-	StmtType value;
+	StmtType stmt;
+
+	Stmt(StmtType stmt, SourcePos pos)
+		: stmt(std::move(stmt)), Node(pos)
+	{
+	}
+
+	std::string Node2Str() override
+	{
+		return "Stmt";
+	}
 };
 
 }

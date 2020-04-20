@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include "Node.hpp"
 #include "Exp.hpp"
 #include "Token/SourcePos.hpp"
 
@@ -16,7 +17,7 @@ namespace xylo::node
  * if Exp Stmt
  * if Exp Stmt else Stmt
  */
-struct If
+struct If : Node
 {
 	std::unique_ptr<Exp> exp;
 
@@ -24,7 +25,15 @@ struct If
 
 	std::unique_ptr<Stmt> stmt_else;
 
-	SourcePos pos;
+	If(std::unique_ptr<Exp> exp, std::unique_ptr<Stmt> stmt, std::unique_ptr<Stmt> stmt_else, SourcePos pos)
+		: exp(std::move(exp)), stmt(std::move(stmt)), stmt_else(std::move(stmt_else)), Node(pos)
+	{
+	}
+
+	std::string Node2Str() override
+	{
+		return "If";
+	}
 };
 }
 

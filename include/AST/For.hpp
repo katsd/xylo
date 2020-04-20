@@ -7,18 +7,17 @@
 
 #include <memory>
 
+#include "Node.hpp"
 #include "Variable.hpp"
 #include "Exp.hpp"
 #include "Token/SourcePos.hpp"
 
 namespace xylo::node
 {
-struct Stmt;
-
 /*
  * for Variable,Exp Stmt
  */
-struct For
+struct For : Node
 {
 	std::unique_ptr<Variable> var;
 
@@ -26,7 +25,15 @@ struct For
 
 	std::unique_ptr<Stmt> stmt;
 
-	SourcePos pos;
+	For(std::unique_ptr<Variable> var, std::unique_ptr<Exp> time, std::unique_ptr<Stmt> stmt, SourcePos pos)
+		: var(std::move(var)), time(std::move(time)), stmt(std::move(stmt)), Node(pos)
+	{
+	}
+
+	std::string Node2Str() override
+	{
+		return "For";
+	}
 };
 }
 

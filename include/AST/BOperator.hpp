@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include "Node.hpp"
 #include "Token/SourcePos.hpp"
 
 namespace xylo::node
@@ -34,7 +35,7 @@ enum BOperatorType
 
 struct Exp;
 
-struct BOperator
+struct BOperator : Node
 {
 	BOperatorType type;
 
@@ -42,7 +43,10 @@ struct BOperator
 
 	std::unique_ptr<Exp> right;
 
-	SourcePos pos;
+	BOperator(BOperatorType type, std::unique_ptr<Exp> left, std::unique_ptr<Exp> right, SourcePos pos)
+		: type(type), left(std::move(left)), right(std::move(right)), Node(pos)
+	{
+	}
 
 	static BOperatorType Symbol2BOperator(Symbol symbol)
 	{
@@ -82,6 +86,11 @@ struct BOperator
 			return BOperatorType::NONE;
 		}
 
+	}
+
+	std::string Node2Str() override
+	{
+		return "BOperator";
 	}
 };
 }

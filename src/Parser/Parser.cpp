@@ -61,18 +61,20 @@ std::unique_ptr<node::Root> Parser::ParseRoot()
 		stmts.emplace_back(std::move(nd));
 	}
 
-	return std::make_unique<node::Root>(node::Root{ std::move(stmts) });
+	return std::make_unique<node::Root>(node::Root(std::move(stmts), SourcePos()));
 }
 
 std::unique_ptr<node::Stmt> Parser::ParseStmt()
 {
+	auto pos = cur->pos;
+
 	// Block
 	if (cur->type == TokenType::SYMBOL && cur->GetSymbol() == Symbol::LBRACKET)
 	{
 		auto nd = ParseBlock();
 		if (nd == nullptr)
 			return nullptr;
-		return std::make_unique<node::Stmt>(node::Stmt{ std::move(nd) });
+		return std::make_unique<node::Stmt>(node::Stmt(std::move(nd), pos));
 	}
 
 	if (cur->type == TokenType::IDENTIFIER)
@@ -83,14 +85,14 @@ std::unique_ptr<node::Stmt> Parser::ParseStmt()
 			auto nd = ParseAssign();
 			if (nd == nullptr)
 				return nullptr;
-			return std::make_unique<node::Stmt>(node::Stmt{ std::move(nd) });
+			return std::make_unique<node::Stmt>(node::Stmt(std::move(nd), pos));
 		}
 
 		// Func
 		auto nd = ParseFunc();
 		if (nd == nullptr)
 			return nullptr;
-		return std::make_unique<node::Stmt>(node::Stmt{ std::move(nd) });
+		return std::make_unique<node::Stmt>(node::Stmt(std::move(nd), pos));
 	}
 
 	if (cur->type != TokenType::RESERVED)
@@ -152,7 +154,7 @@ std::unique_ptr<node::Stmt> Parser::ParseStmt()
 		return nullptr;
 	}
 
-	return std::make_unique<node::Stmt>(node::Stmt{ std::move(stmt) });
+	return std::make_unique<node::Stmt>(node::Stmt(std::move(stmt), pos));
 }
 
 std::unique_ptr<node::FuncDef> Parser::ParseFuncDef()
@@ -194,7 +196,7 @@ std::unique_ptr<node::FuncDef> Parser::ParseFuncDef()
 	if (stmt_nd == nullptr)
 		return nullptr;
 
-	return std::make_unique<node::FuncDef>(node::FuncDef{ func_name, std::move(args), std::move(stmt_nd), pos });
+	return std::make_unique<node::FuncDef>(node::FuncDef(func_name, std::move(args), std::move(stmt_nd), pos));
 }
 
 std::unique_ptr<node::Func> Parser::ParseFunc()
@@ -231,7 +233,7 @@ std::unique_ptr<node::Func> Parser::ParseFunc()
 			return nullptr;
 	}
 
-	return std::make_unique<node::Func>(node::Func{ func_name, std::move(args), pos });
+	return std::make_unique<node::Func>(node::Func(func_name, std::move(args), pos));
 }
 
 std::unique_ptr<node::Block> Parser::ParseBlock()
@@ -258,7 +260,7 @@ std::unique_ptr<node::Block> Parser::ParseBlock()
 		stmts.push_back(std::move(stmt_nd));
 	}
 
-	return std::make_unique<node::Block>(node::Block{ std::move(stmts), pos });
+	return std::make_unique<node::Block>(node::Block(std::move(stmts), pos));
 }
 
 std::unique_ptr<node::Assign> Parser::ParseAssign()
@@ -279,7 +281,7 @@ std::unique_ptr<node::Assign> Parser::ParseAssign()
 	if (exp_nd == nullptr)
 		return nullptr;
 
-	return std::make_unique<node::Assign>(node::Assign{ std::move(var_nd), std::move(exp_nd), pos });
+	return std::make_unique<node::Assign>(node::Assign(std::move(var_nd), std::move(exp_nd), pos));
 }
 
 std::unique_ptr<node::If> Parser::ParseIf()
@@ -310,7 +312,7 @@ std::unique_ptr<node::If> Parser::ParseIf()
 			return nullptr;
 	}
 
-	return std::make_unique<node::If>(node::If{ std::move(exp_nd), std::move(stmt_nd), std::move(stmt_else_nd), pos });
+	return std::make_unique<node::If>(node::If(std::move(exp_nd), std::move(stmt_nd), std::move(stmt_else_nd), pos));
 }
 
 std::unique_ptr<node::Repeat> Parser::ParseRepeat()
@@ -331,7 +333,7 @@ std::unique_ptr<node::Repeat> Parser::ParseRepeat()
 	if (stmt_nd == nullptr)
 		return nullptr;
 
-	return std::make_unique<node::Repeat>(node::Repeat{ std::move(exp_nd), std::move(stmt_nd), pos });
+	return std::make_unique<node::Repeat>(node::Repeat(std::move(exp_nd), std::move(stmt_nd), pos));
 }
 
 std::unique_ptr<node::For> Parser::ParseFor()
@@ -359,7 +361,7 @@ std::unique_ptr<node::For> Parser::ParseFor()
 	if (stmt_nd == nullptr)
 		return nullptr;
 
-	return std::make_unique<node::For>(node::For{ std::move(var_nd), std::move(exp_nd), std::move(stmt_nd), pos });
+	return std::make_unique<node::For>(node::For(std::move(var_nd), std::move(exp_nd), std::move(stmt_nd), pos));
 }
 
 std::unique_ptr<node::While> Parser::ParseWhile()
@@ -380,7 +382,7 @@ std::unique_ptr<node::While> Parser::ParseWhile()
 	if (stmt_nd == nullptr)
 		return nullptr;
 
-	return std::make_unique<node::While>(node::While{ std::move(exp_nd), std::move(stmt_nd), pos });
+	return std::make_unique<node::While>(node::While(std::move(exp_nd), std::move(stmt_nd), pos));
 }
 
 std::unique_ptr<node::Return> Parser::ParseReturn()
@@ -397,7 +399,7 @@ std::unique_ptr<node::Return> Parser::ParseReturn()
 	if (nd == nullptr)
 		return nullptr;
 
-	return std::make_unique<node::Return>(node::Return{ std::move(nd), pos });
+	return std::make_unique<node::Return>(node::Return(std::move(nd), pos));
 }
 
 std::unique_ptr<node::Exp> Parser::ParseExp()
@@ -425,6 +427,8 @@ std::unique_ptr<node::Exp> Parser::ParseExpTail(uint8_t ope_rank, std::unique_pt
 	if (end < cur || cur->type != TokenType::SYMBOL)
 		return left;
 
+	auto pos = cur->pos;
+
 	auto opes = operators[ope_rank];
 	auto ope = node::BOperator::Symbol2BOperator(cur->GetSymbol());
 	if (!opes.count(ope))
@@ -436,15 +440,20 @@ std::unique_ptr<node::Exp> Parser::ParseExpTail(uint8_t ope_rank, std::unique_pt
 
 	auto right = ParseExp(ope_rank + 1);
 
-	std::unique_ptr<node::BOperator> nd_bope(new node::BOperator{ ope, std::move(left), std::move(right), ope_pos });
+	std::unique_ptr<node::BOperator> nd_bope(new node::BOperator(ope, std::move(left), std::move(right), ope_pos));
 
-	std::unique_ptr<node::Exp> nd_exp(new node::Exp{ std::move(nd_bope) });
+	std::unique_ptr<node::Exp> nd_exp(new node::Exp(std::move(nd_bope), pos));
 
 	return ParseExpTail(ope_rank, std::move(nd_exp));
 }
 
 std::unique_ptr<node::Exp> Parser::ParseFactor()
 {
+	if (end < cur)
+		return nullptr;
+
+	auto pos = cur->pos;
+
 	if (cur->type == TokenType::SYMBOL)
 	{
 		if (CompSymbol(Symbol::LPAREN))
@@ -462,7 +471,7 @@ std::unique_ptr<node::Exp> Parser::ParseFactor()
 		auto nd = ParseUOperator();
 		if (nd == nullptr)
 			return nullptr;
-		return std::make_unique<node::Exp>(node::Exp{ std::move(nd) });
+		return std::make_unique<node::Exp>(node::Exp(std::move(nd), pos));
 	}
 
 	if (cur->type == TokenType::IDENTIFIER &&
@@ -472,17 +481,20 @@ std::unique_ptr<node::Exp> Parser::ParseFactor()
 		auto nd = ParseFunc();
 		if (nd == nullptr)
 			return nullptr;
-		return std::make_unique<node::Exp>(node::Exp{ std::move(nd) });
+		return std::make_unique<node::Exp>(node::Exp(std::move(nd), pos));
 	}
 
 	auto nd = ParseValue();
 	if (nd == nullptr)
 		return nullptr;
-	return std::make_unique<node::Exp>(node::Exp{ std::move(nd) });
+	return std::make_unique<node::Exp>(node::Exp(std::move(nd), pos));
 }
 
 std::unique_ptr<node::UOperator> Parser::ParseUOperator()
 {
+	if (end < cur)
+		return nullptr;
+
 	if (cur->type != TokenType::SYMBOL)
 		return nullptr;
 
@@ -508,36 +520,41 @@ std::unique_ptr<node::UOperator> Parser::ParseUOperator()
 	auto nd = ParseFactor();
 	if (nd == nullptr)
 		return nullptr;
-	return std::make_unique<node::UOperator>(node::UOperator{ ope, std::move(nd), ope_pos });
+	return std::make_unique<node::UOperator>(node::UOperator(ope, std::move(nd), ope_pos));
 }
 
 std::unique_ptr<node::Value> Parser::ParseValue()
 {
+	if (end < cur)
+		return nullptr;
+
+	auto pos = cur->pos;
+
 	switch (cur->type)
 	{
 	case TokenType::INT:
 	{
 		auto res = ParseInt();
 		if (res == nullptr) return nullptr;
-		return std::make_unique<node::Value>(std::move(res));
+		return std::make_unique<node::Value>(node::Value(std::move(res), pos));
 	}
 	case TokenType::FLOAT:
 	{
 		auto res = ParseFloat();
 		if (res == nullptr) return nullptr;
-		return std::make_unique<node::Value>(std::move(res));
+		return std::make_unique<node::Value>(node::Value(std::move(res), pos));
 	}
 	case TokenType::STRING:
 	{
 		auto res = ParseString();
 		if (res == nullptr) return nullptr;
-		return std::make_unique<node::Value>(std::move(res));
+		return std::make_unique<node::Value>(node::Value(std::move(res), pos));
 	}
 	case TokenType::IDENTIFIER:
 	{
 		auto res = ParseVariable();
 		if (res == nullptr) return nullptr;
-		return std::make_unique<node::Value>(std::move(res));
+		return std::make_unique<node::Value>(node::Value(std::move(res), pos));
 	}
 	default:
 		return nullptr;
@@ -556,7 +573,7 @@ std::unique_ptr<node::Variable> Parser::ParseVariable()
 	std::string identifier = cur->GetIdentifier();
 	cur++;
 
-	return std::make_unique<node::Variable>(node::Variable{ identifier, pos });
+	return std::make_unique<node::Variable>(node::Variable(identifier, pos));
 }
 
 std::unique_ptr<node::Int> Parser::ParseInt()
@@ -571,7 +588,7 @@ std::unique_ptr<node::Int> Parser::ParseInt()
 	uint64_t value = cur->GetInt();
 	cur++;
 
-	return std::make_unique<node::Int>(node::Int{ value, pos });
+	return std::make_unique<node::Int>(node::Int(value, pos));
 }
 
 std::unique_ptr<node::Float> Parser::ParseFloat()
@@ -586,7 +603,7 @@ std::unique_ptr<node::Float> Parser::ParseFloat()
 	double value = cur->GetFloat();
 	cur++;
 
-	return std::make_unique<node::Float>(node::Float{ value, pos });
+	return std::make_unique<node::Float>(node::Float(value, pos));
 }
 
 std::unique_ptr<node::String> Parser::ParseString()
@@ -601,7 +618,7 @@ std::unique_ptr<node::String> Parser::ParseString()
 	std::string value = cur->GetString();
 	cur++;
 
-	return std::make_unique<node::String>(node::String{ value, pos });
+	return std::make_unique<node::String>(node::String(value, pos));
 }
 
 bool Parser::CheckSymbol(Symbol symbol, bool out_error)

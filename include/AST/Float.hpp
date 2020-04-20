@@ -7,15 +7,25 @@
 
 #include <string>
 
+#include "Node.hpp"
 #include "Token/SourcePos.hpp"
 
 namespace xylo::node
 {
-struct Float
+struct Float : Node
 {
 	double value;
 
-	SourcePos pos;
+	Float(double value, SourcePos pos)
+		: value(value), Node(pos)
+	{
+	}
+
+	std::string Node2Str() override
+	{
+		return "Float";
+	}
+
 };
 }
 

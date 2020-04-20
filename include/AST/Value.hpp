@@ -8,19 +8,36 @@
 #include <variant>
 #include <memory>
 
+#include "Node.hpp"
 #include "Int.hpp"
 #include "Float.hpp"
 #include "String.hpp"
 #include "Variable.hpp"
+#include "Token/SourcePos.hpp"
 
 namespace xylo::node
 {
-typedef std::variant<
-	std::unique_ptr<Int>,
-	std::unique_ptr<Float>,
-	std::unique_ptr<String>,
-	std::unique_ptr<Variable>
-> Value;
+struct Value : Node
+{
+	typedef std::variant<
+		std::unique_ptr<Int>,
+		std::unique_ptr<Float>,
+		std::unique_ptr<String>,
+		std::unique_ptr<Variable>
+	> ValueType;
+
+	ValueType value;
+
+	Value(ValueType value, SourcePos pos)
+		: value(std::move(value)), Node(pos)
+	{
+	}
+
+	std::string Node2Str() override
+	{
+		return "Value";
+	}
+};
 }
 
 #endif //_VALUE_HPP_

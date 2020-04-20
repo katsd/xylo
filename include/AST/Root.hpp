@@ -9,12 +9,13 @@
 #include <vector>
 #include <memory>
 
+#include "Node.hpp"
 #include "Stmt.hpp"
 #include "FuncDef.hpp"
 
 namespace xylo::node
 {
-struct Root
+struct Root : Node
 {
 	typedef std::variant<
 		std::unique_ptr<Stmt>,
@@ -22,6 +23,22 @@ struct Root
 	> RootStmt;
 
 	std::vector<RootStmt> stmts;
+
+	Root(std::vector<RootStmt> stmts, SourcePos pos)
+		: stmts(std::move(stmts)), Node(pos)
+	{
+	}
+
+	Root()
+		: stmts(std::vector<RootStmt>()), Node(SourcePos())
+	{
+
+	}
+
+	std::string Node2Str() override
+	{
+		return "Root";
+	}
 };
 }
 

@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 
+#include "Node.hpp"
 #include "Token/SourcePos.hpp"
 
 namespace xylo::node
@@ -17,11 +18,20 @@ struct Stmt;
 /*
  * { Stmt Stmt ... Stmt }
  */
-struct Block
+struct Block : Node
 {
 	std::vector<std::unique_ptr<Stmt>> stmts;
 
-	SourcePos pos;
+	Block(std::vector<std::unique_ptr<Stmt>> stmts, SourcePos pos)
+		: stmts(std::move(stmts)), Node(pos)
+	{
+	}
+
+	std::string Node2Str() override
+	{
+		return "Stmt";
+	}
+
 };
 }
 

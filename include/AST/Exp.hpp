@@ -8,6 +8,7 @@
 #include <variant>
 #include <memory>
 
+#include "Node.hpp"
 #include "Value.hpp"
 #include "BOperator.hpp"
 #include "UOperator.hpp"
@@ -15,7 +16,7 @@
 
 namespace xylo::node
 {
-struct Exp
+struct Exp : Node
 {
 	typedef std::variant<
 		std::unique_ptr<Value>,
@@ -25,6 +26,16 @@ struct Exp
 	> ExpType;
 
 	ExpType value;
+
+	Exp(ExpType value, SourcePos pos)
+		: value(std::move(value)), Node(pos)
+	{
+	}
+
+	std::string Node2Str() override
+	{
+		return "Exp";
+	}
 };
 }
 

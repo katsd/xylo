@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include "Node.hpp"
 #include "Token/SourcePos.hpp"
 
 namespace xylo::node
@@ -17,15 +18,21 @@ enum UOperatorType
 	NOT_EQ,
 };
 
-struct Exp;
-
-struct UOperator
+struct UOperator : Node
 {
 	UOperatorType type;
 
-	std::unique_ptr<Exp> value;
+	std::unique_ptr<Exp> exp;
 
-	SourcePos pos;
+	UOperator(UOperatorType type, std::unique_ptr<Exp> exp, SourcePos pos)
+		: type(type), exp(std::move(exp)), Node(pos)
+	{
+	}
+
+	std::string Node2Str() override
+	{
+		return "UOperator";
+	}
 };
 }
 
