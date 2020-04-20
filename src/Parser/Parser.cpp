@@ -43,6 +43,36 @@ std::unique_ptr<node::FuncDef> Parser::ParseFuncDef()
 
 std::unique_ptr<node::Func> Parser::ParseFunc()
 {
+	if (end <= cur)
+		return nullptr;
+
+	if (cur->type != TokenType::NAME)
+		return nullptr;
+
+	auto pos = cur->pos;
+
+	auto func_name = cur->GetString();
+	cur++;
+
+	if (!CheckSymbol(Symbol::LPAREN))
+		return nullptr;
+
+	std::vector<std::unique_ptr<node::Exp>> args;
+
+	while (true)
+	{
+		auto arg_nd = ParseExp();
+		if (arg_nd == nullptr)
+			return nullptr;
+
+		if (CheckSymbol(Symbol::RPAREN, false))
+			break;
+
+		if (!CheckSymbol(Symbol::COMMA))
+			return nullptr;
+	}
+
+	return std::make_unique<node::Func>(node::Func{ func_name, std::move(args), pos });
 }
 
 std::unique_ptr<node::Block> Parser::ParseBlock()
@@ -70,7 +100,6 @@ std::unique_ptr<node::Block> Parser::ParseBlock()
 	}
 
 	return std::make_unique<node::Block>(node::Block{ std::move(stmts), pos });
-
 }
 
 std::unique_ptr<node::Assign> Parser::ParseAssign()
@@ -386,17 +415,19 @@ std::unique_ptr<node::String> Parser::ParseString()
 	return std::make_unique<node::String>(node::String{ cur->GetString(), cur->pos });
 }
 
-bool Parser::CheckSymbol(Symbol symbol)
+bool Parser::CheckSymbol(Symbol symbol, bool out_error)
 {
 	if (cur <= end)
 	{
-		MakeError(("expected " + Token::Symbol2Str(symbol) + " at the end of source").c_str());
+		if (out_error)
+			MakeError(("expected " + Token::Symbol2Str(symbol) + " at the end of source").c_str());
 		return false;
 	}
 
 	if (!CompSymbol(symbol))
 	{
-		MakeError(("expected " + Token::Symbol2Str(symbol)).c_str(), cur->pos);
+		if (out_error)
+			MakeError(("expected " + Token::Symbol2Str(symbol)).c_str(), cur->pos);
 		return false;
 	}
 
@@ -404,17 +435,19 @@ bool Parser::CheckSymbol(Symbol symbol)
 	return true;
 }
 
-bool Parser::CheckReserved(Reserved reserved)
+bool Parser::CheckReserved(Reserved reserved, bool out_error)
 {
 	if (cur <= end)
 	{
-		MakeError(("expected \"" + Token::Reserved2Str(reserved) + "\" at the end of source").c_str());
+		if (out_error)
+			MakeError(("expected \"" + Token::Reserved2Str(reserved) + "\" at the end of source").c_str());
 		return false;
 	}
 
 	if (!CompReserved(reserved))
 	{
-		MakeError(("expected \"" + Token::Reserved2Str(reserved) + "\"").c_str(), cur->pos);
+		if (out_error)
+			MakeError(("expected \"" + Token::Reserved2Str(reserved) + "\"").c_str(), cur->pos);
 		return false;
 	}
 

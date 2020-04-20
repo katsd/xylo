@@ -5,6 +5,7 @@
 #ifndef _FUNC_HPP_
 #define _FUNC_HPP_
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -12,13 +13,15 @@
 
 namespace xylo::node
 {
-struct Exp;
 
+/*
+ * TokenType::Name(Exp, Exp, .., Exp)
+ */
 struct Func
 {
 	std::string name;
 
-	std::vector<Exp> args;
+	std::vector<std::unique_ptr<Exp>> args;
 
 	SourcePos pos;
 };

@@ -92,9 +92,9 @@ class Parser
 
 	std::unique_ptr<node::String> ParseString();
 
-	bool CheckSymbol(Symbol symbol);
+	bool CheckSymbol(Symbol symbol, bool out_error = true);
 
-	bool CheckReserved(Reserved reserved);
+	bool CheckReserved(Reserved reserved, bool out_error = true);
 
 	inline bool CompSymbol(Symbol symbol)
 	{
