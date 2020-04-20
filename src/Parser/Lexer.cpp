@@ -112,10 +112,7 @@ bool Lexer::Divide()
 				while (idx < source.size())
 				{
 					if (source[idx] == '\n')
-					{
-						idx--;
 						break;
-					}
 
 					idx++;
 					col++;
@@ -126,13 +123,12 @@ bool Lexer::Divide()
 
 			if (source.substr(idx, 2) == "/*")
 			{
-				idx += 1;
-
 				while (idx < source.size())
 				{
 					if (source[idx] == '\n')
 					{
 						line++;
+						idx++;
 						col = 0;
 						continue;
 					}
@@ -252,7 +248,10 @@ bool Lexer::Divide()
 		}
 	}
 
-	PushSourceUnit(cur, line, col - cur.size());
+	PushSourceUnit(cur, line, col
+							  - cur.
+								  size()
+	);
 
 	return true;
 }
