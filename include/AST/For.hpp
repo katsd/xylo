@@ -16,7 +16,7 @@ namespace xylo::node
 struct Stmt;
 
 /*
- * for(Variable,Exp) Stmt
+ * for Variable,Exp Stmt
  */
 struct For
 {

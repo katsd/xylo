@@ -15,7 +15,7 @@ namespace xylo::node
 struct Stmt;
 
 /*
- * repeat(Exp) Stmt
+ * repeat Exp Stmt
  */
 struct Repeat
 {
