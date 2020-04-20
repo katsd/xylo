@@ -26,6 +26,7 @@ struct Stmt
 		std::unique_ptr<Block>,
 		std::unique_ptr<Assign>,
 		std::unique_ptr<Func>,
+		std::unique_ptr<If>,
 		std::unique_ptr<While>,
 		std::unique_ptr<Repeat>,
 		std::unique_ptr<For>,

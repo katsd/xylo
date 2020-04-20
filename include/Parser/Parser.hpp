@@ -65,6 +65,8 @@ class Parser
 
 	std::unique_ptr<node::Assign> ParseAssign();
 
+	std::unique_ptr<node::If> ParseIf();
+
 	std::unique_ptr<node::Repeat> ParseRepeat();
 
 	std::unique_ptr<node::For> ParseFor();

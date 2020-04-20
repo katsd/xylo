@@ -101,6 +101,15 @@ std::unique_ptr<node::Stmt> Parser::ParseStmt()
 
 	switch (cur->GetReserved())
 	{
+	case Reserved::IF:
+	{
+		auto nd = ParseIf();
+		if (nd == nullptr)
+			return nullptr;
+		stmt = std::move(nd);
+	}
+		break;
+
 	case Reserved::WHILE:
 	{
 		auto nd = ParseWhile();
@@ -269,6 +278,37 @@ std::unique_ptr<node::Assign> Parser::ParseAssign()
 		return nullptr;
 
 	return std::make_unique<node::Assign>(node::Assign{ std::move(var_nd), std::move(exp_nd), pos });
+}
+
+std::unique_ptr<node::If> Parser::ParseIf()
+{
+	if (end < cur)
+		return nullptr;
+
+	auto pos = cur->pos;
+
+	if (!CheckReserved(Reserved::IF))
+		return nullptr;
+
+	auto exp_nd = ParseExp();
+	if (exp_nd == nullptr)
+		return nullptr;
+
+	auto stmt_nd = ParseStmt();
+	if (stmt_nd == nullptr)
+		return nullptr;
+
+	std::unique_ptr<node::Stmt> stmt_else_nd = nullptr;
+
+	if (CheckReserved(Reserved::ELSE, false))
+	{
+		cur++;
+		stmt_else_nd = ParseStmt();
+		if (stmt_else_nd == nullptr)
+			return nullptr;
+	}
+
+	return std::make_unique<node::If>(node::If{ std::move(exp_nd), std::move(stmt_nd), std::move(stmt_else_nd), pos });
 }
 
 std::unique_ptr<node::Repeat> Parser::ParseRepeat()
