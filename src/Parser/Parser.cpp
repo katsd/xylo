@@ -308,7 +308,6 @@ std::unique_ptr<node::If> Parser::ParseIf()
 
 	if (CheckReserved(Reserved::ELSE, false))
 	{
-		cur++;
 		stmt_else_nd = ParseStmt();
 		if (stmt_else_nd == nullptr)
 			return nullptr;
