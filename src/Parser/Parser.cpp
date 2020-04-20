@@ -184,6 +184,7 @@ std::unique_ptr<node::FuncDef> Parser::ParseFuncDef()
 		auto arg_nd = ParseVariable();
 		if (arg_nd == nullptr)
 			return nullptr;
+		args.emplace_back(std::move(arg_nd));
 
 		if (CheckSymbol(Symbol::RPAREN, false))
 			break;
