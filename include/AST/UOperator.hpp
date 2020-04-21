@@ -16,6 +16,7 @@ enum UOperatorType
 {
 	MINUS,
 	NOT_EQ,
+	BIN_NOT,
 };
 
 struct UOperator : Node

@@ -18,6 +18,9 @@ std::string UOperator::Node2Str(uint64_t indent)
 	case NOT_EQ:
 		res += "!";
 		break;
+	case BIN_NOT:
+		res += "~";
+		break;
 	default:
 		break;
 	}
