@@ -22,7 +22,7 @@ struct Obj
  private:
 	union ObjValue
 	{
-		uint64_t ival;
+		int64_t ival;
 
 		double dval;
 
@@ -52,10 +52,10 @@ struct Obj
  public:
 	Obj()
 	{
-		Set((uint64_t)0);
+		Set((int64_t)0);
 	}
 
-	explicit Obj(uint64_t ival)
+	explicit Obj(int64_t ival)
 	{
 		Set(ival);
 	}
@@ -70,25 +70,69 @@ struct Obj
 		Set(std::move(str));
 	}
 
-	inline void Set(uint64_t ival)
+	inline void Set(int64_t ival)
 	{
 		Release();
-		type = ObjType::INT;
+		type = INT;
 		value.ival = ival;
 	}
 
 	inline void Set(double dval)
 	{
 		Release();
-		type = ObjType::FLOAT;
+		type = FLOAT;
 		value.dval = dval;
 	}
 
 	inline void Set(std::string str)
 	{
 		Release();
-		type = ObjType::STRING;
+		type = STRING;
 		value.str = std::make_unique<std::string>(std::move(str));
+	}
+
+	inline ObjType GetType()
+	{
+		return type;
+	}
+
+	inline int64_t GetInt()
+	{
+		switch (type)
+		{
+		case INT:
+			return value.ival;
+		case FLOAT:
+			return (int64_t)value.dval;
+		case STRING:
+			return strtoll(value.str->c_str(), nullptr, 10);
+		}
+	}
+
+	inline double GetFloat()
+	{
+		switch (type)
+		{
+		case INT:
+			return (double)value.ival;
+		case FLOAT:
+			return value.dval;
+		case STRING:
+			return strtod(value.str->c_str(), nullptr);
+		}
+	}
+
+	inline std::string GetString()
+	{
+		switch (type)
+		{
+		case INT:
+			return std::to_string(value.ival);
+		case FLOAT:
+			return std::to_string(value.dval);
+		case STRING:
+			return *value.str;
+		}
 	}
 };
 }
