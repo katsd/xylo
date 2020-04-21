@@ -6,10 +6,12 @@
 #define _CODEGEN_HPP_
 
 #include <cstdint>
+#include <map>
 #include <memory>
 #include <vector>
 
 #include "AST/AST.hpp"
+#include "VM/VM.hpp"
 
 namespace xylo
 {
@@ -19,6 +21,10 @@ class CodeGen
 	const std::unique_ptr<node::Root>& ast;
 
 	std::vector<uint64_t> code;
+
+	std::vector<vm::Obj> const_table;
+
+	std::map<vm::Obj, uint64_t> const_address;
 
 	bool ConvertRoot(std::unique_ptr<node::Root> node, uint64_t scope_id);
 
@@ -52,11 +58,22 @@ class CodeGen
 
 	bool ConvertVariable(std::unique_ptr<node::Variable> node, uint64_t scope_id);
 
-	bool ConvertInt(std::unique_ptr<node::Int> node, uint64_t scope_id);
+	bool ConvertInt(std::unique_ptr<node::Int> node);
 
-	bool ConvertFloat(std::unique_ptr<node::Float> node, uint64_t scope_id);
+	bool ConvertFloat(std::unique_ptr<node::Float> node);
 
-	bool ConvertString(std::unique_ptr<node::String> node, uint64_t scope_id);
+	bool ConvertString(std::unique_ptr<node::String> node);
+
+	inline void PushConst(vm::Obj obj)
+	{
+		code.push_back(vm::Inst::PUSH_CONST);
+		code.push_back(AddConst(obj));
+	}
+
+	void InitConstTable();
+
+	// Return const address
+	uint64_t AddConst(vm::Obj& obj);
 
  public:
 	std::vector<uint64_t> GenerateCode();

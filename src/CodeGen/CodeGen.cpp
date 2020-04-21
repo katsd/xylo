@@ -8,7 +8,8 @@ using namespace xylo;
 
 std::vector<uint64_t> CodeGen::GenerateCode()
 {
-	code = std::vector<uint64_t>();
+	code.clear();
+	InitConstTable();
 
 	return code;
 }
@@ -93,17 +94,34 @@ bool CodeGen::ConvertVariable(std::unique_ptr<node::Variable> node, uint64_t sco
 
 }
 
-bool CodeGen::ConvertInt(std::unique_ptr<node::Int> node, uint64_t scope_id)
+bool CodeGen::ConvertInt(std::unique_ptr<node::Int> node)
 {
-
+	PushConst(vm::Obj{ node->value });
 }
 
-bool CodeGen::ConvertFloat(std::unique_ptr<node::Float> node, uint64_t scope_id)
+bool CodeGen::ConvertFloat(std::unique_ptr<node::Float> node)
 {
-
+	PushConst(vm::Obj{ node->value });
 }
 
-bool CodeGen::ConvertString(std::unique_ptr<node::String> node, uint64_t scope_id)
+bool CodeGen::ConvertString(std::unique_ptr<node::String> node)
 {
+	PushConst(vm::Obj{ node->value });
+}
 
+void CodeGen::InitConstTable()
+{
+	const_table.clear();
+	const_address.clear();
+}
+
+uint64_t CodeGen::AddConst(vm::Obj& obj)
+{
+	if (const_address.find(obj) == const_address.end())
+	{
+		const_address[obj] = const_table.size();
+		const_table.push_back(obj);
+	}
+
+	return const_address[obj];
 }

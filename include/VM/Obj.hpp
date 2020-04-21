@@ -55,6 +55,20 @@ struct Obj
 		Set((int64_t)0);
 	}
 
+	Obj(const Obj& obj)
+	{
+		type = obj.type;
+		switch (obj.type)
+		{
+		case INT:
+			Set(obj.value.ival);
+		case FLOAT:
+			Set(obj.value.dval);
+		case STRING:
+			Set(*obj.value.str);
+		}
+	}
+
 	explicit Obj(int64_t ival)
 	{
 		Set(ival);
@@ -132,6 +146,19 @@ struct Obj
 			return std::to_string(value.dval);
 		case STRING:
 			return *value.str;
+		}
+	}
+
+	bool operator<(const Obj& obj) const
+	{
+		switch (type)
+		{
+		case INT:
+			return std::tie(type, value.ival) < std::tie(obj.type, obj.value.ival);
+		case FLOAT:
+			return std::tie(type, value.dval) < std::tie(obj.type, obj.value.dval);
+		case STRING:
+			return std::tie(type, value.str) < std::tie(obj.type, obj.value.str);
 		}
 	}
 };
