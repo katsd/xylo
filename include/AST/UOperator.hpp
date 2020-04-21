@@ -15,7 +15,7 @@ namespace xylo::node
 enum UOperatorType
 {
 	MINUS,
-	NOT_EQ,
+	NOT,
 	BIN_NOT,
 };
 

@@ -510,7 +510,7 @@ std::unique_ptr<node::UOperator> Parser::ParseUOperator()
 		break;
 
 	case Symbol::NOT:
-		ope = node::UOperatorType::NOT_EQ;
+		ope = node::UOperatorType::NOT;
 		break;
 
 	case Symbol::BIN_NOT:

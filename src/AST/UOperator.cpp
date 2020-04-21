@@ -15,7 +15,7 @@ std::string UOperator::Node2Str(uint64_t indent)
 	case MINUS:
 		res += "-";
 		break;
-	case NOT_EQ:
+	case NOT:
 		res += "!";
 		break;
 	case BIN_NOT:
