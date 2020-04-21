@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.1)
 
 file(GLOB SOURCE ./*.cpp ./.hpp)
 
-add_executable(xylo ${SOURCE})
+#add_executable(xylo ${SOURCE})
+add_executable(xylo main.cpp xylo.hpp)
 
 target_link_libraries(xylo ast)
 target_link_libraries(xylo codegen)
