@@ -76,7 +76,67 @@ bool CodeGen::ConvertExp(std::unique_ptr<node::Exp>& node, uint64_t scope_id)
 
 bool CodeGen::ConvertBOperator(std::unique_ptr<node::BOperator>& node, uint64_t scope_id)
 {
+	if (!ConvertExp(node->right, scope_id))
+		return false;
 
+	if (!ConvertExp(node->left, scope_id))
+		return false;
+
+	switch (node->type)
+	{
+	case node::BOperatorType::OR:
+		code.push_back(vm::Inst::OR);
+		break;
+	case node::BOperatorType::AND:
+		code.push_back(vm::Inst::AND);
+		break;
+	case node::BOperatorType::BIN_OR:
+		code.push_back(vm::Inst::BIN_OR);
+		break;
+	case node::BOperatorType::BIN_XOR:
+		code.push_back(vm::Inst::BIN_XOR);
+		break;
+	case node::BOperatorType::BIN_AND:
+		code.push_back(vm::Inst::BIN_AND);
+		break;
+	case node::BOperatorType::EQUAL:
+		code.push_back(vm::Inst::EQUAL);
+		break;
+	case node::BOperatorType::NOT_EQUAL:
+		code.push_back(vm::Inst::NOT_EQUAL);
+		break;
+	case node::BOperatorType::LESS:
+		code.push_back(vm::Inst::LESS);
+		break;
+	case node::BOperatorType::LESS_EQ:
+		code.push_back(vm::Inst::LESS_EQ);
+		break;
+	case node::BOperatorType::GREATER:
+		code.push_back(vm::Inst::GREATER);
+		break;
+	case node::BOperatorType::GREATER_EQ:
+		code.push_back(vm::Inst::GREATER_EQ);
+		break;
+	case node::BOperatorType::ADD:
+		code.push_back(vm::Inst::ADD);
+		break;
+	case node::BOperatorType::SUB:
+		code.push_back(vm::Inst::SUB);
+		break;
+	case node::BOperatorType::MUL:
+		code.push_back(vm::Inst::MUL);
+		break;
+	case node::BOperatorType::DIV:
+		code.push_back(vm::Inst::DIV);
+		break;
+	case node::BOperatorType::MOD:
+		code.push_back(vm::Inst::MOD);
+		break;
+	default:
+		return false;
+	}
+
+	return true;
 }
 
 bool CodeGen::ConvertUOperator(std::unique_ptr<node::UOperator>& node, uint64_t scope_id)
