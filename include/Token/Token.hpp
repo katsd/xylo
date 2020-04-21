@@ -26,7 +26,7 @@ struct Token
 	SourcePos pos;
 
 	[[nodiscard]]
-	inline uint64_t GetInt() const
+	inline int64_t GetInt() const
 	{
 		return value.ival;
 	}

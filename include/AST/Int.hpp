@@ -15,9 +15,9 @@ namespace xylo::node
 {
 struct Int : Node
 {
-	uint64_t value;
+	int64_t value;
 
-	Int(uint64_t value, SourcePos pos)
+	Int(int64_t value, SourcePos pos)
 		: value(value), Node(pos)
 	{
 	}

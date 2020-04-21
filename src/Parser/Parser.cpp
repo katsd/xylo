@@ -586,7 +586,7 @@ std::unique_ptr<node::Int> Parser::ParseInt()
 		return nullptr;
 
 	auto pos = cur->pos;
-	uint64_t value = cur->GetInt();
+	int64_t value = cur->GetInt();
 	cur++;
 
 	return std::make_unique<node::Int>(node::Int{ value, pos });
