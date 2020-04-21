@@ -94,6 +94,8 @@ bool CodeGen::ConvertBOperator(std::unique_ptr<node::BOperator>& node, uint64_t 
 	if (!ConvertExp(node->left, scope_id))
 		return false;
 
+	code.push_back(vm::Inst::BOPE);
+
 	switch (node->type)
 	{
 	case node::BOperatorType::OR:
