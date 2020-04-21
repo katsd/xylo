@@ -9,6 +9,12 @@ using namespace xylo;
 std::vector<uint64_t> CodeGen::GenerateCode()
 {
 	code.clear();
+
+	is_scope_alive.clear();
+
+	var_cnt = 0;
+	var_info.clear();
+
 	InitConstTable();
 
 	return code;
@@ -213,9 +219,20 @@ bool CodeGen::ConvertValue(std::unique_ptr<node::Value>& node, uint64_t scope_id
 	return MakeError("unknown value", *node);
 }
 
-bool CodeGen::ConvertVariable(std::unique_ptr<node::Variable>& node, uint64_t scope_id)
+bool CodeGen::ConvertVariable(std::unique_ptr<node::Variable>& node, uint64_t scope_id, bool declarable)
 {
+	if (var_info.find(node->name) == var_info.end() || !is_scope_alive[var_info[node->name].scope_id])
+	{
+		if (!declarable)
+			return MakeError(("variable " + node->name + " is not declared").c_str(), *node);
 
+		auto address = var_cnt++;
+		var_info[node->name] = { address, scope_id };
+
+		PushObj(address);
+	}
+
+	PushObj(var_info[node->name].address);
 }
 
 bool CodeGen::ConvertInt(std::unique_ptr<node::Int>& node)

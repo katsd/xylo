@@ -18,6 +18,13 @@ namespace xylo
 class CodeGen
 {
  private:
+	struct VariableInfo
+	{
+		uint64_t address;
+
+		uint64_t scope_id;
+	};
+
 	static constexpr uint64_t global_scope_id = 0;
 
 	const std::unique_ptr<node::Root>& ast;
@@ -27,6 +34,12 @@ class CodeGen
 	std::vector<vm::Obj> const_table;
 
 	std::map<vm::Obj, uint64_t> const_address;
+
+	std::map<uint64_t, bool> is_scope_alive;
+
+	uint64_t var_cnt;
+
+	std::map<std::string, VariableInfo> var_info;
 
 	bool ConvertRoot(std::unique_ptr<node::Root>& node, uint64_t scope_id);
 
@@ -58,13 +71,19 @@ class CodeGen
 
 	bool ConvertValue(std::unique_ptr<node::Value>& node, uint64_t scope_id);
 
-	bool ConvertVariable(std::unique_ptr<node::Variable>& node, uint64_t scope_id);
+	bool ConvertVariable(std::unique_ptr<node::Variable>& node, uint64_t scope_id, bool declarable = false);
 
 	bool ConvertInt(std::unique_ptr<node::Int>& node);
 
 	bool ConvertFloat(std::unique_ptr<node::Float>& node);
 
 	bool ConvertString(std::unique_ptr<node::String>& node);
+
+	inline void PushObj(uint64_t address)
+	{
+		code.push_back(vm::Inst::PUSH_OBJ);
+		code.push_back(address);
+	}
 
 	inline void PushConst(vm::Obj obj)
 	{
