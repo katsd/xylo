@@ -86,7 +86,19 @@ bool CodeGen::ConvertUOperator(std::unique_ptr<node::UOperator> node, uint64_t s
 
 bool CodeGen::ConvertValue(std::unique_ptr<node::Value> node, uint64_t scope_id)
 {
+	if (std::holds_alternative<std::unique_ptr<node::Int>>(node->value))
+		return ConvertInt(std::move(std::get<std::unique_ptr<node::Int>>(node->value)));
 
+	if (std::holds_alternative<std::unique_ptr<node::Float>>(node->value))
+		return ConvertFloat(std::move(std::get<std::unique_ptr<node::Float>>(node->value)));
+
+	if (std::holds_alternative<std::unique_ptr<node::String>>(node->value))
+		return ConvertString(std::move(std::get<std::unique_ptr<node::String>>(node->value)));
+
+	if (std::holds_alternative<std::unique_ptr<node::Variable>>(node->value))
+		return ConvertVariable(std::move(std::get<std::unique_ptr<node::Variable>>(node->value)), scope_id);
+
+	return false;
 }
 
 bool CodeGen::ConvertVariable(std::unique_ptr<node::Variable> node, uint64_t scope_id)
@@ -97,16 +109,19 @@ bool CodeGen::ConvertVariable(std::unique_ptr<node::Variable> node, uint64_t sco
 bool CodeGen::ConvertInt(std::unique_ptr<node::Int> node)
 {
 	PushConst(vm::Obj{ node->value });
+	return true;
 }
 
 bool CodeGen::ConvertFloat(std::unique_ptr<node::Float> node)
 {
 	PushConst(vm::Obj{ node->value });
+	return true;
 }
 
 bool CodeGen::ConvertString(std::unique_ptr<node::String> node)
 {
 	PushConst(vm::Obj{ node->value });
+	return true;
 }
 
 void CodeGen::InitConstTable()
