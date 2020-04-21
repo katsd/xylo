@@ -141,6 +141,9 @@ bool CodeGen::ConvertBOperator(std::unique_ptr<node::BOperator>& node, uint64_t 
 
 bool CodeGen::ConvertUOperator(std::unique_ptr<node::UOperator>& node, uint64_t scope_id)
 {
+	if (!ConvertExp(node->exp, scope_id))
+		return false;
+
 	switch (node->type)
 	{
 	case node::UOperatorType::MINUS:
@@ -152,7 +155,7 @@ bool CodeGen::ConvertUOperator(std::unique_ptr<node::UOperator>& node, uint64_t 
 		code.push_back(vm::Inst::BIN_NOT);
 	}
 
-	return ConvertExp(node->exp, scope_id);
+	return true;
 }
 
 bool CodeGen::ConvertValue(std::unique_ptr<node::Value>& node, uint64_t scope_id)
