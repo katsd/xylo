@@ -62,10 +62,13 @@ struct Obj
 		{
 		case INT:
 			Set(obj.value.ival);
+			break;
 		case FLOAT:
 			Set(obj.value.dval);
+			break;
 		case STRING:
 			Set(*obj.value.str);
+			break;
 		}
 	}
 
