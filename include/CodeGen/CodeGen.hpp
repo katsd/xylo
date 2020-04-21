@@ -44,9 +44,13 @@ class CodeGen
 
 	bool ConvertExp(std::unique_ptr<node::Exp> node, uint64_t scope_id);
 
+	bool ConvertBOperator(std::unique_ptr<node::BOperator> node, uint64_t scope_id);
+
 	bool ConvertUOperator(std::unique_ptr<node::UOperator> node, uint64_t scope_id);
 
 	bool ConvertValue(std::unique_ptr<node::Value> node, uint64_t scope_id);
+
+	bool ConvertVariable(std::unique_ptr<node::Variable> node, uint64_t scope_id);
 
 	bool ConvertInt(std::unique_ptr<node::Int> node, uint64_t scope_id);
 

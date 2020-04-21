@@ -73,12 +73,22 @@ bool CodeGen::ConvertExp(std::unique_ptr<node::Exp> node, uint64_t scope_id)
 
 }
 
+bool CodeGen::ConvertBOperator(std::unique_ptr<node::BOperator> node, uint64_t scope_id)
+{
+
+}
+
 bool CodeGen::ConvertUOperator(std::unique_ptr<node::UOperator> node, uint64_t scope_id)
 {
 
 }
 
 bool CodeGen::ConvertValue(std::unique_ptr<node::Value> node, uint64_t scope_id)
+{
+
+}
+
+bool CodeGen::ConvertVariable(std::unique_ptr<node::Variable> node, uint64_t scope_id)
 {
 
 }
