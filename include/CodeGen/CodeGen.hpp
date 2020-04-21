@@ -77,7 +77,7 @@ class CodeGen
 	// Return const address
 	uint64_t AddConst(vm::Obj& obj);
 
-	bool MakeError(const char* msg, const node::Node& node);
+	static bool MakeError(const char* msg, const node::Node& node);
 
  public:
 	std::vector<uint64_t> GenerateCode();
