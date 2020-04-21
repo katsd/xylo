@@ -6,6 +6,7 @@
 #define _VM_HPP_
 
 #include "Inst.hpp"
+#include "Obj.hpp"
 
 namespace xylo::vm
 {
