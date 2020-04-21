@@ -83,7 +83,7 @@ bool CodeGen::ConvertExp(std::unique_ptr<node::Exp>& node, uint64_t scope_id)
 	if (std::holds_alternative<std::unique_ptr<node::Func>>(node->value))
 		return ConvertFunc(std::get<std::unique_ptr<node::Func>>(node->value), scope_id);
 
-	return false;
+	return MakeError("unknown expression", *node);
 }
 
 bool CodeGen::ConvertBOperator(std::unique_ptr<node::BOperator>& node, uint64_t scope_id)
@@ -145,7 +145,7 @@ bool CodeGen::ConvertBOperator(std::unique_ptr<node::BOperator>& node, uint64_t 
 		code.push_back(vm::Inst::MOD);
 		break;
 	default:
-		return false;
+		return MakeError("unknown operator", *node);
 	}
 
 	return true;
@@ -184,7 +184,7 @@ bool CodeGen::ConvertValue(std::unique_ptr<node::Value>& node, uint64_t scope_id
 	if (std::holds_alternative<std::unique_ptr<node::Variable>>(node->value))
 		return ConvertVariable(std::get<std::unique_ptr<node::Variable>>(node->value), scope_id);
 
-	return false;
+	return MakeError("unknown value", *node);
 }
 
 bool CodeGen::ConvertVariable(std::unique_ptr<node::Variable>& node, uint64_t scope_id)
@@ -225,4 +225,11 @@ uint64_t CodeGen::AddConst(vm::Obj& obj)
 	}
 
 	return const_address[obj];
+}
+
+bool CodeGen::MakeError(const char* msg, const node::Node& node)
+{
+	printf("%s [%llu,%llu]\n", msg, node.pos.line, node.pos.col);
+
+	return false;
 }
