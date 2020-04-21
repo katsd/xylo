@@ -18,6 +18,8 @@ namespace xylo
 class CodeGen
 {
  private:
+	static constexpr uint64_t global_scope_id = 0;
+
 	const std::unique_ptr<node::Root>& ast;
 
 	std::vector<uint64_t> code;
