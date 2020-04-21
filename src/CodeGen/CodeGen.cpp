@@ -71,7 +71,19 @@ bool CodeGen::ConvertReturn(std::unique_ptr<node::Return>& node, uint64_t scope_
 
 bool CodeGen::ConvertExp(std::unique_ptr<node::Exp>& node, uint64_t scope_id)
 {
+	if (std::holds_alternative<std::unique_ptr<node::Value>>(node->value))
+		return ConvertValue(std::get<std::unique_ptr<node::Value>>(node->value), scope_id);
 
+	if (std::holds_alternative<std::unique_ptr<node::BOperator>>(node->value))
+		return ConvertBOperator(std::get<std::unique_ptr<node::BOperator>>(node->value), scope_id);
+
+	if (std::holds_alternative<std::unique_ptr<node::UOperator>>(node->value))
+		return ConvertUOperator(std::get<std::unique_ptr<node::UOperator>>(node->value), scope_id);
+
+	if (std::holds_alternative<std::unique_ptr<node::Func>>(node->value))
+		return ConvertFunc(std::get<std::unique_ptr<node::Func>>(node->value), scope_id);
+
+	return false;
 }
 
 bool CodeGen::ConvertBOperator(std::unique_ptr<node::BOperator>& node, uint64_t scope_id)
