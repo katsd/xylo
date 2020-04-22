@@ -71,7 +71,17 @@ bool CodeGen::ConvertBlock(std::unique_ptr<node::Block>& node, uint64_t scope_id
 
 bool CodeGen::ConvertAssign(std::unique_ptr<node::Assign>& node, uint64_t scope_id)
 {
+	auto var = GetVariableAddress(node->var, scope_id, true);
+	if (!std::get<0>(var))
+		return false;
+	auto var_address = std::get<1>(var);
 
+	if (!ConvertExp(node->exp, scope_id))
+		return false;
+
+	SetObj(var_address);
+
+	return true;
 }
 
 bool CodeGen::ConvertIf(std::unique_ptr<node::If>& node, uint64_t scope_id)
