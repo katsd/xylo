@@ -110,7 +110,17 @@ bool CodeGen::ConvertFunc(std::unique_ptr<node::Func>& node, uint64_t scope_id)
 
 bool CodeGen::ConvertBlock(std::unique_ptr<node::Block>& node, uint64_t scope_id)
 {
+	scope_id = GetNewScope();
 
+	for (auto& stmt : node->stmts)
+	{
+		if (!ConvertStmt(stmt, scope_id))
+			return false;
+	}
+
+	KillScope(scope_id);
+
+	return true;
 }
 
 bool CodeGen::ConvertAssign(std::unique_ptr<node::Assign>& node, uint64_t scope_id)
