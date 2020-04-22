@@ -117,7 +117,31 @@ bool CodeGen::ConvertIf(std::unique_ptr<node::If>& node, uint64_t scope_id)
 
 bool CodeGen::ConvertRepeat(std::unique_ptr<node::Repeat>& node, uint64_t scope_id)
 {
+	if (!ConvertExp(node->time, scope_id))
+		return false;
 
+	auto cnt_var = GetTempVariable();
+
+	SetObj(cnt_var);
+
+	auto return_address = code.size();
+
+	Push0();
+	PushObj(cnt_var);
+	PushBOperator(vm::Inst::LESS_EQ);
+	JumpIf(0);
+
+	auto& break_address = code[code.size() - 1];
+
+	if (!ConvertStmt(node->stmt, scope_id))
+		return false;
+
+	DecrementObj(cnt_var);
+	Jump(return_address);
+
+	break_address = code.size();
+
+	return true;
 }
 
 bool CodeGen::ConvertFor(std::unique_ptr<node::For>& node, uint64_t scope_id)
