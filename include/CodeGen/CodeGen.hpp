@@ -45,7 +45,7 @@ class CodeGen
 
 	bool ConvertRoot(std::unique_ptr<node::Root>& node, uint64_t scope_id);
 
-	bool ConvertStmt(std::unique_ptr<node::Stmt>& node, uint64_t scope_id);
+	bool ConvertStmt(std::unique_ptr<node::Stmt>& node, uint64_t scope_id, bool is_new_scope = false);
 
 	bool ConvertFuncDef(std::unique_ptr<node::FuncDef>& node, uint64_t scope_id);
 

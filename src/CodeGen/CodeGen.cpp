@@ -25,33 +25,53 @@ bool CodeGen::ConvertRoot(std::unique_ptr<node::Root>& node, uint64_t scope_id)
 
 }
 
-bool CodeGen::ConvertStmt(std::unique_ptr<node::Stmt>& node, uint64_t scope_id)
+bool CodeGen::ConvertStmt(std::unique_ptr<node::Stmt>& node, uint64_t scope_id, bool is_new_scope)
 {
+	if (is_new_scope)
+		scope_id = GetNewScope();
+
+	bool res;
+
 	if (std::holds_alternative<std::unique_ptr<node::Block>>(node->stmt))
-		return ConvertBlock(std::get<std::unique_ptr<node::Block>>(node->stmt), scope_id);
+	{
+		res = ConvertBlock(std::get<std::unique_ptr<node::Block>>(node->stmt), scope_id);
+	}
+	else if (std::holds_alternative<std::unique_ptr<node::Assign>>(node->stmt))
+	{
+		res = ConvertAssign(std::get<std::unique_ptr<node::Assign>>(node->stmt), scope_id);
+	}
+	else if (std::holds_alternative<std::unique_ptr<node::Func>>(node->stmt))
+	{
+		res = ConvertFunc(std::get<std::unique_ptr<node::Func>>(node->stmt), scope_id);
+	}
+	else if (std::holds_alternative<std::unique_ptr<node::If>>(node->stmt))
+	{
+		res = ConvertIf(std::get<std::unique_ptr<node::If>>(node->stmt), scope_id);
+	}
+	else if (std::holds_alternative<std::unique_ptr<node::While>>(node->stmt))
+	{
+		res = ConvertWhile(std::get<std::unique_ptr<node::While>>(node->stmt), scope_id);
+	}
+	else if (std::holds_alternative<std::unique_ptr<node::Repeat>>(node->stmt))
+	{
+		res = ConvertRepeat(std::get<std::unique_ptr<node::Repeat>>(node->stmt), scope_id);
+	}
+	else if (std::holds_alternative<std::unique_ptr<node::For>>(node->stmt))
+	{
+		res = ConvertFor(std::get<std::unique_ptr<node::For>>(node->stmt), scope_id);
+	}
+	else if (std::holds_alternative<std::unique_ptr<node::Return>>(node->stmt))
+	{
+		res = ConvertReturn(std::get<std::unique_ptr<node::Return>>(node->stmt), scope_id);
+	}
+	else
+	{
+		return MakeError("unknown statement", *node);
+	}
 
-	if (std::holds_alternative<std::unique_ptr<node::Assign>>(node->stmt))
-		return ConvertAssign(std::get<std::unique_ptr<node::Assign>>(node->stmt), scope_id);
-
-	if (std::holds_alternative<std::unique_ptr<node::Func>>(node->stmt))
-		return ConvertFunc(std::get<std::unique_ptr<node::Func>>(node->stmt), scope_id);
-
-	if (std::holds_alternative<std::unique_ptr<node::If>>(node->stmt))
-		return ConvertIf(std::get<std::unique_ptr<node::If>>(node->stmt), scope_id);
-
-	if (std::holds_alternative<std::unique_ptr<node::While>>(node->stmt))
-		return ConvertWhile(std::get<std::unique_ptr<node::While>>(node->stmt), scope_id);
-
-	if (std::holds_alternative<std::unique_ptr<node::Repeat>>(node->stmt))
-		return ConvertRepeat(std::get<std::unique_ptr<node::Repeat>>(node->stmt), scope_id);
-
-	if (std::holds_alternative<std::unique_ptr<node::For>>(node->stmt))
-		return ConvertFor(std::get<std::unique_ptr<node::For>>(node->stmt), scope_id);
-
-	if (std::holds_alternative<std::unique_ptr<node::Return>>(node->stmt))
-		return ConvertReturn(std::get<std::unique_ptr<node::Return>>(node->stmt), scope_id);
-
-	return MakeError("unknown statement", *node);
+	if (is_new_scope)
+		KillScope(scope_id);
+	return res;
 }
 
 bool CodeGen::ConvertFuncDef(std::unique_ptr<node::FuncDef>& node, uint64_t scope_id)
@@ -204,8 +224,10 @@ bool CodeGen::ConvertWhile(std::unique_ptr<node::While>& node, uint64_t scope_id
 
 	auto& while_end_address = code[code.size() - 1];
 
-	if (!ConvertStmt(node->stmt, scope_id))
-		return false;
+	{
+		if (!ConvertStmt(node->stmt, GetNewScope()))
+			return false;
+	}
 
 	Jump(return_address);
 
