@@ -79,6 +79,9 @@ class CodeGen
 
 	bool ConvertString(std::unique_ptr<node::String>& node);
 
+	std::tuple<bool, uint64_t>
+	GetVariableAddress(const std::unique_ptr<node::Variable>& node, uint64_t scope_id, bool declarable);
+
 	uint64_t GetTempVariable();
 
 	void ReleaseTempVariable(uint64_t address);

@@ -257,18 +257,12 @@ bool CodeGen::ConvertValue(std::unique_ptr<node::Value>& node, uint64_t scope_id
 
 bool CodeGen::ConvertVariable(std::unique_ptr<node::Variable>& node, uint64_t scope_id, bool declarable)
 {
-	if (var_info.find(node->name) == var_info.end() || !is_scope_alive[var_info[node->name].scope_id])
-	{
-		if (!declarable)
-			return MakeError(("variable " + node->name + " is not declared").c_str(), *node);
+	auto var_address = GetVariableAddress(node, scope_id, declarable);
+	if (!std::get<0>(var_address))
+		return false;
 
-		auto address = var_cnt++;
-		var_info[node->name] = { address, scope_id };
-
-		PushObj(address);
-	}
-
-	PushObj(var_info[node->name].address);
+	PushObj(std::get<1>(var_address));
+	return true;
 }
 
 bool CodeGen::ConvertInt(std::unique_ptr<node::Int>& node)
@@ -293,6 +287,23 @@ void CodeGen::InitConstTable()
 {
 	const_table.clear();
 	const_address.clear();
+}
+
+std::tuple<bool, uint64_t>
+CodeGen::GetVariableAddress(const std::unique_ptr<node::Variable>& node, uint64_t scope_id, bool declarable)
+{
+	if (var_info.find(node->name) == var_info.end() || !is_scope_alive[var_info[node->name].scope_id])
+	{
+		if (!declarable)
+			return std::make_tuple(MakeError(("variable " + node->name + " is not declared").c_str(), *node), 0);
+
+		auto address = var_cnt++;
+		var_info[node->name] = { address, scope_id };
+
+		return std::make_tuple(true, address);
+	}
+
+	return std::make_tuple(true, var_info[node->name].address);
 }
 
 uint64_t CodeGen::GetTempVariable()
