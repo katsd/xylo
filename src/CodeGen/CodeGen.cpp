@@ -184,7 +184,7 @@ bool CodeGen::ConvertFunc(std::unique_ptr<node::Func>& node, uint64_t scope_id)
 	code.push_back(var_cnt);
 	code.push_back(vm::Inst::PUSH_START);
 
-	for (uint64_t i = node->args.size() - 1; i >= 0; i--)
+	for (int64_t i = node->args.size() - 1; i >= 0; i--)
 	{
 		if (!ConvertExp(node->args[i], scope_id))
 			return false;
