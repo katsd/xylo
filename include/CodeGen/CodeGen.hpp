@@ -35,6 +35,8 @@ class CodeGen
 
 	std::map<vm::Obj, uint64_t> const_address;
 
+	uint64_t scope_cnt;
+
 	std::map<uint64_t, bool> is_scope_alive;
 
 	uint64_t var_cnt;
@@ -160,6 +162,12 @@ class CodeGen
 
 	// Return const address
 	uint64_t AddConst(vm::Obj& obj);
+
+	void InitScope();
+
+	uint64_t GetNewScope();
+
+	void KillScope(uint64_t scope_id);
 
 	static bool MakeError(const char* msg, const node::Node& node);
 

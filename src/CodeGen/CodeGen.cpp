@@ -412,6 +412,24 @@ uint64_t CodeGen::AddConst(vm::Obj& obj)
 	return const_address[obj];
 }
 
+void CodeGen::InitScope()
+{
+	scope_cnt = 1;
+	is_scope_alive.clear();
+	is_scope_alive[global_scope_id] = true;
+}
+
+uint64_t CodeGen::GetNewScope()
+{
+	is_scope_alive[scope_cnt] = true;
+	return scope_cnt++;
+}
+
+void CodeGen::KillScope(uint64_t scope_id)
+{
+	is_scope_alive[scope_id] = false;
+}
+
 bool CodeGen::MakeError(const char* msg, const node::Node& node)
 {
 	printf("%s [%llu,%llu]\n", msg, node.pos.line, node.pos.col);
