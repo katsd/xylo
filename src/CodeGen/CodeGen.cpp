@@ -146,16 +146,24 @@ bool CodeGen::ConvertRepeat(std::unique_ptr<node::Repeat>& node, uint64_t scope_
 
 bool CodeGen::ConvertFor(std::unique_ptr<node::For>& node, uint64_t scope_id)
 {
-	auto cnt_var = GetTempVariable();
-
-	SetObj0(cnt_var);
-
-	auto return_address = code.size();
-
 	if (!ConvertExp(node->time, scope_id))
 		return false;
 
-	PushObj(cnt_var);
+	auto time_var = GetTempVariable();
+
+	SetObj(time_var);
+
+	auto cnt_var = GetVariableAddress(node->var, scope_id, true);
+	if (!std::get<0>(cnt_var))
+		return false;
+	auto cnt_var_address = std::get<1>(cnt_var);
+
+	SetObj0(cnt_var_address);
+
+	auto return_address = code.size();
+
+	PushObj(time_var);
+	PushObj(cnt_var_address);
 	PushBOperator(vm::Inst::GREATER_EQ);
 
 	auto& break_address = code[code.size() - 1];
@@ -163,12 +171,12 @@ bool CodeGen::ConvertFor(std::unique_ptr<node::For>& node, uint64_t scope_id)
 	if (!ConvertStmt(node->stmt, scope_id))
 		return false;
 
-	IncrementObj(cnt_var);
+	IncrementObj(cnt_var_address);
 	Jump(return_address);
 
 	break_address = code.size();
 
-	ReleaseTempVariable(cnt_var);
+	ReleaseTempVariable(time_var);
 
 	return true;
 }
