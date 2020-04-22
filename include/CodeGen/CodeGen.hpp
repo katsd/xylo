@@ -114,6 +114,30 @@ class CodeGen
 		code.push_back(address);
 	}
 
+	inline void SetObj0(uint64_t address)
+	{
+		code.push_back(vm::Inst::SET_OBJ_ZERO);
+		code.push_back(address);
+	}
+
+	inline void SetObj1(uint64_t address)
+	{
+		code.push_back(vm::Inst::SET_OBJ_ONE);
+		code.push_back(address);
+	}
+
+	inline void IncrementObj(uint64_t address)
+	{
+		code.push_back(vm::Inst::ICR_OBJ);
+		code.push_back(address);
+	}
+
+	inline void DecrementObj(uint64_t address)
+	{
+		code.push_back(vm::Inst::DCR_OBJ);
+		code.push_back(address);
+	}
+
 	inline void Jump(uint64_t address)
 	{
 		code.push_back(vm::Inst::JUMP);

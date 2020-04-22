@@ -39,6 +39,18 @@ enum Inst
 	// Set global obj at $0 to A
 	SET_GLOBAL_OBJ,
 
+	// Set obj at %0 to 0
+	SET_OBJ_ZERO,
+
+	// Set obj at %0 to 1
+	SET_OBJ_ONE,
+
+	// obj at $0 += 1
+	ICR_OBJ,
+
+	// obj at $0 -=1
+	DCR_OBJ,
+
 	// Pop stack while A != START
 	POP_TO_START,
 
