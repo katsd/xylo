@@ -41,12 +41,14 @@ class CodeGen
 	{
 		uint64_t func_id;
 
+		uint64_t start_address;
+
 		bool is_native;
 
 		uint64_t native_func_id;
 	};
 
-	const std::unique_ptr<node::Root>& ast;
+	std::unique_ptr<node::Root>& ast;
 
 	std::vector<uint64_t> code;
 
@@ -132,6 +134,8 @@ class CodeGen
 	bool ConvertFloat(std::unique_ptr<node::Float>& node);
 
 	bool ConvertString(std::unique_ptr<node::String>& node);
+
+	bool DefineFunc(std::unique_ptr<node::FuncDef>& node);
 
 	std::tuple<bool, uint64_t>
 	GetVariableAddress(const std::unique_ptr<node::Variable>& node, uint64_t scope_id, bool declarable);
@@ -236,7 +240,7 @@ class CodeGen
  public:
 	std::vector<uint64_t> GenerateCode();
 
-	CodeGen(const std::unique_ptr<node::Root>& ast)
+	CodeGen(std::unique_ptr<node::Root>& ast)
 		: ast(ast)
 	{
 	}

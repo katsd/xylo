@@ -92,6 +92,8 @@ enum Inst
 
 	PUSH_RETURN_VALUE,
 
+	END,
+
 	// ##################
 	// Binary Operators
 	// Push A $0 B

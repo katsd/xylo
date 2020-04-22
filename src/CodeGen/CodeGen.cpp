@@ -15,12 +15,52 @@ std::vector<uint64_t> CodeGen::GenerateCode()
 	InitScope();
 	InitFunc();
 
+	if (!ConvertRoot(ast, global_scope_id))
+	{
+		printf("failed to generate code\n");
+		return code;
+	}
+
 	return code;
 }
 
 bool CodeGen::ConvertRoot(std::unique_ptr<node::Root>& node, uint64_t scope_id)
 {
+	for (auto& stmt : node->stmts)
+	{
+		if (!std::holds_alternative<std::unique_ptr<node::FuncDef>>(stmt))
+			continue;
 
+		if (!DefineFunc(std::get<std::unique_ptr<node::FuncDef>>(stmt)))
+			return false;
+	}
+
+	for (auto& stmt : node->stmts)
+	{
+		if (!std::holds_alternative<std::unique_ptr<node::Stmt>>(stmt))
+			continue;
+
+		if (!ConvertStmt(std::get<std::unique_ptr<node::Stmt>>(stmt), scope_id))
+			return false;
+	}
+
+	code.push_back(vm::Inst::END);
+
+	for (auto& stmt : node->stmts)
+	{
+		if (!std::holds_alternative<std::unique_ptr<node::FuncDef>>(stmt))
+			continue;
+
+		if (!ConvertFuncDef(std::get<std::unique_ptr<node::FuncDef>>(stmt), scope_id))
+			return false;
+	}
+
+	for (auto i : unassigned_func_id)
+	{
+		code[i.first] = func_info[func_table[i.second]].start_address;
+	}
+
+	return true;
 }
 
 bool CodeGen::ConvertStmt(std::unique_ptr<node::Stmt>& node, uint64_t scope_id, bool is_new_scope)
@@ -72,7 +112,7 @@ bool CodeGen::ConvertStmt(std::unique_ptr<node::Stmt>& node, uint64_t scope_id, 
 	return res;
 }
 
-bool CodeGen::ConvertFuncDef(std::unique_ptr<node::FuncDef>& node, uint64_t scope_id)
+bool CodeGen::DefineFunc(std::unique_ptr<node::FuncDef>& node)
 {
 	auto func_name = node->name;
 	auto arg_num = node->args.size();
@@ -85,7 +125,15 @@ bool CodeGen::ConvertFuncDef(std::unique_ptr<node::FuncDef>& node, uint64_t scop
 	}
 
 	func_table.push_back(func);
-	func_info[func] = FuncInfo{ func_cnt++, false, 0 };
+	func_info[func] = FuncInfo{ func_cnt++, 0, false, 0 };
+
+	return true;
+}
+
+bool CodeGen::ConvertFuncDef(std::unique_ptr<node::FuncDef>& node, uint64_t scope_id)
+{
+	Func func{ node->name, node->args.size() };
+	func_info[func].start_address = code.size();
 
 	scope_id = GetNewScope();
 
