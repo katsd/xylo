@@ -159,6 +159,15 @@ bool CodeGen::ConvertFunc(std::unique_ptr<node::Func>& node, uint64_t scope_id)
 	auto func_name = node->name;
 	auto arg_num = node->args.size();
 
+	if (func_name == "print" && arg_num == 1)
+	{
+		if (!ConvertExp(node->args[0], scope_id))
+			return false;
+
+		code.push_back(vm::Inst::OUT);
+		return true;
+	}
+
 	if (func_info.find(Func{ func_name, arg_num }) == func_info.end())
 	{
 		return MakeError(("function " + func_name + "with " + std::to_string(arg_num) + "arguments is not defined")
