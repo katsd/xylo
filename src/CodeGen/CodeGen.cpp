@@ -124,8 +124,7 @@ bool CodeGen::ConvertFor(std::unique_ptr<node::For>& node, uint64_t scope_id)
 {
 	auto cnt_var = GetTempVariable();
 
-	Push0();
-	SetObj(cnt_var);
+	SetObj0(cnt_var);
 
 	auto return_address = code.size();
 
@@ -140,9 +139,7 @@ bool CodeGen::ConvertFor(std::unique_ptr<node::For>& node, uint64_t scope_id)
 	if (!ConvertStmt(node->stmt, scope_id))
 		return false;
 
-	Push1();
-	PushObj(cnt_var);
-	PushBOperator(vm::Inst::ADD);
+	IncrementObj(cnt_var);
 	Jump(return_address);
 
 	break_address = code.size();
