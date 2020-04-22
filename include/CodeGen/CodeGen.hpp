@@ -25,23 +25,75 @@ class CodeGen
 		uint64_t scope_id;
 	};
 
-	static constexpr uint64_t global_scope_id = 0;
+	struct Func
+	{
+		std::string name;
+
+		uint64_t arg_num;
+
+		bool operator<(const Func& func) const
+		{
+			return std::tie(name, arg_num) < std::tie(func.name, func.arg_num);
+		}
+	};
+
+	struct FuncInfo
+	{
+		uint64_t func_id;
+
+		bool is_native;
+
+		uint64_t native_func_id;
+	};
 
 	const std::unique_ptr<node::Root>& ast;
 
 	std::vector<uint64_t> code;
 
+	// #########################################
+	// #########################################
+
+	// const
+
 	std::vector<vm::Obj> const_table;
 
 	std::map<vm::Obj, uint64_t> const_address;
+
+	// #########################################
+	// #########################################
+
+	// scope
+
+	static constexpr uint64_t global_scope_id = 0;
 
 	uint64_t scope_cnt;
 
 	std::map<uint64_t, bool> is_scope_alive;
 
+	// #########################################
+	// #########################################
+
+	// variable
+
 	uint64_t var_cnt;
 
 	std::map<std::string, VariableInfo> var_info;
+
+	// #########################################
+	// #########################################
+
+	// func
+	uint64_t func_cnt;
+
+	std::vector<Func> func_table;
+
+	std::map<Func, FuncInfo> func_info;
+
+	// code address, func id
+	std::map<uint64_t, uint64_t> unassigned_func_id;
+
+	// #########################################
+	// #########################################
 
 	bool ConvertRoot(std::unique_ptr<node::Root>& node, uint64_t scope_id);
 
@@ -168,6 +220,10 @@ class CodeGen
 	uint64_t GetNewScope();
 
 	void KillScope(uint64_t scope_id);
+
+	void InitFunc();
+
+	void InitVariable();
 
 	static bool MakeError(const char* msg, const node::Node& node);
 

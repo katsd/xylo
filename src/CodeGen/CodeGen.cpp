@@ -10,12 +10,10 @@ std::vector<uint64_t> CodeGen::GenerateCode()
 {
 	code.clear();
 
-	is_scope_alive.clear();
-
-	var_cnt = 0;
-	var_info.clear();
-
+	InitVariable();
 	InitConstTable();
+	InitScope();
+	InitFunc();
 
 	return code;
 }
@@ -81,7 +79,33 @@ bool CodeGen::ConvertFuncDef(std::unique_ptr<node::FuncDef>& node, uint64_t scop
 
 bool CodeGen::ConvertFunc(std::unique_ptr<node::Func>& node, uint64_t scope_id)
 {
+	auto func_name = node->name;
+	auto arg_num = node->args.size();
 
+	if (func_info.find(Func{ func_name, arg_num }) == func_info.end())
+	{
+		return MakeError(("function " + func_name + "with " + std::to_string(arg_num) + "arguments is not defined")
+			.c_str(), *node);
+	}
+
+	code.push_back(vm::Inst::ICR_FUNC_LEVEL);
+	code.push_back(vm::Inst::PUSH_OBJ_IDX_OFFSET);
+	code.push_back(vm::Inst::ADD_OBJ_IDX_OFFSET);
+	code.push_back(var_cnt);
+	code.push_back(vm::Inst::PUSH_START);
+
+	for (uint64_t i = node->args.size() - 1; i >= 0; i--)
+	{
+		if (!ConvertExp(node->args[i], scope_id))
+			return false;
+	}
+
+	Jump(0);
+
+	auto func_id = func_info[Func{ func_name, arg_num }].func_id;
+	unassigned_func_id[code.size() - 1] = func_id;
+
+	return true;
 }
 
 bool CodeGen::ConvertBlock(std::unique_ptr<node::Block>& node, uint64_t scope_id)
@@ -448,6 +472,18 @@ uint64_t CodeGen::GetNewScope()
 void CodeGen::KillScope(uint64_t scope_id)
 {
 	is_scope_alive[scope_id] = false;
+}
+
+void CodeGen::InitFunc()
+{
+	func_cnt = 0;
+	func_info.clear();
+}
+
+void CodeGen::InitVariable()
+{
+	var_cnt = 0;
+	var_info.clear();
 }
 
 bool CodeGen::MakeError(const char* msg, const node::Node& node)
