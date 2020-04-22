@@ -79,6 +79,10 @@ class CodeGen
 
 	bool ConvertString(std::unique_ptr<node::String>& node);
 
+	uint64_t GetTempVariable();
+
+	void ReleaseTempVariable(uint64_t address);
+
 	inline void PushObj(uint64_t address)
 	{
 		code.push_back(vm::Inst::PUSH_OBJ);
@@ -89,6 +93,18 @@ class CodeGen
 	{
 		code.push_back(vm::Inst::PUSH_CONST);
 		code.push_back(AddConst(obj));
+	}
+
+	inline void SetObj(uint64_t address)
+	{
+		code.push_back(vm::Inst::SET_OBJ);
+		code.push_back(address);
+	}
+
+	inline void JumpIf(uint64_t address)
+	{
+		code.push_back(vm::Inst::JUMP_IF);
+		code.push_back(address);
 	}
 
 	void InitConstTable();

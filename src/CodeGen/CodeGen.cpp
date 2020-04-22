@@ -76,7 +76,43 @@ bool CodeGen::ConvertAssign(std::unique_ptr<node::Assign>& node, uint64_t scope_
 
 bool CodeGen::ConvertIf(std::unique_ptr<node::If>& node, uint64_t scope_id)
 {
+	auto condition_address = GetTempVariable();
 
+	if (!ConvertExp(node->exp, scope_id))
+		return false;
+
+	code.push_back(vm::Inst::NOT);
+	SetObj(condition_address);
+	PushObj(condition_address);
+	JumpIf(0);
+
+	auto& else_start_address = code[code.size() - 1];
+
+	if (!ConvertStmt(node->stmt, scope_id + 1))
+		return false;
+
+	if (node->stmt_else != nullptr)
+	{
+		PushObj(condition_address);
+		JumpIf(0);
+
+		auto& if_end_address = code[code.size() - 1];
+
+		else_start_address = code.size();
+
+		if (!ConvertStmt(node->stmt_else, scope_id + 1))
+			return false;
+
+		if_end_address = code.size();
+	}
+	else
+	{
+		else_start_address = code.size();
+	}
+
+	ReleaseTempVariable(condition_address);
+
+	return true;
 }
 
 bool CodeGen::ConvertRepeat(std::unique_ptr<node::Repeat>& node, uint64_t scope_id)
@@ -257,6 +293,17 @@ void CodeGen::InitConstTable()
 {
 	const_table.clear();
 	const_address.clear();
+}
+
+uint64_t CodeGen::GetTempVariable()
+{
+	return var_cnt++;
+}
+
+void CodeGen::ReleaseTempVariable(uint64_t address)
+{
+	if (var_cnt == address)
+		var_cnt--;
 }
 
 uint64_t CodeGen::AddConst(vm::Obj& obj)
