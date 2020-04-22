@@ -118,7 +118,7 @@ bool CodeGen::ConvertIf(std::unique_ptr<node::If>& node, uint64_t scope_id)
 
 	auto& else_start_address = code[code.size() - 1];
 
-	if (!ConvertStmt(node->stmt, scope_id + 1))
+	if (!ConvertStmt(node->stmt, 0, true))
 		return false;
 
 	if (node->stmt_else != nullptr)
@@ -130,7 +130,7 @@ bool CodeGen::ConvertIf(std::unique_ptr<node::If>& node, uint64_t scope_id)
 
 		else_start_address = code.size();
 
-		if (!ConvertStmt(node->stmt_else, scope_id + 1))
+		if (!ConvertStmt(node->stmt_else, 0, true))
 			return false;
 
 		if_end_address = code.size();
@@ -163,7 +163,7 @@ bool CodeGen::ConvertRepeat(std::unique_ptr<node::Repeat>& node, uint64_t scope_
 
 	auto& break_address = code[code.size() - 1];
 
-	if (!ConvertStmt(node->stmt, scope_id))
+	if (!ConvertStmt(node->stmt, 0, true))
 		return false;
 
 	DecrementObj(cnt_var);
@@ -198,7 +198,7 @@ bool CodeGen::ConvertFor(std::unique_ptr<node::For>& node, uint64_t scope_id)
 
 	auto& break_address = code[code.size() - 1];
 
-	if (!ConvertStmt(node->stmt, scope_id))
+	if (!ConvertStmt(node->stmt, 0, true))
 		return false;
 
 	IncrementObj(cnt_var_address);
@@ -224,10 +224,8 @@ bool CodeGen::ConvertWhile(std::unique_ptr<node::While>& node, uint64_t scope_id
 
 	auto& while_end_address = code[code.size() - 1];
 
-	{
-		if (!ConvertStmt(node->stmt, GetNewScope()))
-			return false;
-	}
+	if (!ConvertStmt(node->stmt, 0, true))
+		return false;
 
 	Jump(return_address);
 
