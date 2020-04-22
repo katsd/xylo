@@ -122,7 +122,34 @@ bool CodeGen::ConvertRepeat(std::unique_ptr<node::Repeat>& node, uint64_t scope_
 
 bool CodeGen::ConvertFor(std::unique_ptr<node::For>& node, uint64_t scope_id)
 {
+	auto cnt_var = GetTempVariable();
 
+	Push0();
+	SetObj(cnt_var);
+
+	auto return_address = code.size();
+
+	if (!ConvertExp(node->time, scope_id))
+		return false;
+
+	PushObj(cnt_var);
+	PushBOperator(vm::Inst::GREATER_EQ);
+
+	auto& break_address = code[code.size() - 1];
+
+	if (!ConvertStmt(node->stmt, scope_id))
+		return false;
+
+	Push1();
+	PushObj(cnt_var);
+	PushBOperator(vm::Inst::ADD);
+	Jump(return_address);
+
+	break_address = code.size();
+
+	ReleaseTempVariable(cnt_var);
+
+	return true;
 }
 
 bool CodeGen::ConvertWhile(std::unique_ptr<node::While>& node, uint64_t scope_id)

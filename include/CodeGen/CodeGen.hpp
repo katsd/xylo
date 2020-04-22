@@ -98,9 +98,25 @@ class CodeGen
 		code.push_back(AddConst(obj));
 	}
 
+	inline void Push0()
+	{
+		code.push_back(vm::Inst::PUSH_ZERO);
+	}
+
+	inline void Push1()
+	{
+		code.push_back(vm::Inst::PUSH_ONE);
+	}
+
 	inline void SetObj(uint64_t address)
 	{
 		code.push_back(vm::Inst::SET_OBJ);
+		code.push_back(address);
+	}
+
+	inline void Jump(uint64_t address)
+	{
+		code.push_back(vm::Inst::JUMP);
 		code.push_back(address);
 	}
 
@@ -108,6 +124,12 @@ class CodeGen
 	{
 		code.push_back(vm::Inst::JUMP_IF);
 		code.push_back(address);
+	}
+
+	inline void PushBOperator(vm::Inst ope)
+	{
+		code.push_back(vm::Inst::BOPE);
+		code.push_back(ope);
 	}
 
 	void InitConstTable();
