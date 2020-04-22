@@ -154,6 +154,8 @@ bool CodeGen::ConvertFor(std::unique_ptr<node::For>& node, uint64_t scope_id)
 
 bool CodeGen::ConvertWhile(std::unique_ptr<node::While>& node, uint64_t scope_id)
 {
+	auto return_address = code.size();
+
 	if (!ConvertExp(node->exp, scope_id))
 		return false;
 
@@ -165,6 +167,8 @@ bool CodeGen::ConvertWhile(std::unique_ptr<node::While>& node, uint64_t scope_id
 
 	if (!ConvertStmt(node->stmt, scope_id))
 		return false;
+
+	Jump(return_address);
 
 	while_end_address = code.size();
 
