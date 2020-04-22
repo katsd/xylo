@@ -140,6 +140,12 @@ class CodeGen
 
 	void ReleaseTempVariable(uint64_t address);
 
+	inline void Push(uint64_t value)
+	{
+		code.push_back(vm::Inst::PUSH);
+		code.push_back(value);
+	}
+
 	inline void PushObj(uint64_t address)
 	{
 		code.push_back(vm::Inst::PUSH_OBJ);

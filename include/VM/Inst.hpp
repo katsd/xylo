@@ -88,6 +88,10 @@ enum Inst
 	// func_level--
 	DCR_FUNC_LEVEL,
 
+	PUT_RETURN_VALUE,
+
+	PUSH_RETURN_VALUE,
+
 	// ##################
 	// Binary Operators
 	// Push A $0 B

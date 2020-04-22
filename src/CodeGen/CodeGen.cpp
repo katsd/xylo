@@ -89,6 +89,10 @@ bool CodeGen::ConvertFunc(std::unique_ptr<node::Func>& node, uint64_t scope_id)
 	}
 
 	code.push_back(vm::Inst::ICR_FUNC_LEVEL);
+
+	Push(0);
+	auto& return_address = code[code.size() - 1];
+
 	code.push_back(vm::Inst::PUSH_OBJ_IDX_OFFSET);
 	code.push_back(vm::Inst::ADD_OBJ_IDX_OFFSET);
 	code.push_back(var_cnt);
@@ -101,6 +105,8 @@ bool CodeGen::ConvertFunc(std::unique_ptr<node::Func>& node, uint64_t scope_id)
 	}
 
 	Jump(0);
+
+	return_address = code.size();
 
 	auto func_id = func_info[Func{ func_name, arg_num }].func_id;
 	unassigned_func_id[code.size() - 1] = func_id;
@@ -270,7 +276,17 @@ bool CodeGen::ConvertWhile(std::unique_ptr<node::While>& node, uint64_t scope_id
 
 bool CodeGen::ConvertReturn(std::unique_ptr<node::Return>& node, uint64_t scope_id)
 {
+	if (!ConvertExp(node->exp, scope_id))
+		return false;
 
+	code.push_back(vm::Inst::PUT_RETURN_VALUE);
+	code.push_back(vm::Inst::POP_TO_START);
+	code.push_back(vm::Inst::SET_OBJ_IDX_OFFSET);
+	code.push_back(vm::Inst::JUMP_TO_STACK_VALUE);
+	code.push_back(vm::Inst::DCR_FUNC_LEVEL);
+	code.push_back(vm::Inst::PUSH_RETURN_VALUE);
+
+	return true;
 }
 
 bool CodeGen::ConvertExp(std::unique_ptr<node::Exp>& node, uint64_t scope_id)
