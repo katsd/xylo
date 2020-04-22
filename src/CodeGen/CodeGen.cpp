@@ -74,7 +74,36 @@ bool CodeGen::ConvertStmt(std::unique_ptr<node::Stmt>& node, uint64_t scope_id, 
 
 bool CodeGen::ConvertFuncDef(std::unique_ptr<node::FuncDef>& node, uint64_t scope_id)
 {
+	auto func_name = node->name;
+	auto arg_num = node->args.size();
+	Func func{ func_name, arg_num };
 
+	if (func_info.find(func) != func_info.end())
+	{
+		return MakeError(("function " + func_name + "with " + std::to_string(arg_num) + "arguments is already defined")
+			.c_str(), *node);
+	}
+
+	func_table.push_back(func);
+	func_info[func] = FuncInfo{ func_cnt++, false, 0 };
+
+	scope_id = GetNewScope();
+
+	for (auto& arg : node->args)
+	{
+		auto var = GetVariableAddress(arg, scope_id, true);
+		if (!std::get<0>(var))
+			return false;
+		auto var_address = std::get<1>(var);
+		SetObj(var_address);
+	}
+
+	if (!ConvertStmt(node->stmt, scope_id))
+		return false;
+
+	KillScope(scope_id);
+
+	return true;
 }
 
 bool CodeGen::ConvertFunc(std::unique_ptr<node::Func>& node, uint64_t scope_id)
