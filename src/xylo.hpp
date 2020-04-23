@@ -8,31 +8,34 @@
 #ifndef XYLO_HPP_
 #define XYLO_HPP_
 
+#include <cstdint>
 #include <string>
 
-#include "parser.hpp"
-#include "vm/vm.hpp"
+#include "Parser/Parser.hpp"
+#include "CodeGen/CodeGen.hpp"
+#include "VM/VM.hpp"
+
+using namespace xylo;
 
 class Xylo
 {
-private:
-    VM eval;
+ private:
 
-public:
-    Xylo(std::string code_str)
-    {
-        auto parser_res = Parser(code_str).Parse();
+ public:
+	explicit Xylo(const std::string& source)
+	{
+		auto ast = Parser(source).Parse();
 
-        if (parser_res.success)
-            eval = VM(parser_res.iseq, parser_res.const_table);
+		if (ast == nullptr)
+			return;
 
-        eval.Init();
-    }
+		puts(ast->Node2Str(0).c_str());
 
-    VM::Result Run(unsigned long func_id)
-    {
-        return eval.RunFunc(func_id);
-    }
+		const auto code = CodeGen(ast).GenerateCode();
+
+		vm::VM eval{ code };
+		eval.OutCode();
+	}
 };
 
 #endif /* XYLO_HPP_ */
