@@ -9,6 +9,7 @@
 #include <map>
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 #include "AST/AST.hpp"
 #include "VM/VM.hpp"
@@ -48,7 +49,7 @@ class CodeGen
 		uint64_t native_func_id;
 	};
 
-	std::unique_ptr<node::Root>& ast;
+	const std::unique_ptr<node::Root>& ast;
 
 	std::vector<uint64_t> code;
 
@@ -97,45 +98,45 @@ class CodeGen
 	// #########################################
 	// #########################################
 
-	bool ConvertRoot(std::unique_ptr<node::Root>& node, uint64_t scope_id);
+	bool ConvertRoot(const std::unique_ptr<node::Root>& node, uint64_t scope_id);
 
-	bool ConvertStmt(std::unique_ptr<node::Stmt>& node, uint64_t scope_id, bool is_new_scope = false);
+	bool ConvertStmt(const std::unique_ptr<node::Stmt>& node, uint64_t scope_id, bool is_new_scope = false);
 
-	bool ConvertFuncDef(std::unique_ptr<node::FuncDef>& node, uint64_t scope_id);
+	bool ConvertFuncDef(const std::unique_ptr<node::FuncDef>& node, uint64_t scope_id);
 
-	bool ConvertFunc(std::unique_ptr<node::Func>& node, uint64_t scope_id);
+	bool ConvertFunc(const std::unique_ptr<node::Func>& node, uint64_t scope_id);
 
-	bool ConvertBlock(std::unique_ptr<node::Block>& node, uint64_t scope_id);
+	bool ConvertBlock(const std::unique_ptr<node::Block>& node, uint64_t scope_id);
 
-	bool ConvertAssign(std::unique_ptr<node::Assign>& node, uint64_t scope_id);
+	bool ConvertAssign(const std::unique_ptr<node::Assign>& node, uint64_t scope_id);
 
-	bool ConvertIf(std::unique_ptr<node::If>& node, uint64_t scope_id);
+	bool ConvertIf(const std::unique_ptr<node::If>& node, uint64_t scope_id);
 
-	bool ConvertRepeat(std::unique_ptr<node::Repeat>& node, uint64_t scope_id);
+	bool ConvertRepeat(const std::unique_ptr<node::Repeat>& node, uint64_t scope_id);
 
-	bool ConvertFor(std::unique_ptr<node::For>& node, uint64_t scope_id);
+	bool ConvertFor(const std::unique_ptr<node::For>& node, uint64_t scope_id);
 
-	bool ConvertWhile(std::unique_ptr<node::While>& node, uint64_t scope_id);
+	bool ConvertWhile(const std::unique_ptr<node::While>& node, uint64_t scope_id);
 
-	bool ConvertReturn(std::unique_ptr<node::Return>& node, uint64_t scope_id);
+	bool ConvertReturn(const std::unique_ptr<node::Return>& node, uint64_t scope_id);
 
-	bool ConvertExp(std::unique_ptr<node::Exp>& node, uint64_t scope_id);
+	bool ConvertExp(const std::unique_ptr<node::Exp>& node, uint64_t scope_id);
 
-	bool ConvertBOperator(std::unique_ptr<node::BOperator>& node, uint64_t scope_id);
+	bool ConvertBOperator(const std::unique_ptr<node::BOperator>& node, uint64_t scope_id);
 
-	bool ConvertUOperator(std::unique_ptr<node::UOperator>& node, uint64_t scope_id);
+	bool ConvertUOperator(const std::unique_ptr<node::UOperator>& node, uint64_t scope_id);
 
-	bool ConvertValue(std::unique_ptr<node::Value>& node, uint64_t scope_id);
+	bool ConvertValue(const std::unique_ptr<node::Value>& node, uint64_t scope_id);
 
-	bool ConvertVariable(std::unique_ptr<node::Variable>& node, uint64_t scope_id, bool declarable = false);
+	bool ConvertVariable(const std::unique_ptr<node::Variable>& node, uint64_t scope_id, bool declarable = false);
 
-	bool ConvertInt(std::unique_ptr<node::Int>& node);
+	bool ConvertInt(const std::unique_ptr<node::Int>& node);
 
-	bool ConvertFloat(std::unique_ptr<node::Float>& node);
+	bool ConvertFloat(const std::unique_ptr<node::Float>& node);
 
-	bool ConvertString(std::unique_ptr<node::String>& node);
+	bool ConvertString(const std::unique_ptr<node::String>& node);
 
-	bool DefineFunc(std::unique_ptr<node::FuncDef>& node);
+	bool DefineFunc(const std::unique_ptr<node::FuncDef>& node);
 
 	std::tuple<bool, uint64_t>
 	GetVariableAddress(const std::unique_ptr<node::Variable>& node, uint64_t scope_id, bool declarable);
@@ -240,7 +241,7 @@ class CodeGen
  public:
 	std::vector<uint64_t> GenerateCode();
 
-	CodeGen(std::unique_ptr<node::Root>& ast)
+	CodeGen(const std::unique_ptr<node::Root>& ast)
 		: ast(ast)
 	{
 	}
