@@ -24,7 +24,7 @@ struct Func : Node
 	std::vector<std::unique_ptr<Exp>> args;
 
 	Func(std::string name, std::vector<std::unique_ptr<Exp>> args, SourcePos pos)
-		: name(std::move(name)), args(std::move(args)), Node(pos)
+		: Node(pos), name(std::move(name)), args(std::move(args))
 	{
 	}
 

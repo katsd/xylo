@@ -28,7 +28,7 @@ struct Exp : Node
 	ExpType value;
 
 	Exp(ExpType value, SourcePos pos)
-		: value(std::move(value)), Node(pos)
+		: Node(pos), value(std::move(value))
 	{
 	}
 

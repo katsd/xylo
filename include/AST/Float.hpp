@@ -17,7 +17,7 @@ struct Float : Node
 	double value;
 
 	Float(double value, SourcePos pos)
-		: value(value), Node(pos)
+		: Node(pos), value(value)
 	{
 	}
 

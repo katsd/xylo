@@ -23,7 +23,7 @@ struct Repeat : Node
 	std::unique_ptr<Stmt> stmt;
 
 	Repeat(std::unique_ptr<Exp> time, std::unique_ptr<Stmt> stmt, SourcePos pos)
-		: time(std::move(time)), stmt(std::move(stmt)), Node(pos)
+		: Node(pos), time(std::move(time)), stmt(std::move(stmt))
 	{
 	}
 

@@ -23,7 +23,7 @@ struct While : Node
 	std::unique_ptr<Stmt> stmt;
 
 	While(std::unique_ptr<Exp> exp, std::unique_ptr<Stmt> stmt, SourcePos pos)
-		: exp(std::move(exp)), stmt(std::move(stmt)), Node(pos)
+		: Node(pos), exp(std::move(exp)), stmt(std::move(stmt))
 	{
 	}
 

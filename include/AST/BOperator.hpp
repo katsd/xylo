@@ -45,7 +45,7 @@ struct BOperator : Node
 	std::unique_ptr<Exp> right;
 
 	BOperator(BOperatorType type, std::unique_ptr<Exp> left, std::unique_ptr<Exp> right, SourcePos pos)
-		: type(type), left(std::move(left)), right(std::move(right)), Node(pos)
+		: Node(pos), type(type), left(std::move(left)), right(std::move(right))
 	{
 	}
 

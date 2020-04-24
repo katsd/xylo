@@ -17,7 +17,7 @@ struct Variable : Node
 	std::string name;
 
 	Variable(std::string name, SourcePos pos)
-		: name(std::move(name)), Node(pos)
+		: Node(pos), name(std::move(name))
 	{
 	}
 

@@ -23,7 +23,7 @@ struct Block : Node
 	std::vector<std::unique_ptr<Stmt>> stmts;
 
 	Block(std::vector<std::unique_ptr<Stmt>> stmts, SourcePos pos)
-		: stmts(std::move(stmts)), Node(pos)
+		: Node(pos), stmts(std::move(stmts))
 	{
 	}
 

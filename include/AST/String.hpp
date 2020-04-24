@@ -17,7 +17,7 @@ struct String : Node
 	std::string value;
 
 	String(std::string value, SourcePos pos)
-		: value(std::move(value)), Node(pos)
+		: Node(pos), value(std::move(value))
 	{
 	}
 

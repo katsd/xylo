@@ -18,7 +18,7 @@ struct Int : Node
 	int64_t value;
 
 	Int(int64_t value, SourcePos pos)
-		: value(value), Node(pos)
+		: Node(pos), value(value)
 	{
 	}
 

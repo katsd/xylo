@@ -37,7 +37,7 @@ struct Stmt : Node
 	StmtType stmt;
 
 	Stmt(StmtType stmt, SourcePos pos)
-		: stmt(std::move(stmt)), Node(pos)
+		: Node(pos), stmt(std::move(stmt))
 	{
 	}
 

@@ -26,7 +26,7 @@ struct If : Node
 	std::unique_ptr<Stmt> stmt_else;
 
 	If(std::unique_ptr<Exp> exp, std::unique_ptr<Stmt> stmt, std::unique_ptr<Stmt> stmt_else, SourcePos pos)
-		: exp(std::move(exp)), stmt(std::move(stmt)), stmt_else(std::move(stmt_else)), Node(pos)
+		: Node(pos), exp(std::move(exp)), stmt(std::move(stmt)), stmt_else(std::move(stmt_else))
 	{
 	}
 

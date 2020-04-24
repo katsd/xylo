@@ -26,7 +26,7 @@ struct UOperator : Node
 	std::unique_ptr<Exp> exp;
 
 	UOperator(UOperatorType type, std::unique_ptr<Exp> exp, SourcePos pos)
-		: type(type), exp(std::move(exp)), Node(pos)
+		: Node(pos), type(type), exp(std::move(exp))
 	{
 	}
 

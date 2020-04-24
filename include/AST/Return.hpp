@@ -18,7 +18,7 @@ struct Return : Node
 	std::unique_ptr<Exp> exp;
 
 	Return(std::unique_ptr<Exp> exp, SourcePos pos)
-		: exp(std::move(exp)), Node(pos)
+		: Node(pos), exp(std::move(exp))
 	{
 	}
 

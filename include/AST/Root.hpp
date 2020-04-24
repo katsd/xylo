@@ -25,12 +25,12 @@ struct Root : Node
 	std::vector<RootStmt> stmts;
 
 	Root(std::vector<RootStmt> stmts, SourcePos pos)
-		: stmts(std::move(stmts)), Node(pos)
+		: Node(pos), stmts(std::move(stmts))
 	{
 	}
 
 	Root()
-		: stmts(std::vector<RootStmt>()), Node(SourcePos())
+		: Node(SourcePos()), stmts(std::vector<RootStmt>())
 	{
 
 	}

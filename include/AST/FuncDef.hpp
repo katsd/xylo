@@ -28,7 +28,7 @@ struct FuncDef : Node
 	std::unique_ptr<Stmt> stmt;
 
 	FuncDef(std::string name, std::vector<std::unique_ptr<Variable>> args, std::unique_ptr<Stmt> stmt, SourcePos pos)
-		: name(std::move(name)), args(std::move(args)), stmt(std::move(stmt)), Node(pos)
+		: Node(pos), name(std::move(name)), args(std::move(args)), stmt(std::move(stmt))
 	{
 	}
 

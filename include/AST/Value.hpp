@@ -29,7 +29,7 @@ struct Value : Node
 	ValueType value;
 
 	Value(ValueType value, SourcePos pos)
-		: value(std::move(value)), Node(pos)
+		: Node(pos), value(std::move(value))
 	{
 	}
 

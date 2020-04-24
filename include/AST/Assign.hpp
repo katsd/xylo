@@ -23,7 +23,7 @@ struct Assign : Node
 	std::unique_ptr<Exp> exp;
 
 	Assign(std::unique_ptr<Variable> var, std::unique_ptr<Exp> exp, SourcePos pos)
-		: var(std::move(var)), exp(std::move(exp)), Node(pos)
+		: Node(pos), var(std::move(var)), exp(std::move(exp))
 	{
 	}
 
