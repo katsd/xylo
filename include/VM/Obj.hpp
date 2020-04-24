@@ -46,7 +46,7 @@ struct Obj
 	inline void Release()
 	{
 		if (type == STRING)
-			value.str.release();
+			value.str.reset();
 	}
 
  public:
