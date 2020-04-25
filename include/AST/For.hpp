@@ -12,7 +12,7 @@
 #include "Exp.hpp"
 #include "Token/SourcePos.hpp"
 
-namespace xylo::node
+namespace xylo::ast
 {
 /*
  * for Variable,Exp Stmt

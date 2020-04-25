@@ -11,7 +11,7 @@
 #include "Token/Token.hpp"
 #include "Token/SourcePos.hpp"
 
-namespace xylo::node
+namespace xylo::ast
 {
 enum BOperatorType
 {

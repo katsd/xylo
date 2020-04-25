@@ -11,7 +11,7 @@
 #include "Node.hpp"
 #include "Token/SourcePos.hpp"
 
-namespace xylo::node
+namespace xylo::ast
 {
 struct Int : Node
 {

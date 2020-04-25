@@ -14,7 +14,7 @@
 #include "Stmt.hpp"
 #include "Token/SourcePos.hpp"
 
-namespace xylo::node
+namespace xylo::ast
 {
 /*
  * func Symbol::NAME(Symbol::Name, .., Symbol::NAME)

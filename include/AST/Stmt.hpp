@@ -19,7 +19,7 @@
 #include "Return.hpp"
 #include "Token/SourcePos.hpp"
 
-namespace xylo::node
+namespace xylo::ast
 {
 struct Stmt : Node
 {

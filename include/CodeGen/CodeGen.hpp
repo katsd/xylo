@@ -49,7 +49,7 @@ class CodeGen
 		uint64_t native_func_id;
 	};
 
-	const std::unique_ptr<node::Root>& ast;
+	const std::unique_ptr<ast::Root>& ast;
 
 	std::vector<uint64_t> code;
 
@@ -98,48 +98,48 @@ class CodeGen
 	// #########################################
 	// #########################################
 
-	bool ConvertRoot(const std::unique_ptr<node::Root>& node, uint64_t scope_id);
+	bool ConvertRoot(const std::unique_ptr<ast::Root>& node, uint64_t scope_id);
 
-	bool ConvertStmt(const std::unique_ptr<node::Stmt>& node, uint64_t scope_id, bool is_new_scope = false);
+	bool ConvertStmt(const std::unique_ptr<ast::Stmt>& node, uint64_t scope_id, bool is_new_scope = false);
 
-	bool ConvertFuncDef(const std::unique_ptr<node::FuncDef>& node, uint64_t scope_id);
+	bool ConvertFuncDef(const std::unique_ptr<ast::FuncDef>& node, uint64_t scope_id);
 
-	bool ConvertFunc(const std::unique_ptr<node::Func>& node, uint64_t scope_id);
+	bool ConvertFunc(const std::unique_ptr<ast::Func>& node, uint64_t scope_id);
 
-	bool ConvertBlock(const std::unique_ptr<node::Block>& node, uint64_t scope_id);
+	bool ConvertBlock(const std::unique_ptr<ast::Block>& node, uint64_t scope_id);
 
-	bool ConvertAssign(const std::unique_ptr<node::Assign>& node, uint64_t scope_id);
+	bool ConvertAssign(const std::unique_ptr<ast::Assign>& node, uint64_t scope_id);
 
-	bool ConvertIf(const std::unique_ptr<node::If>& node, uint64_t scope_id);
+	bool ConvertIf(const std::unique_ptr<ast::If>& node, uint64_t scope_id);
 
-	bool ConvertRepeat(const std::unique_ptr<node::Repeat>& node, uint64_t scope_id);
+	bool ConvertRepeat(const std::unique_ptr<ast::Repeat>& node, uint64_t scope_id);
 
-	bool ConvertFor(const std::unique_ptr<node::For>& node, uint64_t scope_id);
+	bool ConvertFor(const std::unique_ptr<ast::For>& node, uint64_t scope_id);
 
-	bool ConvertWhile(const std::unique_ptr<node::While>& node, uint64_t scope_id);
+	bool ConvertWhile(const std::unique_ptr<ast::While>& node, uint64_t scope_id);
 
-	bool ConvertReturn(const std::unique_ptr<node::Return>& node, uint64_t scope_id);
+	bool ConvertReturn(const std::unique_ptr<ast::Return>& node, uint64_t scope_id);
 
-	bool ConvertExp(const std::unique_ptr<node::Exp>& node, uint64_t scope_id);
+	bool ConvertExp(const std::unique_ptr<ast::Exp>& node, uint64_t scope_id);
 
-	bool ConvertBOperator(const std::unique_ptr<node::BOperator>& node, uint64_t scope_id);
+	bool ConvertBOperator(const std::unique_ptr<ast::BOperator>& node, uint64_t scope_id);
 
-	bool ConvertUOperator(const std::unique_ptr<node::UOperator>& node, uint64_t scope_id);
+	bool ConvertUOperator(const std::unique_ptr<ast::UOperator>& node, uint64_t scope_id);
 
-	bool ConvertValue(const std::unique_ptr<node::Value>& node, uint64_t scope_id);
+	bool ConvertValue(const std::unique_ptr<ast::Value>& node, uint64_t scope_id);
 
-	bool ConvertVariable(const std::unique_ptr<node::Variable>& node, uint64_t scope_id, bool declarable = false);
+	bool ConvertVariable(const std::unique_ptr<ast::Variable>& node, uint64_t scope_id, bool declarable = false);
 
-	bool ConvertInt(const std::unique_ptr<node::Int>& node);
+	bool ConvertInt(const std::unique_ptr<ast::Int>& node);
 
-	bool ConvertFloat(const std::unique_ptr<node::Float>& node);
+	bool ConvertFloat(const std::unique_ptr<ast::Float>& node);
 
-	bool ConvertString(const std::unique_ptr<node::String>& node);
+	bool ConvertString(const std::unique_ptr<ast::String>& node);
 
-	bool DefineFunc(const std::unique_ptr<node::FuncDef>& node);
+	bool DefineFunc(const std::unique_ptr<ast::FuncDef>& node);
 
 	std::tuple<bool, uint64_t>
-	GetVariableAddress(const std::unique_ptr<node::Variable>& node, uint64_t scope_id, bool declarable);
+	GetVariableAddress(const std::unique_ptr<ast::Variable>& node, uint64_t scope_id, bool declarable);
 
 	uint64_t GetTempVariable();
 
@@ -236,12 +236,12 @@ class CodeGen
 
 	void InitVariable();
 
-	static bool MakeError(const char* msg, const node::Node& node);
+	static bool MakeError(const char* msg, const ast::Node& node);
 
  public:
 	std::vector<uint64_t> GenerateCode();
 
-	CodeGen(const std::unique_ptr<node::Root>& ast)
+	CodeGen(const std::unique_ptr<ast::Root>& ast)
 		: ast(ast)
 	{
 	}

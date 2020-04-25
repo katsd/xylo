@@ -14,7 +14,7 @@ std::vector<uint64_t> CodeGen::GenerateCode()
 	InitConstTable();
 	InitScope();
 	InitFunc();
-	
+
 	if (!ConvertRoot(ast, global_scope_id))
 	{
 		printf("failed to generate code\n");
@@ -24,23 +24,23 @@ std::vector<uint64_t> CodeGen::GenerateCode()
 	return code;
 }
 
-bool CodeGen::ConvertRoot(const std::unique_ptr<node::Root>& node, uint64_t scope_id)
+bool CodeGen::ConvertRoot(const std::unique_ptr<ast::Root>& node, uint64_t scope_id)
 {
 	for (auto& stmt : node->stmts)
 	{
-		if (!std::holds_alternative<std::unique_ptr<node::FuncDef>>(stmt))
+		if (!std::holds_alternative<std::unique_ptr<ast::FuncDef>>(stmt))
 			continue;
 
-		if (!DefineFunc(std::get<std::unique_ptr<node::FuncDef>>(stmt)))
+		if (!DefineFunc(std::get<std::unique_ptr<ast::FuncDef>>(stmt)))
 			return false;
 	}
 
 	for (auto& stmt : node->stmts)
 	{
-		if (!std::holds_alternative<std::unique_ptr<node::Stmt>>(stmt))
+		if (!std::holds_alternative<std::unique_ptr<ast::Stmt>>(stmt))
 			continue;
 
-		if (!ConvertStmt(std::get<std::unique_ptr<node::Stmt>>(stmt), scope_id))
+		if (!ConvertStmt(std::get<std::unique_ptr<ast::Stmt>>(stmt), scope_id))
 			return false;
 	}
 
@@ -48,10 +48,10 @@ bool CodeGen::ConvertRoot(const std::unique_ptr<node::Root>& node, uint64_t scop
 
 	for (auto& stmt : node->stmts)
 	{
-		if (!std::holds_alternative<std::unique_ptr<node::FuncDef>>(stmt))
+		if (!std::holds_alternative<std::unique_ptr<ast::FuncDef>>(stmt))
 			continue;
 
-		if (!ConvertFuncDef(std::get<std::unique_ptr<node::FuncDef>>(stmt), scope_id))
+		if (!ConvertFuncDef(std::get<std::unique_ptr<ast::FuncDef>>(stmt), scope_id))
 			return false;
 	}
 
@@ -63,44 +63,44 @@ bool CodeGen::ConvertRoot(const std::unique_ptr<node::Root>& node, uint64_t scop
 	return true;
 }
 
-bool CodeGen::ConvertStmt(const std::unique_ptr<node::Stmt>& node, uint64_t scope_id, bool is_new_scope)
+bool CodeGen::ConvertStmt(const std::unique_ptr<ast::Stmt>& node, uint64_t scope_id, bool is_new_scope)
 {
 	if (is_new_scope)
 		scope_id = GetNewScope();
 
 	bool res;
 
-	if (std::holds_alternative<std::unique_ptr<node::Block>>(node->stmt))
+	if (std::holds_alternative<std::unique_ptr<ast::Block>>(node->stmt))
 	{
-		res = ConvertBlock(std::get<std::unique_ptr<node::Block>>(node->stmt), scope_id);
+		res = ConvertBlock(std::get<std::unique_ptr<ast::Block>>(node->stmt), scope_id);
 	}
-	else if (std::holds_alternative<std::unique_ptr<node::Assign>>(node->stmt))
+	else if (std::holds_alternative<std::unique_ptr<ast::Assign>>(node->stmt))
 	{
-		res = ConvertAssign(std::get<std::unique_ptr<node::Assign>>(node->stmt), scope_id);
+		res = ConvertAssign(std::get<std::unique_ptr<ast::Assign>>(node->stmt), scope_id);
 	}
-	else if (std::holds_alternative<std::unique_ptr<node::Func>>(node->stmt))
+	else if (std::holds_alternative<std::unique_ptr<ast::Func>>(node->stmt))
 	{
-		res = ConvertFunc(std::get<std::unique_ptr<node::Func>>(node->stmt), scope_id);
+		res = ConvertFunc(std::get<std::unique_ptr<ast::Func>>(node->stmt), scope_id);
 	}
-	else if (std::holds_alternative<std::unique_ptr<node::If>>(node->stmt))
+	else if (std::holds_alternative<std::unique_ptr<ast::If>>(node->stmt))
 	{
-		res = ConvertIf(std::get<std::unique_ptr<node::If>>(node->stmt), scope_id);
+		res = ConvertIf(std::get<std::unique_ptr<ast::If>>(node->stmt), scope_id);
 	}
-	else if (std::holds_alternative<std::unique_ptr<node::While>>(node->stmt))
+	else if (std::holds_alternative<std::unique_ptr<ast::While>>(node->stmt))
 	{
-		res = ConvertWhile(std::get<std::unique_ptr<node::While>>(node->stmt), scope_id);
+		res = ConvertWhile(std::get<std::unique_ptr<ast::While>>(node->stmt), scope_id);
 	}
-	else if (std::holds_alternative<std::unique_ptr<node::Repeat>>(node->stmt))
+	else if (std::holds_alternative<std::unique_ptr<ast::Repeat>>(node->stmt))
 	{
-		res = ConvertRepeat(std::get<std::unique_ptr<node::Repeat>>(node->stmt), scope_id);
+		res = ConvertRepeat(std::get<std::unique_ptr<ast::Repeat>>(node->stmt), scope_id);
 	}
-	else if (std::holds_alternative<std::unique_ptr<node::For>>(node->stmt))
+	else if (std::holds_alternative<std::unique_ptr<ast::For>>(node->stmt))
 	{
-		res = ConvertFor(std::get<std::unique_ptr<node::For>>(node->stmt), scope_id);
+		res = ConvertFor(std::get<std::unique_ptr<ast::For>>(node->stmt), scope_id);
 	}
-	else if (std::holds_alternative<std::unique_ptr<node::Return>>(node->stmt))
+	else if (std::holds_alternative<std::unique_ptr<ast::Return>>(node->stmt))
 	{
-		res = ConvertReturn(std::get<std::unique_ptr<node::Return>>(node->stmt), scope_id);
+		res = ConvertReturn(std::get<std::unique_ptr<ast::Return>>(node->stmt), scope_id);
 	}
 	else
 	{
@@ -112,9 +112,9 @@ bool CodeGen::ConvertStmt(const std::unique_ptr<node::Stmt>& node, uint64_t scop
 	return res;
 }
 
-bool CodeGen::DefineFunc(const std::unique_ptr<node::FuncDef>& node)
+bool CodeGen::DefineFunc(const std::unique_ptr<ast::FuncDef>& node)
 {
-	auto func_name = node->name;
+	std::string func_name = node->name;
 	auto arg_num = node->args.size();
 	Func func{ func_name, arg_num };
 
@@ -130,7 +130,7 @@ bool CodeGen::DefineFunc(const std::unique_ptr<node::FuncDef>& node)
 	return true;
 }
 
-bool CodeGen::ConvertFuncDef(const std::unique_ptr<node::FuncDef>& node, uint64_t scope_id)
+bool CodeGen::ConvertFuncDef(const std::unique_ptr<ast::FuncDef>& node, uint64_t scope_id)
 {
 	Func func{ node->name, node->args.size() };
 	func_info[func].start_address = code.size();
@@ -154,7 +154,7 @@ bool CodeGen::ConvertFuncDef(const std::unique_ptr<node::FuncDef>& node, uint64_
 	return true;
 }
 
-bool CodeGen::ConvertFunc(const std::unique_ptr<node::Func>& node, uint64_t scope_id)
+bool CodeGen::ConvertFunc(const std::unique_ptr<ast::Func>& node, uint64_t scope_id)
 {
 	auto func_name = node->name;
 	auto arg_num = node->args.size();
@@ -176,7 +176,6 @@ bool CodeGen::ConvertFunc(const std::unique_ptr<node::Func>& node, uint64_t scop
 
 	code.push_back(vm::Inst::ICR_FUNC_LEVEL);
 
-	Push(0);
 	auto& return_address = code[code.size() - 1];
 
 	code.push_back(vm::Inst::PUSH_OBJ_IDX_OFFSET);
@@ -200,7 +199,7 @@ bool CodeGen::ConvertFunc(const std::unique_ptr<node::Func>& node, uint64_t scop
 	return true;
 }
 
-bool CodeGen::ConvertBlock(const std::unique_ptr<node::Block>& node, uint64_t scope_id)
+bool CodeGen::ConvertBlock(const std::unique_ptr<ast::Block>& node, uint64_t scope_id)
 {
 	scope_id = GetNewScope();
 
@@ -215,7 +214,7 @@ bool CodeGen::ConvertBlock(const std::unique_ptr<node::Block>& node, uint64_t sc
 	return true;
 }
 
-bool CodeGen::ConvertAssign(const std::unique_ptr<node::Assign>& node, uint64_t scope_id)
+bool CodeGen::ConvertAssign(const std::unique_ptr<ast::Assign>& node, uint64_t scope_id)
 {
 	auto var = GetVariableAddress(node->var, scope_id, true);
 	if (!std::get<0>(var))
@@ -230,7 +229,7 @@ bool CodeGen::ConvertAssign(const std::unique_ptr<node::Assign>& node, uint64_t 
 	return true;
 }
 
-bool CodeGen::ConvertIf(const std::unique_ptr<node::If>& node, uint64_t scope_id)
+bool CodeGen::ConvertIf(const std::unique_ptr<ast::If>& node, uint64_t scope_id)
 {
 	auto condition_address = GetTempVariable();
 
@@ -271,7 +270,7 @@ bool CodeGen::ConvertIf(const std::unique_ptr<node::If>& node, uint64_t scope_id
 	return true;
 }
 
-bool CodeGen::ConvertRepeat(const std::unique_ptr<node::Repeat>& node, uint64_t scope_id)
+bool CodeGen::ConvertRepeat(const std::unique_ptr<ast::Repeat>& node, uint64_t scope_id)
 {
 	if (!ConvertExp(node->time, scope_id))
 		return false;
@@ -300,7 +299,7 @@ bool CodeGen::ConvertRepeat(const std::unique_ptr<node::Repeat>& node, uint64_t 
 	return true;
 }
 
-bool CodeGen::ConvertFor(const std::unique_ptr<node::For>& node, uint64_t scope_id)
+bool CodeGen::ConvertFor(const std::unique_ptr<ast::For>& node, uint64_t scope_id)
 {
 	if (!ConvertExp(node->time, scope_id))
 		return false;
@@ -337,7 +336,7 @@ bool CodeGen::ConvertFor(const std::unique_ptr<node::For>& node, uint64_t scope_
 	return true;
 }
 
-bool CodeGen::ConvertWhile(const std::unique_ptr<node::While>& node, uint64_t scope_id)
+bool CodeGen::ConvertWhile(const std::unique_ptr<ast::While>& node, uint64_t scope_id)
 {
 	auto return_address = code.size();
 
@@ -360,7 +359,7 @@ bool CodeGen::ConvertWhile(const std::unique_ptr<node::While>& node, uint64_t sc
 	return true;
 }
 
-bool CodeGen::ConvertReturn(const std::unique_ptr<node::Return>& node, uint64_t scope_id)
+bool CodeGen::ConvertReturn(const std::unique_ptr<ast::Return>& node, uint64_t scope_id)
 {
 	if (!ConvertExp(node->exp, scope_id))
 		return false;
@@ -375,24 +374,24 @@ bool CodeGen::ConvertReturn(const std::unique_ptr<node::Return>& node, uint64_t 
 	return true;
 }
 
-bool CodeGen::ConvertExp(const std::unique_ptr<node::Exp>& node, uint64_t scope_id)
+bool CodeGen::ConvertExp(const std::unique_ptr<ast::Exp>& node, uint64_t scope_id)
 {
-	if (std::holds_alternative<std::unique_ptr<node::Value>>(node->value))
-		return ConvertValue(std::get<std::unique_ptr<node::Value>>(node->value), scope_id);
+	if (std::holds_alternative<std::unique_ptr<ast::Value>>(node->value))
+		return ConvertValue(std::get<std::unique_ptr<ast::Value>>(node->value), scope_id);
 
-	if (std::holds_alternative<std::unique_ptr<node::BOperator>>(node->value))
-		return ConvertBOperator(std::get<std::unique_ptr<node::BOperator>>(node->value), scope_id);
+	if (std::holds_alternative<std::unique_ptr<ast::BOperator>>(node->value))
+		return ConvertBOperator(std::get<std::unique_ptr<ast::BOperator>>(node->value), scope_id);
 
-	if (std::holds_alternative<std::unique_ptr<node::UOperator>>(node->value))
-		return ConvertUOperator(std::get<std::unique_ptr<node::UOperator>>(node->value), scope_id);
+	if (std::holds_alternative<std::unique_ptr<ast::UOperator>>(node->value))
+		return ConvertUOperator(std::get<std::unique_ptr<ast::UOperator>>(node->value), scope_id);
 
-	if (std::holds_alternative<std::unique_ptr<node::Func>>(node->value))
-		return ConvertFunc(std::get<std::unique_ptr<node::Func>>(node->value), scope_id);
+	if (std::holds_alternative<std::unique_ptr<ast::Func>>(node->value))
+		return ConvertFunc(std::get<std::unique_ptr<ast::Func>>(node->value), scope_id);
 
 	return MakeError("unknown expression", *node);
 }
 
-bool CodeGen::ConvertBOperator(const std::unique_ptr<node::BOperator>& node, uint64_t scope_id)
+bool CodeGen::ConvertBOperator(const std::unique_ptr<ast::BOperator>& node, uint64_t scope_id)
 {
 	if (!ConvertExp(node->right, scope_id))
 		return false;
@@ -404,52 +403,52 @@ bool CodeGen::ConvertBOperator(const std::unique_ptr<node::BOperator>& node, uin
 
 	switch (node->type)
 	{
-	case node::BOperatorType::OR:
+	case ast::BOperatorType::OR:
 		code.push_back(vm::Inst::OR);
 		break;
-	case node::BOperatorType::AND:
+	case ast::BOperatorType::AND:
 		code.push_back(vm::Inst::AND);
 		break;
-	case node::BOperatorType::BIN_OR:
+	case ast::BOperatorType::BIN_OR:
 		code.push_back(vm::Inst::BIN_OR);
 		break;
-	case node::BOperatorType::BIN_XOR:
+	case ast::BOperatorType::BIN_XOR:
 		code.push_back(vm::Inst::BIN_XOR);
 		break;
-	case node::BOperatorType::BIN_AND:
+	case ast::BOperatorType::BIN_AND:
 		code.push_back(vm::Inst::BIN_AND);
 		break;
-	case node::BOperatorType::EQUAL:
+	case ast::BOperatorType::EQUAL:
 		code.push_back(vm::Inst::EQUAL);
 		break;
-	case node::BOperatorType::NOT_EQUAL:
+	case ast::BOperatorType::NOT_EQUAL:
 		code.push_back(vm::Inst::NOT_EQUAL);
 		break;
-	case node::BOperatorType::LESS:
+	case ast::BOperatorType::LESS:
 		code.push_back(vm::Inst::LESS);
 		break;
-	case node::BOperatorType::LESS_EQ:
+	case ast::BOperatorType::LESS_EQ:
 		code.push_back(vm::Inst::LESS_EQ);
 		break;
-	case node::BOperatorType::GREATER:
+	case ast::BOperatorType::GREATER:
 		code.push_back(vm::Inst::GREATER);
 		break;
-	case node::BOperatorType::GREATER_EQ:
+	case ast::BOperatorType::GREATER_EQ:
 		code.push_back(vm::Inst::GREATER_EQ);
 		break;
-	case node::BOperatorType::ADD:
+	case ast::BOperatorType::ADD:
 		code.push_back(vm::Inst::ADD);
 		break;
-	case node::BOperatorType::SUB:
+	case ast::BOperatorType::SUB:
 		code.push_back(vm::Inst::SUB);
 		break;
-	case node::BOperatorType::MUL:
+	case ast::BOperatorType::MUL:
 		code.push_back(vm::Inst::MUL);
 		break;
-	case node::BOperatorType::DIV:
+	case ast::BOperatorType::DIV:
 		code.push_back(vm::Inst::DIV);
 		break;
-	case node::BOperatorType::MOD:
+	case ast::BOperatorType::MOD:
 		code.push_back(vm::Inst::MOD);
 		break;
 	default:
@@ -459,20 +458,20 @@ bool CodeGen::ConvertBOperator(const std::unique_ptr<node::BOperator>& node, uin
 	return true;
 }
 
-bool CodeGen::ConvertUOperator(const std::unique_ptr<node::UOperator>& node, uint64_t scope_id)
+bool CodeGen::ConvertUOperator(const std::unique_ptr<ast::UOperator>& node, uint64_t scope_id)
 {
 	if (!ConvertExp(node->exp, scope_id))
 		return false;
 
 	switch (node->type)
 	{
-	case node::UOperatorType::MINUS:
+	case ast::UOperatorType::MINUS:
 		code.push_back(vm::Inst::MINUS);
 		break;
-	case node::UOperatorType::NOT:
+	case ast::UOperatorType::NOT:
 		code.push_back(vm::Inst::NOT);
 		break;
-	case node::UOperatorType::BIN_NOT:
+	case ast::UOperatorType::BIN_NOT:
 		code.push_back(vm::Inst::BIN_NOT);
 		break;
 	}
@@ -480,24 +479,24 @@ bool CodeGen::ConvertUOperator(const std::unique_ptr<node::UOperator>& node, uin
 	return true;
 }
 
-bool CodeGen::ConvertValue(const std::unique_ptr<node::Value>& node, uint64_t scope_id)
+bool CodeGen::ConvertValue(const std::unique_ptr<ast::Value>& node, uint64_t scope_id)
 {
-	if (std::holds_alternative<std::unique_ptr<node::Int>>(node->value))
-		return ConvertInt(std::get<std::unique_ptr<node::Int>>(node->value));
+	if (std::holds_alternative<std::unique_ptr<ast::Int>>(node->value))
+		return ConvertInt(std::get<std::unique_ptr<ast::Int>>(node->value));
 
-	if (std::holds_alternative<std::unique_ptr<node::Float>>(node->value))
-		return ConvertFloat(std::get<std::unique_ptr<node::Float>>(node->value));
+	if (std::holds_alternative<std::unique_ptr<ast::Float>>(node->value))
+		return ConvertFloat(std::get<std::unique_ptr<ast::Float>>(node->value));
 
-	if (std::holds_alternative<std::unique_ptr<node::String>>(node->value))
-		return ConvertString(std::get<std::unique_ptr<node::String>>(node->value));
+	if (std::holds_alternative<std::unique_ptr<ast::String>>(node->value))
+		return ConvertString(std::get<std::unique_ptr<ast::String>>(node->value));
 
-	if (std::holds_alternative<std::unique_ptr<node::Variable>>(node->value))
-		return ConvertVariable(std::get<std::unique_ptr<node::Variable>>(node->value), scope_id);
+	if (std::holds_alternative<std::unique_ptr<ast::Variable>>(node->value))
+		return ConvertVariable(std::get<std::unique_ptr<ast::Variable>>(node->value), scope_id);
 
 	return MakeError("unknown value", *node);
 }
 
-bool CodeGen::ConvertVariable(const std::unique_ptr<node::Variable>& node, uint64_t scope_id, bool declarable)
+bool CodeGen::ConvertVariable(const std::unique_ptr<ast::Variable>& node, uint64_t scope_id, bool declarable)
 {
 	auto var_address = GetVariableAddress(node, scope_id, declarable);
 	if (!std::get<0>(var_address))
@@ -507,19 +506,19 @@ bool CodeGen::ConvertVariable(const std::unique_ptr<node::Variable>& node, uint6
 	return true;
 }
 
-bool CodeGen::ConvertInt(const std::unique_ptr<node::Int>& node)
+bool CodeGen::ConvertInt(const std::unique_ptr<ast::Int>& node)
 {
 	PushConst(vm::Obj{ node->value });
 	return true;
 }
 
-bool CodeGen::ConvertFloat(const std::unique_ptr<node::Float>& node)
+bool CodeGen::ConvertFloat(const std::unique_ptr<ast::Float>& node)
 {
 	PushConst(vm::Obj{ node->value });
 	return true;
 }
 
-bool CodeGen::ConvertString(const std::unique_ptr<node::String>& node)
+bool CodeGen::ConvertString(const std::unique_ptr<ast::String>& node)
 {
 	PushConst(vm::Obj{ node->value });
 	return true;
@@ -532,7 +531,7 @@ void CodeGen::InitConstTable()
 }
 
 std::tuple<bool, uint64_t>
-CodeGen::GetVariableAddress(const std::unique_ptr<node::Variable>& node, uint64_t scope_id, bool declarable)
+CodeGen::GetVariableAddress(const std::unique_ptr<ast::Variable>& node, uint64_t scope_id, bool declarable)
 {
 	if (var_info.find(node->name) == var_info.end() || !is_scope_alive[var_info[node->name].scope_id])
 	{
@@ -600,7 +599,7 @@ void CodeGen::InitVariable()
 	var_info.clear();
 }
 
-bool CodeGen::MakeError(const char* msg, const node::Node& node)
+bool CodeGen::MakeError(const char* msg, const ast::Node& node)
 {
 	printf("%s [%llu,%llu]\n", msg, node.pos.line, node.pos.col);
 

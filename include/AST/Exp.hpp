@@ -14,7 +14,7 @@
 #include "UOperator.hpp"
 #include "Func.hpp"
 
-namespace xylo::node
+namespace xylo::ast
 {
 struct Exp : Node
 {

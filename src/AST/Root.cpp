@@ -2,9 +2,11 @@
 // Created by Katsu Matsuda on 2020/04/20.
 //
 
+#include <AST/Root.hpp>
+
 #include "AST/AST.hpp"
 
-using namespace xylo::node;
+using namespace xylo::ast;
 
 std::string Root::Node2Str(uint64_t indent)
 {

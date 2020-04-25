@@ -13,7 +13,7 @@
 #include "Stmt.hpp"
 #include "FuncDef.hpp"
 
-namespace xylo::node
+namespace xylo::ast
 {
 struct Root : Node
 {

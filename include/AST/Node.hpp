@@ -9,7 +9,7 @@
 
 #include "Token/SourcePos.hpp"
 
-namespace xylo::node
+namespace xylo::ast
 {
 struct Node
 {

@@ -4,7 +4,7 @@
 
 #include "AST/AST.hpp"
 
-using namespace xylo::node;
+using namespace xylo::ast;
 
 BOperatorType BOperator::Symbol2BOperator(Symbol symbol)
 {

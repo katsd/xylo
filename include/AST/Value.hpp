@@ -15,7 +15,7 @@
 #include "Variable.hpp"
 #include "Token/SourcePos.hpp"
 
-namespace xylo::node
+namespace xylo::ast
 {
 struct Value : Node
 {

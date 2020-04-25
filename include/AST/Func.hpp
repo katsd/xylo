@@ -12,7 +12,7 @@
 #include "Node.hpp"
 #include "Token/SourcePos.hpp"
 
-namespace xylo::node
+namespace xylo::ast
 {
 /*
  * TokenType::Name(Exp, Exp, .., Exp)
