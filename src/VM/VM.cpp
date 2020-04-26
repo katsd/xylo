@@ -49,7 +49,7 @@ Obj VM::Run(uint64_t start_idx)
 		case PUSH_GLOBAL_OBJ:
 		{
 			std::lock_guard<std::mutex> lock(global_obj_table_mutex);
-			PushStack(sc, stack, global_obj_table[++pc]);
+			PushStack(sc, stack, global_obj_table[code[++pc]]);
 		}
 			break;
 
