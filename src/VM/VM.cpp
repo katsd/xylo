@@ -3,3 +3,304 @@
 //
 
 #include "VM/VM.hpp"
+
+using namespace xylo::vm;
+
+void VM::Run(uint64_t start_idx)
+{
+	uint64_t pc = start_idx;
+
+	uint64_t sc = 0;
+
+	uint64_t obj_idx_offset = 0;
+
+	uint64_t func_level = 0;
+
+	std::unique_ptr<Obj[]> obj_table(new Obj[obj_table_size]);
+
+	std::unique_ptr<Obj[]> stack(new Obj[stack_size]);
+
+	std::unique_ptr<Obj> return_value = nullptr;
+
+	while (pc < code.size())
+	{
+		auto inst = code[pc];
+
+		switch (inst)
+		{
+		case PUSH:
+			PushStack(sc, stack, Obj{ (int64_t)code[++pc] });
+			break;
+
+		case PUSH_TOP:
+			PushStack(sc, stack, GetStack(sc, stack));
+			break;
+
+		case PUSH_OBJ:
+			PushStack(sc, stack, obj_table[code[++pc]]);
+			break;
+
+		case PUSH_GLOBAL_OBJ:
+			//TODO:
+			printf("PUSH_GLOBAL_OBJ %llu\n", code[++pc]);
+			break;
+
+		case PUSH_CONST:
+			//TODO:
+			printf("PUSH_CONST %llu\n", code[++pc]);
+			break;
+
+		case PUSH_ZERO:
+			PushStack(sc, stack, Obj{ (int64_t)0 });
+			break;
+
+		case PUSH_ONE:
+			PushStack(sc, stack, Obj{ (int64_t)1 });
+			break;
+
+		case PUSH_START:
+			//TODO:
+			printf("PUSH_START\n");
+			break;
+
+		case SET_OBJ:
+			obj_table[code[++pc]] = GetStack(sc, stack);
+			break;
+
+		case SET_GLOBAL_OBJ:
+			//TODO;
+			printf("SET_GLOBAL_OBJ %llu\n", code[++pc]);
+			break;
+
+		case SET_OBJ_ZERO:
+			obj_table[code[++pc]] = Obj{ (int64_t)0 };
+			break;
+
+		case SET_OBJ_ONE:
+			obj_table[code[++pc]] = Obj{ (int64_t)1 };
+			break;
+
+		case ICR_OBJ:
+		{
+			auto obj = obj_table[code[++pc]];
+			obj.Set(obj.GetInt() + 1);
+		}
+			break;
+
+		case DCR_OBJ:
+		{
+			auto obj = obj_table[code[++pc]];
+			obj.Set(obj.GetInt() - 1);
+		}
+			break;
+
+		case POP_TO_START:
+			//TODO:
+			printf("POP_TO_START\n");
+			break;
+
+		case INPUT:
+		{
+			std::string str;
+			std::cin >> str;
+
+			PushStack(sc, stack, Obj{ str });
+		}
+			break;
+
+		case OUT:
+			printf("%s\n", GetStack(sc, stack).GetString().c_str());
+			break;
+
+		case YAY:
+			printf("Yay\n");
+			break;
+
+		case JUMP:
+			pc = code[++pc];
+			continue;
+
+		case JUMP_TO_STACK_VALUE:
+			pc = GetStack(sc, stack).GetInt();
+			continue;
+
+		case JUMP_IF:
+			if (GetStack(sc, stack).GetInt() != 0)
+			{
+				pc = code[++pc];
+				continue;
+			}
+			pc++;
+			break;
+
+		case PUSH_OBJ_IDX_OFFSET:
+			PushStack(sc, stack, Obj{ (int64_t)obj_idx_offset });
+			break;
+
+		case ADD_OBJ_IDX_OFFSET:
+			obj_idx_offset += code[++pc];
+			break;
+
+		case SET_OBJ_IDX_OFFSET:
+			obj_idx_offset = GetStack(sc, stack).GetInt();
+			break;
+
+		case ICR_FUNC_LEVEL:
+			func_level++;
+			break;
+
+		case DCR_FUNC_LEVEL:
+			func_level--;
+			break;
+
+		case PUT_RETURN_VALUE:
+			return_value = std::make_unique<Obj>(GetStack(sc, stack));
+			break;
+
+		case PUSH_RETURN_VALUE:
+			PushStack(sc, stack, *return_value);
+			return_value = nullptr;
+			break;
+
+		case END:
+			//TODO:
+			printf("END\n");
+			break;
+
+		case BOPE:
+		{
+			auto ope = code[++pc];
+
+			auto left = GetStack(sc, stack);
+			auto right = GetStack(sc, stack);
+
+			bool is_int = left.GetType() == ObjType::INT && right.GetType() == ObjType::INT;
+
+			Obj obj;
+
+			switch (ope)
+			{
+			case ADD:
+				if (is_int)
+					obj.Set(left.GetInt() + right.GetInt());
+				else
+					obj.Set(left.GetFloat() + right.GetFloat());
+				break;
+
+			case SUB:
+				if (is_int)
+					obj.Set(left.GetInt() - right.GetInt());
+				else
+					obj.Set(left.GetFloat() - right.GetFloat());
+				break;
+
+			case MUL:
+				if (is_int)
+					obj.Set(left.GetInt() * right.GetInt());
+				else
+					obj.Set(left.GetFloat() * right.GetFloat());
+				break;
+
+			case DIV:
+				if (is_int)
+					obj.Set(left.GetInt() / right.GetInt());
+				else
+					obj.Set(left.GetFloat() / right.GetFloat());
+				break;
+
+			case MOD:
+				obj.Set(left.GetInt() % right.GetInt());
+				break;
+
+			case BIN_AND:
+				obj.Set(left.GetInt() & right.GetInt());
+				break;
+
+			case BIN_OR:
+				obj.Set(left.GetInt() | right.GetInt());
+				break;
+
+			case BIN_XOR:
+				obj.Set(left.GetInt() ^ right.GetInt());
+
+				break;
+
+			case EQUAL:
+				obj.Set((int64_t)(left == right ? 1 : 0));
+				break;
+
+			case NOT_EQUAL:
+				obj.Set((int64_t)(left != right ? 1 : 0));
+				break;
+
+			case GREATER:
+				if (is_int)
+					obj.Set((int64_t)(left.GetInt() > right.GetInt() ? 1 : 0));
+				else
+					obj.Set((int64_t)(left.GetFloat() > right.GetFloat() ? 1 : 0));
+				break;
+
+			case GREATER_EQ:
+				if (is_int)
+					obj.Set((int64_t)(left.GetInt() >= right.GetInt() ? 1 : 0));
+				else
+					obj.Set((int64_t)(left.GetFloat() >= right.GetFloat() ? 1 : 0));
+				printf(">=\n");
+				break;
+
+			case LESS:
+				if (is_int)
+					obj.Set((int64_t)(left.GetInt() < right.GetInt() ? 1 : 0));
+				else
+					obj.Set((int64_t)(left.GetFloat() < right.GetFloat() ? 1 : 0));
+				printf("<\n");
+				break;
+
+			case LESS_EQ:
+				if (is_int)
+					obj.Set((int64_t)(left.GetInt() <= right.GetInt() ? 1 : 0));
+				else
+					obj.Set((int64_t)(left.GetFloat() <= right.GetFloat() ? 1 : 0));
+				break;
+
+			case AND:
+				obj.Set((int64_t)((left.GetInt() != 0 && right.GetInt()) != 0 ? 1 : 0));
+				break;
+
+			case OR:
+				obj.Set((int64_t)((left.GetInt() != 0 || right.GetInt()) != 0 ? 1 : 0));
+				break;
+
+			default:
+				break;
+			}
+
+			PushStack(sc, stack, obj);
+		}
+			break;
+
+		case MINUS:
+		{
+			auto obj = GetStack(sc, stack);
+			if (obj.GetType() == ObjType::INT)
+				PushStack(sc, stack, Obj{ -obj.GetInt() });
+			else
+				PushStack(sc, stack, Obj{ -obj.GetFloat() });
+		}
+			break;
+
+		case NOT:
+			PushStack(sc, stack, Obj{ (int64_t)(GetStack(sc, stack).GetInt() == 0 ? 1 : 0) });
+			break;
+
+		case BIN_NOT:
+			PushStack(sc, stack, Obj{ (int64_t)(~GetStack(sc, stack).GetInt()) });
+			break;
+
+		default:
+			printf("[Error] unknown instruction : %llu\n", inst);
+			break;
+		}
+		pc++;
+	}
+}

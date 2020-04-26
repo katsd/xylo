@@ -108,12 +108,12 @@ struct Obj
 		value.str = std::make_unique<std::string>(std::move(str));
 	}
 
-	inline ObjType GetType()
+	[[nodiscard]] inline ObjType GetType() const
 	{
 		return type;
 	}
 
-	inline int64_t GetInt()
+	[[nodiscard]] inline int64_t GetInt() const
 	{
 		switch (type)
 		{
@@ -126,7 +126,7 @@ struct Obj
 		}
 	}
 
-	inline double GetFloat()
+	[[nodiscard]] inline double GetFloat() const
 	{
 		switch (type)
 		{
@@ -139,7 +139,7 @@ struct Obj
 		}
 	}
 
-	inline std::string GetString()
+	[[nodiscard]] inline std::string GetString() const
 	{
 		switch (type)
 		{
@@ -163,6 +163,35 @@ struct Obj
 		case STRING:
 			return std::tie(type, value.str) < std::tie(obj.type, obj.value.str);
 		}
+	}
+
+	bool operator==(const Obj& obj) const
+	{
+		auto l_type = GetType();
+		auto r_type = obj.GetType();
+
+		if (l_type == r_type)
+		{
+			switch (l_type)
+			{
+			case ObjType::INT:
+				return GetInt() == obj.GetInt();
+			case ObjType::FLOAT:
+				return GetFloat() == obj.GetFloat();
+			case ObjType::STRING:
+				return GetString() == obj.GetString();
+			}
+		}
+
+		if (l_type == ObjType::STRING || r_type == ObjType::STRING)
+			return GetString() == obj.GetString();
+
+		return abs(GetFloat() - obj.GetFloat()) < 1e-15;
+	}
+
+	bool operator!=(const Obj& obj) const
+	{
+		return !(this == &obj);
 	}
 
 	Obj& operator=(Obj obj)

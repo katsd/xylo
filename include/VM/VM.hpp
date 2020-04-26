@@ -5,6 +5,7 @@
 #ifndef _VM_HPP_
 #define _VM_HPP_
 
+#include <iostream>
 #include <cstdint>
 #include <vector>
 
@@ -16,12 +17,28 @@ namespace xylo::vm
 class VM
 {
  private:
-	std::vector<uint64_t> code;
+	static constexpr uint64_t obj_table_size = 1024 * 128;
+
+	static constexpr uint64_t stack_size = 1024 * 1024;
+
+	const std::vector<uint64_t> code;
+
+	inline Obj& GetStack(uint64_t& sc, const std::unique_ptr<Obj[]>& stack)
+	{
+		return stack[--sc];
+	}
+
+	inline void PushStack(uint64_t& sc, const std::unique_ptr<Obj[]>& stack, const Obj& obj)
+	{
+		stack[sc++] = obj;
+	}
 
  public:
+	void Run(uint64_t start_idx);
+
 	void OutCode();
 
-	VM(std::vector<uint64_t> code)
+	VM(const std::vector<uint64_t> code)
 		: code(std::move(code))
 	{
 
