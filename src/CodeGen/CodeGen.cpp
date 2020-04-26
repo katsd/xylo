@@ -120,7 +120,8 @@ bool CodeGen::DefineFunc(const std::unique_ptr<ast::FuncDef>& node)
 
 	if (func_info.find(func) != func_info.end())
 	{
-		return MakeError(("function " + func_name + "with " + std::to_string(arg_num) + "arguments is already defined")
+		return MakeError(("function " + func_name + " with " + std::to_string(arg_num)
+						  + " arguments is already defined")
 			.c_str(), *node);
 	}
 
@@ -170,7 +171,7 @@ bool CodeGen::ConvertFunc(const std::unique_ptr<ast::Func>& node, uint64_t scope
 
 	if (func_info.find(Func{ func_name, arg_num }) == func_info.end())
 	{
-		return MakeError(("function " + func_name + "with " + std::to_string(arg_num) + "arguments is not defined")
+		return MakeError(("function " + func_name + " with " + std::to_string(arg_num) + " arguments is not defined")
 			.c_str(), *node);
 	}
 
