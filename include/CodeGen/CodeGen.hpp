@@ -140,7 +140,8 @@ class CodeGen
 
 	bool DefineFunc(const std::unique_ptr<ast::FuncDef>& node);
 
-	std::tuple<bool, uint64_t>
+	// result, address, is_global_variable
+	std::tuple<bool, uint64_t, bool>
 	GetVariableAddress(const std::unique_ptr<ast::Variable>& node, uint64_t scope_id, bool declarable);
 
 	uint64_t GetTempVariable();
