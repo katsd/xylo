@@ -23,6 +23,8 @@ class VM
 
 	const std::vector<uint64_t> code;
 
+	const std::vector<Obj> const_table;
+
 	inline Obj& GetStack(uint64_t& sc, const std::unique_ptr<Obj[]>& stack)
 	{
 		return stack[--sc];
@@ -38,8 +40,8 @@ class VM
 
 	void OutCode();
 
-	VM(const std::vector<uint64_t> code)
-		: code(std::move(code))
+	VM(const std::vector<uint64_t> code, const std::vector<Obj> const_table)
+		: code(std::move(code)), const_table(std::move(const_table))
 	{
 
 	}

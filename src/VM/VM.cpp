@@ -46,8 +46,7 @@ void VM::Run(uint64_t start_idx)
 			break;
 
 		case PUSH_CONST:
-			//TODO:
-			printf("PUSH_CONST %llu\n", code[++pc]);
+			PushStack(sc, stack, const_table[code[++pc]]);
 			break;
 
 		case PUSH_ZERO:
