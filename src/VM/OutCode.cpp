@@ -12,6 +12,8 @@ void VM::OutCode()
 
 	while (pc < code.size())
 	{
+		printf("#%lld: ", pc);
+
 		auto inst = code[pc];
 
 		switch (inst)
