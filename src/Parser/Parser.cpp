@@ -31,7 +31,7 @@ std::unique_ptr<ast::Root> Parser::Parse()
 	end = &lex_result.tokens[lex_result.tokens.size() - 1];
 
 	auto root_nd = ParseRoot();
-	if (root_nd == nullptr)
+	if (!root_nd)
 	{
 		printf("failed to parse\n");
 		return nullptr;
@@ -49,14 +49,14 @@ std::unique_ptr<ast::Root> Parser::ParseRoot()
 		if (cur->type == TokenType::RESERVED && cur->GetReserved() == Reserved::FUNC)
 		{
 			auto nd = ParseFuncDef();
-			if (nd == nullptr)
+			if (!nd)
 				return nullptr;
 			stmts.emplace_back(std::move(nd));
 			continue;
 		}
 
 		auto nd = ParseStmt();
-		if (nd == nullptr)
+		if (!nd)
 			return nullptr;
 		stmts.emplace_back(std::move(nd));
 	}
@@ -72,7 +72,7 @@ std::unique_ptr<ast::Stmt> Parser::ParseStmt()
 	if (cur->type == TokenType::SYMBOL && cur->GetSymbol() == Symbol::LBRACKET)
 	{
 		auto nd = ParseBlock();
-		if (nd == nullptr)
+		if (!nd)
 			return nullptr;
 		return std::make_unique<ast::Stmt>(ast::Stmt{ std::move(nd), pos });
 	}
@@ -83,14 +83,14 @@ std::unique_ptr<ast::Stmt> Parser::ParseStmt()
 		if (cur + 1 <= end && CompSymbol(cur + 1, Symbol::ASSIGN))
 		{
 			auto nd = ParseAssign();
-			if (nd == nullptr)
+			if (!nd)
 				return nullptr;
 			return std::make_unique<ast::Stmt>(ast::Stmt{ std::move(nd), pos });
 		}
 
 		// Func
 		auto nd = ParseFunc();
-		if (nd == nullptr)
+		if (!nd)
 			return nullptr;
 		return std::make_unique<ast::Stmt>(ast::Stmt{ std::move(nd), pos });
 	}
@@ -108,7 +108,7 @@ std::unique_ptr<ast::Stmt> Parser::ParseStmt()
 	case Reserved::IF:
 	{
 		auto nd = ParseIf();
-		if (nd == nullptr)
+		if (!nd)
 			return nullptr;
 		stmt = std::move(nd);
 	}
@@ -117,7 +117,7 @@ std::unique_ptr<ast::Stmt> Parser::ParseStmt()
 	case Reserved::WHILE:
 	{
 		auto nd = ParseWhile();
-		if (nd == nullptr)
+		if (!nd)
 			return nullptr;
 		stmt = std::move(nd);
 	}
@@ -126,7 +126,7 @@ std::unique_ptr<ast::Stmt> Parser::ParseStmt()
 	case Reserved::REPEAT:
 	{
 		auto nd = ParseRepeat();
-		if (nd == nullptr)
+		if (!nd)
 			return nullptr;
 		stmt = std::move(nd);
 	}
@@ -135,7 +135,7 @@ std::unique_ptr<ast::Stmt> Parser::ParseStmt()
 	case Reserved::FOR:
 	{
 		auto nd = ParseFor();
-		if (nd == nullptr)
+		if (!nd)
 			return nullptr;
 		stmt = std::move(nd);
 	}
@@ -144,7 +144,7 @@ std::unique_ptr<ast::Stmt> Parser::ParseStmt()
 	case Reserved::RETURN:
 	{
 		auto nd = ParseReturn();
-		if (nd == nullptr)
+		if (!nd)
 			return nullptr;
 		stmt = std::move(nd);
 	}
@@ -182,7 +182,7 @@ std::unique_ptr<ast::FuncDef> Parser::ParseFuncDef()
 			break;
 
 		auto arg_nd = ParseVariable();
-		if (arg_nd == nullptr)
+		if (!arg_nd)
 			return nullptr;
 		args.emplace_back(std::move(arg_nd));
 
@@ -194,7 +194,7 @@ std::unique_ptr<ast::FuncDef> Parser::ParseFuncDef()
 	}
 
 	auto stmt_nd = ParseStmt();
-	if (stmt_nd == nullptr)
+	if (!stmt_nd)
 		return nullptr;
 
 	return std::make_unique<ast::FuncDef>(ast::FuncDef{ func_name, std::move(args), std::move(stmt_nd), pos });
@@ -224,7 +224,7 @@ std::unique_ptr<ast::Func> Parser::ParseFunc()
 			break;
 
 		auto arg_nd = ParseExp();
-		if (arg_nd == nullptr)
+		if (!arg_nd)
 			return nullptr;
 		args.emplace_back(std::move(arg_nd));
 
@@ -256,7 +256,7 @@ std::unique_ptr<ast::Block> Parser::ParseBlock()
 			break;
 
 		auto stmt_nd = ParseStmt();
-		if (stmt_nd == nullptr)
+		if (!stmt_nd)
 			return nullptr;
 
 		stmts.push_back(std::move(stmt_nd));
@@ -273,14 +273,14 @@ std::unique_ptr<ast::Assign> Parser::ParseAssign()
 	auto pos = cur->pos;
 
 	auto var_nd = ParseVariable();
-	if (var_nd == nullptr)
+	if (!var_nd)
 		return nullptr;
 
 	if (!CheckSymbol(Symbol::ASSIGN))
 		return nullptr;
 
 	auto exp_nd = ParseExp();
-	if (exp_nd == nullptr)
+	if (!exp_nd)
 		return nullptr;
 
 	return std::make_unique<ast::Assign>(ast::Assign{ std::move(var_nd), std::move(exp_nd), pos });
@@ -297,11 +297,11 @@ std::unique_ptr<ast::If> Parser::ParseIf()
 		return nullptr;
 
 	auto exp_nd = ParseExp();
-	if (exp_nd == nullptr)
+	if (!exp_nd)
 		return nullptr;
 
 	auto stmt_nd = ParseStmt();
-	if (stmt_nd == nullptr)
+	if (!stmt_nd)
 		return nullptr;
 
 	std::unique_ptr<ast::Stmt> stmt_else_nd = nullptr;
@@ -309,7 +309,7 @@ std::unique_ptr<ast::If> Parser::ParseIf()
 	if (CheckReserved(Reserved::ELSE, false))
 	{
 		stmt_else_nd = ParseStmt();
-		if (stmt_else_nd == nullptr)
+		if (!stmt_else_nd)
 			return nullptr;
 	}
 
@@ -327,11 +327,11 @@ std::unique_ptr<ast::Repeat> Parser::ParseRepeat()
 		return nullptr;
 
 	auto exp_nd = ParseExp();
-	if (exp_nd == nullptr)
+	if (!exp_nd)
 		return nullptr;
 
 	auto stmt_nd = ParseStmt();
-	if (stmt_nd == nullptr)
+	if (!stmt_nd)
 		return nullptr;
 
 	return std::make_unique<ast::Repeat>(ast::Repeat{ std::move(exp_nd), std::move(stmt_nd), pos });
@@ -348,18 +348,18 @@ std::unique_ptr<ast::For> Parser::ParseFor()
 		return nullptr;
 
 	auto var_nd = ParseVariable();
-	if (var_nd == nullptr)
+	if (!var_nd)
 		return nullptr;
 
 	if (!CheckSymbol(Symbol::COMMA))
 		return nullptr;
 
 	auto exp_nd = ParseExp();
-	if (exp_nd == nullptr)
+	if (!exp_nd)
 		return nullptr;
 
 	auto stmt_nd = ParseStmt();
-	if (stmt_nd == nullptr)
+	if (!stmt_nd)
 		return nullptr;
 
 	return std::make_unique<ast::For>(ast::For{ std::move(var_nd), std::move(exp_nd), std::move(stmt_nd), pos });
@@ -376,11 +376,11 @@ std::unique_ptr<ast::While> Parser::ParseWhile()
 		return nullptr;
 
 	auto exp_nd = ParseExp();
-	if (exp_nd == nullptr)
+	if (!exp_nd)
 		return nullptr;
 
 	auto stmt_nd = ParseStmt();
-	if (stmt_nd == nullptr)
+	if (!stmt_nd)
 		return nullptr;
 
 	return std::make_unique<ast::While>(ast::While{ std::move(exp_nd), std::move(stmt_nd), pos });
@@ -397,7 +397,7 @@ std::unique_ptr<ast::Return> Parser::ParseReturn()
 		return nullptr;
 
 	auto nd = ParseExp();
-	if (nd == nullptr)
+	if (!nd)
 		return nullptr;
 
 	return std::make_unique<ast::Return>(ast::Return{ std::move(nd), pos });
@@ -417,7 +417,7 @@ std::unique_ptr<ast::Exp> Parser::ParseExp(uint8_t ope_rank)
 
 	auto left = ParseExp(ope_rank + 1);
 
-	if (left == nullptr)
+	if (!left)
 		return nullptr;
 
 	return ParseExpTail(ope_rank, std::move(left));
@@ -470,7 +470,7 @@ std::unique_ptr<ast::Exp> Parser::ParseFactor()
 		}
 
 		auto nd = ParseUOperator();
-		if (nd == nullptr)
+		if (!nd)
 			return nullptr;
 		return std::make_unique<ast::Exp>(ast::Exp{ std::move(nd), pos });
 	}
@@ -480,13 +480,13 @@ std::unique_ptr<ast::Exp> Parser::ParseFactor()
 		CompSymbol(cur + 1, Symbol::LPAREN))
 	{
 		auto nd = ParseFunc();
-		if (nd == nullptr)
+		if (!nd)
 			return nullptr;
 		return std::make_unique<ast::Exp>(ast::Exp{ std::move(nd), pos });
 	}
 
 	auto nd = ParseValue();
-	if (nd == nullptr)
+	if (!nd)
 		return nullptr;
 	return std::make_unique<ast::Exp>(ast::Exp{ std::move(nd), pos });
 }
@@ -523,7 +523,7 @@ std::unique_ptr<ast::UOperator> Parser::ParseUOperator()
 
 	cur++;
 	auto nd = ParseFactor();
-	if (nd == nullptr)
+	if (!nd)
 		return nullptr;
 	return std::make_unique<ast::UOperator>(ast::UOperator{ ope, std::move(nd), ope_pos });
 }
@@ -540,25 +540,25 @@ std::unique_ptr<ast::Value> Parser::ParseValue()
 	case TokenType::INT:
 	{
 		auto res = ParseInt();
-		if (res == nullptr) return nullptr;
+		if (!res) return nullptr;
 		return std::make_unique<ast::Value>(ast::Value{ std::move(res), pos });
 	}
 	case TokenType::FLOAT:
 	{
 		auto res = ParseFloat();
-		if (res == nullptr) return nullptr;
+		if (!res) return nullptr;
 		return std::make_unique<ast::Value>(ast::Value{ std::move(res), pos });
 	}
 	case TokenType::STRING:
 	{
 		auto res = ParseString();
-		if (res == nullptr) return nullptr;
+		if (!res) return nullptr;
 		return std::make_unique<ast::Value>(ast::Value{ std::move(res), pos });
 	}
 	case TokenType::IDENTIFIER:
 	{
 		auto res = ParseVariable();
-		if (res == nullptr) return nullptr;
+		if (!res) return nullptr;
 		return std::make_unique<ast::Value>(ast::Value{ std::move(res), pos });
 	}
 	default:
