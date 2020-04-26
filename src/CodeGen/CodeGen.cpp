@@ -176,7 +176,7 @@ bool CodeGen::ConvertFunc(const std::unique_ptr<ast::Func>& node, uint64_t scope
 
 	code.push_back(vm::Inst::ICR_FUNC_LEVEL);
 
-	auto& return_address = code[code.size() - 1];
+	auto return_address_idx = code.size() - 1;
 
 	code.push_back(vm::Inst::PUSH_OBJ_IDX_OFFSET);
 	code.push_back(vm::Inst::ADD_OBJ_IDX_OFFSET);
@@ -191,7 +191,7 @@ bool CodeGen::ConvertFunc(const std::unique_ptr<ast::Func>& node, uint64_t scope
 
 	Jump(0);
 
-	return_address = code.size();
+	code[return_address_idx] = code.size();
 
 	auto func_id = func_info[Func{ func_name, arg_num }].func_id;
 	unassigned_func_id[code.size() - 1] = func_id;
@@ -241,7 +241,7 @@ bool CodeGen::ConvertIf(const std::unique_ptr<ast::If>& node, uint64_t scope_id)
 	PushObj(condition_address);
 	JumpIf(0);
 
-	auto& else_start_address = code[code.size() - 1];
+	auto else_start_address_idx = code.size() - 1;
 
 	if (!ConvertStmt(node->stmt, 0, true))
 		return false;
@@ -251,18 +251,18 @@ bool CodeGen::ConvertIf(const std::unique_ptr<ast::If>& node, uint64_t scope_id)
 		PushObj(condition_address);
 		JumpIf(0);
 
-		auto& if_end_address = code[code.size() - 1];
+		auto if_end_address_idx = code.size() - 1;
 
-		else_start_address = code.size();
+		code[else_start_address_idx] = code.size();
 
 		if (!ConvertStmt(node->stmt_else, 0, true))
 			return false;
 
-		if_end_address = code.size();
+		code[if_end_address_idx] = code.size();
 	}
 	else
 	{
-		else_start_address = code.size();
+		code[else_start_address_idx] = code.size();
 	}
 
 	ReleaseTempVariable(condition_address);
@@ -286,7 +286,7 @@ bool CodeGen::ConvertRepeat(const std::unique_ptr<ast::Repeat>& node, uint64_t s
 	PushBOperator(vm::Inst::LESS_EQ);
 	JumpIf(0);
 
-	auto& break_address = code[code.size() - 1];
+	auto break_address_idx = code.size() - 1;
 
 	if (!ConvertStmt(node->stmt, 0, true))
 		return false;
@@ -294,7 +294,7 @@ bool CodeGen::ConvertRepeat(const std::unique_ptr<ast::Repeat>& node, uint64_t s
 	DecrementObj(cnt_var);
 	Jump(return_address);
 
-	break_address = code.size();
+	code[break_address_idx] = code.size();
 
 	return true;
 }
@@ -321,7 +321,7 @@ bool CodeGen::ConvertFor(const std::unique_ptr<ast::For>& node, uint64_t scope_i
 	PushObj(cnt_var_address);
 	PushBOperator(vm::Inst::GREATER_EQ);
 
-	auto& break_address = code[code.size() - 1];
+	auto break_address_idx = code.size() - 1;
 
 	if (!ConvertStmt(node->stmt, 0, true))
 		return false;
@@ -329,7 +329,7 @@ bool CodeGen::ConvertFor(const std::unique_ptr<ast::For>& node, uint64_t scope_i
 	IncrementObj(cnt_var_address);
 	Jump(return_address);
 
-	break_address = code.size();
+	code[break_address_idx] = code.size();
 
 	ReleaseTempVariable(time_var);
 
@@ -347,14 +347,14 @@ bool CodeGen::ConvertWhile(const std::unique_ptr<ast::While>& node, uint64_t sco
 
 	JumpIf(0);
 
-	auto& while_end_address = code[code.size() - 1];
+	auto while_end_address_idx = code.size() - 1;
 
 	if (!ConvertStmt(node->stmt, 0, true))
 		return false;
 
 	Jump(return_address);
 
-	while_end_address = code.size();
+	code[while_end_address_idx] = code.size();
 
 	return true;
 }
