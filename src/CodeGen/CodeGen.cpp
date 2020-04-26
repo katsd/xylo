@@ -326,6 +326,8 @@ bool CodeGen::ConvertFor(const std::unique_ptr<ast::For>& node, uint64_t scope_i
 	if (!ConvertExp(node->time, scope_id))
 		return false;
 
+	scope_id = GetNewScope();
+
 	auto time_var = GetTempVariable();
 
 	SetObj(time_var);
@@ -342,10 +344,10 @@ bool CodeGen::ConvertFor(const std::unique_ptr<ast::For>& node, uint64_t scope_i
 	PushObj(time_var);
 	PushObj(cnt_var_address);
 	PushBOperator(vm::Inst::GREATER_EQ);
-
+	JumpIf(0);
 	auto break_address_idx = code.size() - 1;
 
-	if (!ConvertStmt(node->stmt, 0, true))
+	if (!ConvertStmt(node->stmt, scope_id, true))
 		return false;
 
 	IncrementObj(cnt_var_address);
@@ -354,6 +356,8 @@ bool CodeGen::ConvertFor(const std::unique_ptr<ast::For>& node, uint64_t scope_i
 	code[break_address_idx] = code.size();
 
 	ReleaseTempVariable(time_var);
+
+	KillScope(scope_id);
 
 	return true;
 }
