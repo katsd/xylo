@@ -44,7 +44,7 @@ class VM
 	}
 
  public:
-	Obj Run(uint64_t start_idx);
+	Obj Run(uint64_t start_idx = 0);
 
 	void OutCode();
 
