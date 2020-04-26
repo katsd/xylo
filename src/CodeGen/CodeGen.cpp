@@ -10,6 +10,7 @@ std::vector<uint64_t> CodeGen::GenerateCode()
 {
 	code.clear();
 
+	InitGlobalVariable();
 	InitVariable();
 	InitConstTable();
 	InitScope();
@@ -607,9 +608,13 @@ void CodeGen::InitFunc()
 	func_info.clear();
 }
 
-void CodeGen::InitVariable()
+void CodeGen::InitGlobalVariable()
 {
 	global_var_cnt = 0;
+}
+
+void CodeGen::InitVariable()
+{
 	var_cnt = 0;
 	var_info.clear();
 }

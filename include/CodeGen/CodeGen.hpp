@@ -248,6 +248,8 @@ class CodeGen
 
 	void InitFunc();
 
+	void InitGlobalVariable();
+
 	void InitVariable();
 
 	static bool MakeError(const char* msg, const ast::Node& node);
