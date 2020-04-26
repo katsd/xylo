@@ -128,6 +128,10 @@ void VM::OutCode()
 			printf("PUSH_RETURN_VALUE\n");
 			break;
 
+		case START:
+			printf("START\n");
+			break;
+
 		case END:
 			printf("END\n");
 			break;
