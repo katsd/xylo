@@ -225,7 +225,10 @@ bool CodeGen::ConvertAssign(const std::unique_ptr<ast::Assign>& node, uint64_t s
 	if (!ConvertExp(node->exp, scope_id))
 		return false;
 
-	SetObj(var_address);
+	if (scope_id == global_scope_id)
+		SetGlobalObj(var_address);
+	else
+		SetObj(var_address);
 
 	return true;
 }
@@ -503,7 +506,13 @@ bool CodeGen::ConvertVariable(const std::unique_ptr<ast::Variable>& node, uint64
 	if (!std::get<0>(var_address))
 		return false;
 
-	PushObj(std::get<1>(var_address));
+	auto address = std::get<1>(var_address);
+
+	if (scope_id == global_scope_id)
+		PushGlobalObj(address);
+	else
+		PushObj(address);
+
 	return true;
 }
 
@@ -539,7 +548,11 @@ CodeGen::GetVariableAddress(const std::unique_ptr<ast::Variable>& node, uint64_t
 		if (!declarable)
 			return std::make_tuple(MakeError(("variable " + node->name + " is not declared").c_str(), *node), 0);
 
-		auto address = var_cnt++;
+		uint64_t address;
+		if (scope_id == global_scope_id)
+			address = global_var_cnt++;
+		else
+			address = var_cnt++;
 		var_info[node->name] = { address, scope_id };
 
 		return std::make_tuple(true, address);
@@ -596,6 +609,7 @@ void CodeGen::InitFunc()
 
 void CodeGen::InitVariable()
 {
+	global_var_cnt = 0;
 	var_cnt = 0;
 	var_info.clear();
 }

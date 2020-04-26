@@ -78,6 +78,8 @@ class CodeGen
 
 	// variable
 
+	uint64_t global_var_cnt;
+
 	uint64_t var_cnt;
 
 	std::map<std::string, VariableInfo> var_info;
@@ -157,6 +159,12 @@ class CodeGen
 		code.push_back(address);
 	}
 
+	inline void PushGlobalObj(uint64_t address)
+	{
+		code.push_back(vm::Inst::PUSH_GLOBAL_OBJ);
+		code.push_back(address);
+	}
+
 	inline void PushConst(vm::Obj obj)
 	{
 		code.push_back(vm::Inst::PUSH_CONST);
@@ -176,6 +184,12 @@ class CodeGen
 	inline void SetObj(uint64_t address)
 	{
 		code.push_back(vm::Inst::SET_OBJ);
+		code.push_back(address);
+	}
+
+	inline void SetGlobalObj(uint64_t address)
+	{
+		code.push_back(vm::Inst::SET_GLOBAL_OBJ);
 		code.push_back(address);
 	}
 
