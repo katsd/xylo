@@ -10,6 +10,12 @@ Obj VM::Run(uint64_t start_idx)
 {
 	uint64_t pc = start_idx;
 
+	if (code[pc++] != START)
+	{
+		printf("failed to run\n");
+		return Obj{};
+	}
+
 	uint64_t sc = 0;
 
 	uint64_t obj_idx_offset = 0;
