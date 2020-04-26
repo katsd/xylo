@@ -196,7 +196,7 @@ struct Obj
 		case FLOAT:
 			return std::tie(type, value.dval) < std::tie(obj.type, obj.value.dval);
 		case STRING:
-			return std::tie(type, value.str) < std::tie(obj.type, obj.value.str);
+			return std::tie(type, *value.str) < std::tie(obj.type, *obj.value.str);
 		}
 	}
 
