@@ -228,10 +228,10 @@ struct Obj
 
 	bool operator!=(const Obj& obj) const
 	{
-		return !(this == &obj);
+		return this != &obj;
 	}
 
-	Obj& operator=(Obj obj)
+	Obj& operator=(const Obj& obj)
 	{
 		Release();
 		type = obj.type;
