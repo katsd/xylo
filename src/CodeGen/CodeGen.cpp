@@ -36,6 +36,8 @@ bool CodeGen::ConvertRoot(const std::unique_ptr<ast::Root>& node, uint64_t scope
 			return false;
 	}
 
+	code.push_back(vm::Inst::START);
+
 	for (auto& stmt : node->stmts)
 	{
 		if (!std::holds_alternative<std::unique_ptr<ast::Stmt>>(stmt))
@@ -145,6 +147,8 @@ bool CodeGen::ConvertFuncDef(const std::unique_ptr<ast::FuncDef>& node, uint64_t
 
 	scope_id = GetNewScope();
 
+	code.push_back(vm::Inst::START);
+
 	for (auto& arg : node->args)
 	{
 		auto var = GetVariableAddress(arg, scope_id, true);
@@ -158,6 +162,8 @@ bool CodeGen::ConvertFuncDef(const std::unique_ptr<ast::FuncDef>& node, uint64_t
 
 	if (!ConvertStmt(node->stmt, scope_id))
 		return false;
+
+	code.push_back(vm::Inst::END);
 
 	KillScope(scope_id);
 
