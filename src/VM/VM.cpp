@@ -91,14 +91,14 @@ Obj VM::Run(uint64_t start_idx)
 		case ICR_OBJ:
 		{
 			auto obj = obj_table[code[++pc]];
-			obj.Set(obj.GetInt() + 1);
+			obj_table[code[pc]].Set(obj.GetInt() + 1);
 		}
 			break;
 
 		case DCR_OBJ:
 		{
 			auto obj = obj_table[code[++pc]];
-			obj.Set(obj.GetInt() - 1);
+			obj_table[code[pc]].Set(obj.GetInt() - 1);
 		}
 			break;
 
