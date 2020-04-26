@@ -51,7 +51,7 @@ enum Inst
 	// obj at $0 -=1
 	DCR_OBJ,
 
-	// Pop stack while A != START
+	// Pop stack while A != START => Pop stack (Remove START)
 	POP_TO_START,
 
 	// Input value
