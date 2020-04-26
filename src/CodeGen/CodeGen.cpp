@@ -184,6 +184,12 @@ bool CodeGen::ConvertFunc(const std::unique_ptr<ast::Func>& node, uint64_t scope
 		return true;
 	}
 
+	if (func_name == "input" && arg_num == 0)
+	{
+		code.push_back(vm::Inst::INPUT);
+		return true;
+	}
+
 	if (func_info.find(Func{ func_name, arg_num }) == func_info.end())
 	{
 		return MakeError(("function " + func_name + " with " + std::to_string(arg_num) + " arguments is not defined")
