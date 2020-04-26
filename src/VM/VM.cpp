@@ -6,7 +6,7 @@
 
 using namespace xylo::vm;
 
-void VM::Run(uint64_t start_idx)
+Obj VM::Run(uint64_t start_idx)
 {
 	uint64_t pc = start_idx;
 
@@ -58,8 +58,7 @@ void VM::Run(uint64_t start_idx)
 			break;
 
 		case PUSH_START:
-			//TODO:
-			printf("PUSH_START\n");
+			PushStack(sc, stack, Obj{ Inst::START });
 			break;
 
 		case SET_OBJ:
@@ -94,8 +93,11 @@ void VM::Run(uint64_t start_idx)
 			break;
 
 		case POP_TO_START:
-			//TODO:
-			printf("POP_TO_START\n");
+			while (sc >= 0)
+			{
+				if (GetStack(sc, stack).GetInst() == Inst::START)
+					break;
+			}
 			break;
 
 		case INPUT:
@@ -162,8 +164,8 @@ void VM::Run(uint64_t start_idx)
 			break;
 
 		case END:
-			//TODO:
-			printf("END\n");
+			if (func_level == 0)
+				return GetStack(sc, stack);
 			break;
 
 		case BOPE:
