@@ -259,7 +259,6 @@ Obj VM::Run(uint64_t start_idx)
 					obj.Set((int64_t)(left.GetInt() >= right.GetInt() ? 1 : 0));
 				else
 					obj.Set((int64_t)(left.GetFloat() >= right.GetFloat() ? 1 : 0));
-				printf(">=\n");
 				break;
 
 			case LESS:
@@ -267,7 +266,6 @@ Obj VM::Run(uint64_t start_idx)
 					obj.Set((int64_t)(left.GetInt() < right.GetInt() ? 1 : 0));
 				else
 					obj.Set((int64_t)(left.GetFloat() < right.GetFloat() ? 1 : 0));
-				printf("<\n");
 				break;
 
 			case LESS_EQ:
