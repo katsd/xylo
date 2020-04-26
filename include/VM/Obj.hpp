@@ -7,6 +7,7 @@
 
 #include <string>
 #include <memory>
+#include <cmath>
 
 namespace xylo::vm
 {
