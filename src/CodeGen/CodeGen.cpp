@@ -264,9 +264,9 @@ bool CodeGen::ConvertIf(const std::unique_ptr<ast::If>& node, uint64_t scope_id)
 	if (!ConvertExp(node->exp, scope_id))
 		return false;
 
-	code.push_back(vm::Inst::NOT);
 	SetObj(condition_address);
 	PushObj(condition_address);
+	code.push_back(vm::Inst::NOT);
 	JumpIf(0);
 
 	auto else_start_address_idx = code.size() - 1;
