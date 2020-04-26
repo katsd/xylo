@@ -92,6 +92,8 @@ enum Inst
 
 	PUSH_RETURN_VALUE,
 
+	START,
+
 	END,
 
 	// ##################
