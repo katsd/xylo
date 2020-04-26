@@ -10,7 +10,7 @@ Obj VM::Run(uint64_t start_idx)
 {
 	uint64_t pc = start_idx;
 
-	if (code[pc++] != START)
+	if (code[pc] != START)
 	{
 		printf("failed to run\n");
 		return Obj{};
@@ -171,6 +171,9 @@ Obj VM::Run(uint64_t start_idx)
 		case PUSH_RETURN_VALUE:
 			PushStack(sc, stack, *return_value);
 			return_value = nullptr;
+			break;
+
+		case START:
 			break;
 
 		case END:
