@@ -161,6 +161,7 @@ enum Inst
 	// ~A
 	BIN_NOT,
 
+	DO_NOTHING,
 };
 }
 

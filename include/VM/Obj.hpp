@@ -13,6 +13,7 @@ namespace xylo::vm
 {
 enum ObjType
 {
+	INST,
 	INT,
 	FLOAT,
 	STRING,
@@ -23,6 +24,8 @@ struct Obj
  private:
 	union ObjValue
 	{
+		Inst inst;
+
 		int64_t ival;
 
 		double dval;
@@ -61,6 +64,9 @@ struct Obj
 		type = obj.type;
 		switch (obj.type)
 		{
+		case INST:
+			Set(obj.value.inst);
+			break;
 		case INT:
 			Set(obj.value.ival);
 			break;
@@ -71,6 +77,11 @@ struct Obj
 			Set(*obj.value.str);
 			break;
 		}
+	}
+
+	explicit Obj(Inst inst)
+	{
+		Set(inst);
 	}
 
 	explicit Obj(int64_t ival)
@@ -86,6 +97,13 @@ struct Obj
 	explicit Obj(std::string str)
 	{
 		Set(std::move(str));
+	}
+
+	inline void Set(Inst inst)
+	{
+		Release();
+		type = INST;
+		value.inst = inst;
 	}
 
 	inline void Set(int64_t ival)
@@ -114,10 +132,20 @@ struct Obj
 		return type;
 	}
 
+	[[nodiscard]] inline Inst GetInst() const
+	{
+		if (type == ObjType::INST)
+			return value.inst;
+
+		return Inst::DO_NOTHING;
+	}
+
 	[[nodiscard]] inline int64_t GetInt() const
 	{
 		switch (type)
 		{
+		case INST:
+			return 0;
 		case INT:
 			return value.ival;
 		case FLOAT:
@@ -131,6 +159,8 @@ struct Obj
 	{
 		switch (type)
 		{
+		case INST:
+			return 0;
 		case INT:
 			return (double)value.ival;
 		case FLOAT:
@@ -144,6 +174,8 @@ struct Obj
 	{
 		switch (type)
 		{
+		case INST:
+			return "";
 		case INT:
 			return std::to_string(value.ival);
 		case FLOAT:
@@ -157,6 +189,8 @@ struct Obj
 	{
 		switch (type)
 		{
+		case INST:
+			return std::tie(type, value.inst) < std::tie(obj.type, obj.value.inst);
 		case INT:
 			return std::tie(type, value.ival) < std::tie(obj.type, obj.value.ival);
 		case FLOAT:
@@ -175,11 +209,13 @@ struct Obj
 		{
 			switch (l_type)
 			{
-			case ObjType::INT:
+			case INST:
+				return GetInst() == obj.GetInst();
+			case INT:
 				return GetInt() == obj.GetInt();
-			case ObjType::FLOAT:
+			case FLOAT:
 				return GetFloat() == obj.GetFloat();
-			case ObjType::STRING:
+			case STRING:
 				return GetString() == obj.GetString();
 			}
 		}
@@ -201,6 +237,8 @@ struct Obj
 		type = obj.type;
 		switch (type)
 		{
+		case INST:
+			value.inst = obj.GetInst();
 		case INT:
 			value.ival = obj.GetInt();
 			break;
