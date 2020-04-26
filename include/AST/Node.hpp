@@ -22,6 +22,10 @@ struct Node
 	{
 	}
 
+	virtual ~Node()
+	{
+	}
+
 	virtual std::string Node2Str(uint64_t indent) = 0;
 
 	inline static std::string IndentStr(uint64_t indent)
