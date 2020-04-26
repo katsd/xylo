@@ -602,7 +602,7 @@ void CodeGen::InitVariable()
 
 bool CodeGen::MakeError(const char* msg, const ast::Node& node)
 {
-	printf("%s [%llu,%llu]\n", msg, node.pos.line, node.pos.col);
+	printf("%s [%llu,%llu]\n", msg, node.pos.line + 1, node.pos.col + 1);
 
 	return false;
 }
