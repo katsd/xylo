@@ -66,6 +66,8 @@ bool CodeGen::ConvertRoot(const std::unique_ptr<ast::Root>& node, uint64_t scope
 
 bool CodeGen::ConvertStmt(const std::unique_ptr<ast::Stmt>& node, uint64_t scope_id, bool is_new_scope)
 {
+	auto cur_var_cnt = var_cnt;
+
 	if (is_new_scope)
 		scope_id = GetNewScope();
 
@@ -109,7 +111,11 @@ bool CodeGen::ConvertStmt(const std::unique_ptr<ast::Stmt>& node, uint64_t scope
 	}
 
 	if (is_new_scope)
+	{
+		var_cnt = cur_var_cnt;
 		KillScope(scope_id);
+	}
+
 	return res;
 }
 
@@ -147,6 +153,8 @@ bool CodeGen::ConvertFuncDef(const std::unique_ptr<ast::FuncDef>& node, uint64_t
 		auto var_address = std::get<1>(var);
 		SetObj(var_address);
 	}
+
+	InitVariable();
 
 	if (!ConvertStmt(node->stmt, scope_id))
 		return false;
@@ -203,6 +211,7 @@ bool CodeGen::ConvertFunc(const std::unique_ptr<ast::Func>& node, uint64_t scope
 
 bool CodeGen::ConvertBlock(const std::unique_ptr<ast::Block>& node, uint64_t scope_id)
 {
+	auto cur_var_cnt = var_cnt;
 	scope_id = GetNewScope();
 
 	for (auto& stmt : node->stmts)
@@ -211,6 +220,7 @@ bool CodeGen::ConvertBlock(const std::unique_ptr<ast::Block>& node, uint64_t sco
 			return false;
 	}
 
+	var_cnt = cur_var_cnt;
 	KillScope(scope_id);
 
 	return true;
