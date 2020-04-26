@@ -51,6 +51,7 @@ struct Obj
 	{
 		if (type == STRING)
 			value.str.reset();
+		value.ival = 0;
 	}
 
  public:
@@ -239,6 +240,7 @@ struct Obj
 		{
 		case INST:
 			value.inst = obj.GetInst();
+			break;
 		case INT:
 			value.ival = obj.GetInt();
 			break;
