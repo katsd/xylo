@@ -164,6 +164,26 @@ struct Obj
 			return std::tie(type, value.str) < std::tie(obj.type, obj.value.str);
 		}
 	}
+
+	Obj& operator=(Obj obj)
+	{
+		Release();
+		type = obj.type;
+		switch (type)
+		{
+		case INT:
+			value.ival = obj.GetInt();
+			break;
+		case FLOAT:
+			value.dval = obj.GetFloat();
+			break;
+		case STRING:
+			value.str = std::make_unique<std::string>(obj.GetString());
+			break;
+		}
+
+		return *this;
+	}
 };
 }
 
