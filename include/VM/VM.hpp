@@ -7,6 +7,8 @@
 
 #include <iostream>
 #include <cstdint>
+#include <memory>
+#include <mutex>
 #include <vector>
 
 #include "Inst.hpp"
@@ -17,6 +19,8 @@ namespace xylo::vm
 class VM
 {
  private:
+	static constexpr uint64_t global_obj_table_size = 1024 * 128;
+
 	static constexpr uint64_t obj_table_size = 1024 * 128;
 
 	static constexpr uint64_t stack_size = 1024 * 1024;
@@ -24,6 +28,10 @@ class VM
 	const std::vector<uint64_t> code;
 
 	const std::vector<Obj> const_table;
+
+	std::mutex global_obj_table_mutex;
+
+	std::unique_ptr<Obj[]> global_obj_table;
 
 	inline Obj& GetStack(uint64_t& sc, const std::unique_ptr<Obj[]>& stack)
 	{
@@ -43,7 +51,7 @@ class VM
 	VM(const std::vector<uint64_t> code, const std::vector<Obj> const_table)
 		: code(std::move(code)), const_table(std::move(const_table))
 	{
-
+		global_obj_table = std::make_unique<Obj[]>(global_obj_table_size);
 	}
 
 };

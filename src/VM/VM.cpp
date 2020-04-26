@@ -41,8 +41,10 @@ Obj VM::Run(uint64_t start_idx)
 			break;
 
 		case PUSH_GLOBAL_OBJ:
-			//TODO:
-			printf("PUSH_GLOBAL_OBJ %llu\n", code[++pc]);
+		{
+			std::lock_guard<std::mutex> lock(global_obj_table_mutex);
+			PushStack(sc, stack, global_obj_table[++pc]);
+		}
 			break;
 
 		case PUSH_CONST:
@@ -66,8 +68,10 @@ Obj VM::Run(uint64_t start_idx)
 			break;
 
 		case SET_GLOBAL_OBJ:
-			//TODO;
-			printf("SET_GLOBAL_OBJ %llu\n", code[++pc]);
+		{
+			std::lock_guard<std::mutex> lock(global_obj_table_mutex);
+			global_obj_table[code[++pc]] = GetStack(sc, stack);
+		}
 			break;
 
 		case SET_OBJ_ZERO:
@@ -304,4 +308,6 @@ Obj VM::Run(uint64_t start_idx)
 		}
 		pc++;
 	}
+
+	return Obj{};
 }
