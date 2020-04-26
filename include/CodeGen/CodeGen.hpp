@@ -255,7 +255,16 @@ class CodeGen
 	static bool MakeError(const char* msg, const ast::Node& node);
 
  public:
-	std::vector<uint64_t> GenerateCode();
+	struct Result
+	{
+		bool success;
+
+		std::vector<uint64_t> code;
+
+		std::vector<vm::Obj> const_table;
+	};
+
+	Result GenerateCode();
 
 	CodeGen(const std::unique_ptr<ast::Root>& ast)
 		: ast(ast)

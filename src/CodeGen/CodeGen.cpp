@@ -6,7 +6,7 @@
 
 using namespace xylo;
 
-std::vector<uint64_t> CodeGen::GenerateCode()
+CodeGen::Result CodeGen::GenerateCode()
 {
 	code.clear();
 
@@ -19,10 +19,10 @@ std::vector<uint64_t> CodeGen::GenerateCode()
 	if (!ConvertRoot(ast, global_scope_id))
 	{
 		printf("failed to generate code\n");
-		return code;
+		return Result{ false };
 	}
 
-	return code;
+	return Result{ true, code, const_table };
 }
 
 bool CodeGen::ConvertRoot(const std::unique_ptr<ast::Root>& node, uint64_t scope_id)
