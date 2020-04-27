@@ -43,7 +43,7 @@ Obj VM::Run(uint64_t start_idx)
 			break;
 
 		case PUSH_OBJ:
-			PushStack(sc, stack, obj_table[code[++pc]]);
+			PushStack(sc, stack, obj_table[code[++pc] + obj_idx_offset]);
 			break;
 
 		case PUSH_GLOBAL_OBJ:
@@ -70,7 +70,7 @@ Obj VM::Run(uint64_t start_idx)
 			break;
 
 		case SET_OBJ:
-			obj_table[code[++pc]] = GetStack(sc, stack);
+			obj_table[code[++pc] + obj_idx_offset] = GetStack(sc, stack);
 			break;
 
 		case SET_GLOBAL_OBJ:
@@ -81,24 +81,24 @@ Obj VM::Run(uint64_t start_idx)
 			break;
 
 		case SET_OBJ_ZERO:
-			obj_table[code[++pc]] = Obj{ (int64_t)0 };
+			obj_table[code[++pc] + obj_idx_offset] = Obj{ (int64_t)0 };
 			break;
 
 		case SET_OBJ_ONE:
-			obj_table[code[++pc]] = Obj{ (int64_t)1 };
+			obj_table[code[++pc] + obj_idx_offset] = Obj{ (int64_t)1 };
 			break;
 
 		case ICR_OBJ:
 		{
-			auto obj = obj_table[code[++pc]];
-			obj_table[code[pc]].Set(obj.GetInt() + 1);
+			auto obj = obj_table[code[++pc] + obj_idx_offset];
+			obj_table[code[pc] + obj_idx_offset].Set(obj.GetInt() + 1);
 		}
 			break;
 
 		case DCR_OBJ:
 		{
-			auto obj = obj_table[code[++pc]];
-			obj_table[code[pc]].Set(obj.GetInt() - 1);
+			auto obj = obj_table[code[++pc] + obj_idx_offset];
+			obj_table[code[pc] + obj_idx_offset].Set(obj.GetInt() - 1);
 		}
 			break;
 
