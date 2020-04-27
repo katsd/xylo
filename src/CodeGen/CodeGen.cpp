@@ -198,6 +198,7 @@ bool CodeGen::ConvertFunc(const std::unique_ptr<ast::Func>& node, uint64_t scope
 
 	code.push_back(vm::Inst::ICR_FUNC_LEVEL);
 
+	Push(0);
 	auto return_address_idx = code.size() - 1;
 
 	code.push_back(vm::Inst::PUSH_OBJ_IDX_OFFSET);
@@ -217,6 +218,8 @@ bool CodeGen::ConvertFunc(const std::unique_ptr<ast::Func>& node, uint64_t scope
 
 	auto func_id = func_info[Func{ func_name, arg_num }].func_id;
 	unassigned_func_id[code.size() - 1] = func_id;
+
+	code.push_back(vm::Inst::PUSH_RETURN_VALUE);
 
 	return true;
 }
@@ -399,9 +402,8 @@ bool CodeGen::ConvertReturn(const std::unique_ptr<ast::Return>& node, uint64_t s
 	code.push_back(vm::Inst::PUT_RETURN_VALUE);
 	code.push_back(vm::Inst::POP_TO_START);
 	code.push_back(vm::Inst::SET_OBJ_IDX_OFFSET);
-	code.push_back(vm::Inst::JUMP_TO_STACK_VALUE);
 	code.push_back(vm::Inst::DCR_FUNC_LEVEL);
-	code.push_back(vm::Inst::PUSH_RETURN_VALUE);
+	code.push_back(vm::Inst::JUMP_TO_STACK_VALUE);
 
 	return true;
 }
