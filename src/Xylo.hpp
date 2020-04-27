@@ -15,6 +15,7 @@
 #include "Parser/Parser.hpp"
 #include "CodeGen/CodeGen.hpp"
 #include "VM/VM.hpp"
+#include "Native/Native.hpp"
 
 using namespace xylo;
 
@@ -28,7 +29,11 @@ class Xylo
  public:
 	explicit Xylo(const std::string& source)
 	{
-		ast = Parser(source).Parse();
+		native::Native::Init();
+
+		auto std_lib = native::Native::StandardLibraryCode();
+
+		ast = Parser(source + std_lib).Parse();
 
 		if (ast == nullptr)
 			return;
