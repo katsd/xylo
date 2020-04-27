@@ -149,6 +149,8 @@ bool CodeGen::ConvertFuncDef(const std::unique_ptr<ast::FuncDef>& node, uint64_t
 
 	code.push_back(vm::Inst::START);
 
+	InitVariable();
+
 	for (auto& arg : node->args)
 	{
 		auto var = GetVariableAddress(arg, scope_id, true);
@@ -157,8 +159,6 @@ bool CodeGen::ConvertFuncDef(const std::unique_ptr<ast::FuncDef>& node, uint64_t
 		auto var_address = std::get<1>(var);
 		SetObj(var_address);
 	}
-
-	InitVariable();
 
 	if (!ConvertStmt(node->stmt, scope_id))
 		return false;
