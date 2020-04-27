@@ -316,6 +316,10 @@ Lexer::Result Lexer::Tokenize()
 		{
 			token.Set(Reserved::ELSE, unit.source);
 		}
+		else if (unit.source == "@native")
+		{
+			token.Set(Attribute::NATIVE_FUNC, unit.source);
+		}
 		else if (unit.source == "+")
 		{
 			token.Set(Symbol::PLUS, unit.source);

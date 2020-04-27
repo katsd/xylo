@@ -50,6 +50,12 @@ struct Token
 	}
 
 	[[nodiscard]]
+	inline Attribute GetAttribute() const
+	{
+		return value.attribute;
+	}
+
+	[[nodiscard]]
 	inline Reserved GetReserved() const
 	{
 		return value.reserved;
@@ -93,6 +99,13 @@ struct Token
 	{
 		type = TokenType::SYMBOL;
 		value = symbol;
+		source = src;
+	}
+
+	inline void Set(Attribute attribute, const std::string src)
+	{
+		type = TokenType::ATTRIBUTE;
+		value = attribute;
 		source = src;
 	}
 
