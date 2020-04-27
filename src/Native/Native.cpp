@@ -7,6 +7,8 @@
 using namespace xylo;
 using namespace xylo::native;
 
+std::vector<Native::Func> Native::funcs;
+
 void Native::Init()
 {
 	funcs.clear();
