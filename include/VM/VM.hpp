@@ -35,6 +35,12 @@ class VM
 
 	inline Obj& GetStack(uint64_t& sc, const std::unique_ptr<Obj[]>& stack)
 	{
+		if (sc >= stack_size)
+		{
+			puts("Stack Overflow");
+			exit(0);
+		}
+
 		return stack[--sc];
 	}
 
