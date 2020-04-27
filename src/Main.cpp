@@ -10,7 +10,7 @@
 #include <sstream>
 #include <string>
 
-#include "xylo.hpp"
+#include "Xylo.hpp"
 
 struct ArgInfo
 {
