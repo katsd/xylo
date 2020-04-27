@@ -202,8 +202,6 @@ bool CodeGen::ConvertFunc(const std::unique_ptr<ast::Func>& node, uint64_t scope
 	auto return_address_idx = code.size() - 1;
 
 	code.push_back(vm::Inst::PUSH_OBJ_IDX_OFFSET);
-	code.push_back(vm::Inst::ADD_OBJ_IDX_OFFSET);
-	code.push_back(var_cnt);
 	code.push_back(vm::Inst::PUSH_START);
 
 	for (int64_t i = node->args.size() - 1; i >= 0; i--)
@@ -211,6 +209,8 @@ bool CodeGen::ConvertFunc(const std::unique_ptr<ast::Func>& node, uint64_t scope
 		if (!ConvertExp(node->args[i], scope_id))
 			return false;
 	}
+
+	AddObjIdxOffset(var_cnt);
 
 	Jump(0);
 

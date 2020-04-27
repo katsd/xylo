@@ -230,6 +230,12 @@ class CodeGen
 		code.push_back(address);
 	}
 
+	inline void AddObjIdxOffset(uint64_t offset)
+	{
+		code.push_back(vm::Inst::ADD_OBJ_IDX_OFFSET);
+		code.push_back(offset);
+	}
+
 	inline void PushBOperator(vm::Inst ope)
 	{
 		code.push_back(vm::Inst::BOPE);
