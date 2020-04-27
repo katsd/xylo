@@ -12,23 +12,61 @@
 
 #include "xylo.hpp"
 
-int main(int args, char *argv[])
+struct ArgInfo
 {
-    std::fstream ifs(argv[1]);
+	std::string source_path;
 
-    if (!ifs)
-    {
-        printf("failed to open file");
-        return 0;
-    }
+	bool emit_ast = false;
 
-    std::stringstream ss;
-    ss << ifs.rdbuf();
-    ifs.close();
+	bool emit_bytecode = false;
+};
 
-    std::string code_str(ss.str());
+ArgInfo ReadArg(int args, char* argv[])
+{
+	ArgInfo argInfo;
 
-    auto eval = Xylo(code_str);
+	for (int i = 1; i < args; i++)
+	{
+		auto arg = std::string(argv[i]);
 
-    return 0;
+		if (arg == "-emit-ast")
+			argInfo.emit_ast = true;
+		else if (arg == "-emit-bytecode")
+			argInfo.emit_bytecode = true;
+		else
+			argInfo.source_path = arg;
+	}
+
+	return argInfo;
+}
+
+int main(int args, char* argv[])
+{
+	auto arg_info = ReadArg(args, argv);
+
+	std::fstream ifs(arg_info.source_path);
+
+	if (!ifs)
+	{
+		printf("failed to open file");
+		return 0;
+	}
+
+	std::stringstream ss;
+	ss << ifs.rdbuf();
+	ifs.close();
+
+	std::string source(ss.str());
+
+	Xylo eval{ source };
+
+	if (arg_info.emit_ast)
+		eval.OutAST();
+
+	if (arg_info.emit_bytecode)
+		eval.OutCode();
+
+	eval.Run();
+
+	return 0;
 }
