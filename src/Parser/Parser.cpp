@@ -46,7 +46,7 @@ std::unique_ptr<ast::Root> Parser::ParseRoot()
 
 	while (cur <= end)
 	{
-		if (cur->type == TokenType::RESERVED && cur->GetReserved() == Reserved::FUNC)
+		if (CompReserved(Reserved::FUNC) || CompAttribute(Attribute::NATIVE_FUNC))
 		{
 			auto nd = ParseFuncDef();
 			if (!nd)
@@ -162,6 +162,19 @@ std::unique_ptr<ast::FuncDef> Parser::ParseFuncDef()
 	if (end < cur)
 		return nullptr;
 
+	bool is_native_func = false;
+	uint64_t native_func_id;
+
+	if (CompAttribute(Attribute::NATIVE_FUNC))
+	{
+		auto attribute = ParseNativeFuncAttribute();
+		if (!std::get<0>(attribute))
+			return nullptr;
+
+		is_native_func = true;
+		native_func_id = std::get<1>(attribute);
+	}
+
 	auto pos = cur->pos;
 
 	if (!CheckReserved(Reserved::FUNC))
@@ -197,7 +210,12 @@ std::unique_ptr<ast::FuncDef> Parser::ParseFuncDef()
 	if (!stmt_nd)
 		return nullptr;
 
-	return std::make_unique<ast::FuncDef>(ast::FuncDef{ func_name, std::move(args), std::move(stmt_nd), pos });
+	return std::make_unique<ast::FuncDef>(ast::FuncDef{ func_name,
+														is_native_func,
+														native_func_id,
+														std::move(args),
+														std::move(stmt_nd),
+														pos });
 }
 
 std::unique_ptr<ast::Func> Parser::ParseFunc()
@@ -620,6 +638,37 @@ std::unique_ptr<ast::String> Parser::ParseString()
 	cur++;
 
 	return std::make_unique<ast::String>(ast::String{ value, pos });
+}
+
+std::tuple<bool, uint64_t> Parser::ParseNativeFuncAttribute()
+{
+	if (end < cur)
+	{
+		MakeError("expected @native at the end of source.");
+		return { false, 0 };
+	}
+
+	if (!CompAttribute(Attribute::NATIVE_FUNC))
+	{
+		MakeError("expected @native", cur->pos);
+		return { false, 0 };
+	}
+
+	cur++;
+
+	if (!CheckSymbol(Symbol::LPAREN))
+		return { false, 0 };
+
+	auto nd_int = ParseInt();
+	if (!nd_int)
+		return { false, 0 };
+
+	auto func_id = nd_int->value;
+
+	if (!CheckSymbol(Symbol::RPAREN))
+		return { false, 0 };
+
+	return { true, func_id };
 }
 
 bool Parser::CheckSymbol(Symbol symbol, bool out_error)

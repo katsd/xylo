@@ -17,18 +17,33 @@
 namespace xylo::ast
 {
 /*
- * func Symbol::NAME(Symbol::Name, .., Symbol::NAME)
+ * @native(INT)
+ * func Symbol::NAME(Symbol::NAME, .., Symbol::NAME)
  */
 struct FuncDef : Node
 {
 	std::string name;
 
+	bool is_native_func;
+
+	uint64_t native_func_id;
+
 	std::vector<std::unique_ptr<Variable>> args;
 
 	std::unique_ptr<Stmt> stmt;
 
-	FuncDef(std::string name, std::vector<std::unique_ptr<Variable>> args, std::unique_ptr<Stmt> stmt, SourcePos pos)
-		: Node(pos), name(std::move(name)), args(std::move(args)), stmt(std::move(stmt))
+	FuncDef(std::string name,
+		bool is_native_func,
+		uint64_t native_func_id,
+		std::vector<std::unique_ptr<Variable>> args,
+		std::unique_ptr<Stmt> stmt,
+		SourcePos pos)
+		: Node(pos),
+		  name(std::move(name)),
+		  is_native_func(is_native_func),
+		  native_func_id(native_func_id),
+		  args(std::move(args)),
+		  stmt(std::move(stmt))
 	{
 	}
 

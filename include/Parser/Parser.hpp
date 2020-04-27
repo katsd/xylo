@@ -96,6 +96,9 @@ class Parser
 
 	std::unique_ptr<ast::String> ParseString();
 
+	// result, func id
+	std::tuple<bool, uint64_t> ParseNativeFuncAttribute();
+
 	bool CheckSymbol(Symbol symbol, bool out_error = true);
 
 	bool CheckReserved(Reserved reserved, bool out_error = true);
@@ -110,6 +113,16 @@ class Parser
 	static inline bool CompSymbol(Token* token, Symbol symbol)
 	{
 		return token->type == TokenType::SYMBOL && token->GetSymbol() == symbol;
+	}
+
+	inline bool CompAttribute(Attribute attribute)
+	{
+		return CompAttribute(cur, attribute);
+	}
+
+	static inline bool CompAttribute(Token* token, Attribute attribute)
+	{
+		return token->type == TokenType::ATTRIBUTE && token->GetAttribute() == attribute;
 	}
 
 	inline bool CompReserved(Reserved reserved)
