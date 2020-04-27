@@ -242,6 +242,13 @@ class CodeGen
 		code.push_back(ope);
 	}
 
+	inline void CallNative(uint64_t native_func_id, uint64_t arg_num)
+	{
+		code.push_back(vm::Inst::CALL_NATIVE);
+		code.push_back(native_func_id);
+		code.push_back(arg_num);
+	}
+
 	void InitConstTable();
 
 	// Return const address

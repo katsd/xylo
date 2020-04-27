@@ -135,7 +135,7 @@ bool CodeGen::DefineFunc(const std::unique_ptr<ast::FuncDef>& node)
 	}
 
 	func_table.push_back(func);
-	func_info[func] = FuncInfo{ func_cnt++, 0, false, 0 };
+	func_info[func] = FuncInfo{ func_cnt++, 0, node->is_native_func, node->native_func_id };
 
 	return true;
 }
@@ -196,6 +196,21 @@ bool CodeGen::ConvertFunc(const std::unique_ptr<ast::Func>& node, uint64_t scope
 			.c_str(), *node);
 	}
 
+	auto info = func_info[Func{ func_name, arg_num }];
+
+	if (info.is_native)
+	{
+		for (int64_t i = node->args.size() - 1; i >= 0; i--)
+		{
+			if (!ConvertExp(node->args[i], scope_id))
+				return false;
+		}
+
+		CallNative(info.func_id, node->args.size());
+
+		return true;
+	}
+
 	code.push_back(vm::Inst::ICR_FUNC_LEVEL);
 
 	Push(0);
@@ -216,8 +231,7 @@ bool CodeGen::ConvertFunc(const std::unique_ptr<ast::Func>& node, uint64_t scope
 
 	code[return_address_idx] = code.size();
 
-	auto func_id = func_info[Func{ func_name, arg_num }].func_id;
-	unassigned_func_id[code.size() - 1] = func_id;
+	unassigned_func_id[code.size() - 1] = info.func_id;
 
 	code.push_back(vm::Inst::PUSH_RETURN_VALUE);
 
