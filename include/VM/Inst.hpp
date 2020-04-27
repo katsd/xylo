@@ -92,6 +92,9 @@ enum Inst
 
 	PUSH_RETURN_VALUE,
 
+	// Call C++ func $0 (with $2 args)
+	CALL_NATIVE,
+
 	START,
 
 	END,

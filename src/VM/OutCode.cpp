@@ -130,6 +130,11 @@ void VM::OutCode()
 			printf("PUSH_RETURN_VALUE\n");
 			break;
 
+		case CALL_NATIVE:
+			printf("CALL_NATIVE %llu %llu\n", code[pc + 1], code[pc + 2]);
+			pc += 2;
+			break;
+
 		case START:
 			printf("START\n");
 			break;

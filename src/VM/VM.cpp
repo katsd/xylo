@@ -3,6 +3,7 @@
 //
 
 #include "VM/VM.hpp"
+#include "Native/Native.hpp"
 
 using namespace xylo::vm;
 
@@ -171,6 +172,22 @@ Obj VM::Run(uint64_t start_idx)
 		case PUSH_RETURN_VALUE:
 			PushStack(sc, stack, *return_value);
 			return_value = nullptr;
+			break;
+
+		case CALL_NATIVE:
+		{
+			auto func_id = code[++pc];
+			auto arg_num = code[++pc];
+
+			auto args = std::make_unique<Obj[]>(arg_num);
+
+			for (int i = 0; i < arg_num; i++)
+				args[i] = GetStack(sc, stack);
+
+			auto res = native::Native::Call(func_id, args);
+
+			PushStack(sc, stack, res);
+		}
 			break;
 
 		case START:
