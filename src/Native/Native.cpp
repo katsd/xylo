@@ -14,6 +14,11 @@ void Native::Init()
 	funcs.clear();
 }
 
+void Native::AddFunc(const Func& func)
+{
+	AddFunc(func.func, func.func_name, func.arg_num);
+}
+
 void Native::AddFunc(vm::Obj (* func)(std::unique_ptr<vm::Obj[]>&, uint64_t), std::string name, uint64_t arg_num)
 {
 	funcs.push_back({ func, std::move(name), arg_num });

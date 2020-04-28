@@ -27,8 +27,11 @@ class Xylo
 	std::unique_ptr<vm::VM> eval;
 
  public:
-	explicit Xylo(const std::string& source)
+	explicit Xylo(const std::string& source, const std::vector<native::Native::Func>& ext_ilb = {})
 	{
+		for (const auto& func : ext_ilb)
+			native::Native::AddFunc(func);
+
 		native::Native::Init();
 
 		auto std_lib = native::Native::StandardLibraryCode();

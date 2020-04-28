@@ -16,7 +16,13 @@ namespace xylo::native
 {
 class Native
 {
+ public:
+	struct Func;
+
  private:
+	static std::vector<Func> funcs;
+
+ public:
 	struct Func
 	{
 		vm::Obj (* func)(std::unique_ptr<vm::Obj[]>& args, uint64_t arg_num);
@@ -26,10 +32,9 @@ class Native
 		uint64_t arg_num;
 	};
 
-	static std::vector<Func> funcs;
-
- public:
 	static void Init();
+
+	static void AddFunc(const Func& func);
 
 	static void
 	AddFunc(vm::Obj (* func)(std::unique_ptr<vm::Obj[]>& args, uint64_t arg_num), std::string name, uint64_t arg_num);
