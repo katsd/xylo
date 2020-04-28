@@ -7,7 +7,19 @@
 
 using namespace xylo::vm;
 
-Obj VM::Run(uint64_t start_idx)
+Obj VM::Run(const std::string& func_name, const std::vector<Obj>& args)
+{
+	std::string key = func_name + "_" + std::to_string(args.size());
+
+	auto pair = func_start_idx.find(key);
+
+	if (pair == func_start_idx.end())
+		return Obj{};
+
+	return Run((*pair).second, args);
+}
+
+Obj VM::Run(uint64_t start_idx, const std::vector<Obj>& args)
 {
 	uint64_t pc = start_idx;
 
@@ -28,6 +40,9 @@ Obj VM::Run(uint64_t start_idx)
 	std::unique_ptr<Obj[]> stack(new Obj[stack_size]);
 
 	std::unique_ptr<Obj> return_value = nullptr;
+
+	for (uint64_t i = args.size() - 1; i >= 0; i--)
+		PushStack(sc, stack, args[i]);
 
 	while (pc < code.size())
 	{

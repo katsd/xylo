@@ -43,12 +43,17 @@ class Xylo
 		if (!codegen_result.success)
 			return;
 
-		eval = std::make_unique<vm::VM>(codegen_result.code, codegen_result.const_table);
+		eval = std::make_unique<vm::VM>(codegen_result.code, codegen_result.const_table, codegen_result.func_start_idx);
 	}
 
 	void Run()
 	{
 		eval->Run();
+	}
+
+	void Run(const std::string& func_name, const std::vector<vm::Obj>& args)
+	{
+		eval->Run(func_name, args);
 	}
 
 	void OutAST()

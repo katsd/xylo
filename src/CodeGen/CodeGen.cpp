@@ -22,7 +22,14 @@ CodeGen::Result CodeGen::GenerateCode()
 		return Result{ false };
 	}
 
-	return Result{ true, code, const_table };
+	std::map<std::string, uint64_t> func_start_idx;
+	for (const auto& info : func_info)
+	{
+		if (!info.second.is_native)
+			func_start_idx[info.first.name + "_" + std::to_string(info.first.arg_num)] = info.second.start_address;
+	}
+
+	return Result{ true, code, const_table, func_start_idx };
 }
 
 bool CodeGen::ConvertRoot(const std::unique_ptr<ast::Root>& node, uint64_t scope_id)

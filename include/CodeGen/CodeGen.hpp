@@ -276,6 +276,8 @@ class CodeGen
 		std::vector<uint64_t> code;
 
 		std::vector<vm::Obj> const_table;
+
+		std::map<std::string, uint64_t> func_start_idx;
 	};
 
 	Result GenerateCode();

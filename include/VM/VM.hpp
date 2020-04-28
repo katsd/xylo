@@ -7,8 +7,10 @@
 
 #include <iostream>
 #include <cstdint>
+#include <map>
 #include <memory>
 #include <mutex>
+#include <utility>
 #include <vector>
 
 #include "Inst.hpp"
@@ -28,6 +30,8 @@ class VM
 	const std::vector<uint64_t> code;
 
 	const std::vector<Obj> const_table;
+
+	const std::map<std::string, uint64_t> func_start_idx;
 
 	std::mutex global_obj_table_mutex;
 
@@ -50,12 +54,16 @@ class VM
 	}
 
  public:
-	Obj Run(uint64_t start_idx = 0);
+	Obj Run(uint64_t start_idx = 0, const std::vector<Obj>& args = {});
+
+	Obj Run(const std::string& func_name, const std::vector<Obj>& args);
 
 	void OutCode();
 
-	VM(const std::vector<uint64_t> code, const std::vector<Obj> const_table)
-		: code(std::move(code)), const_table(std::move(const_table))
+	VM(std::vector<uint64_t> code,
+		std::vector<Obj> const_table,
+		std::map<std::string, uint64_t> func_start_idx)
+		: code(std::move(code)), const_table(std::move(const_table)), func_start_idx(std::move(func_start_idx))
 	{
 		global_obj_table = std::make_unique<Obj[]>(global_obj_table_size);
 	}
