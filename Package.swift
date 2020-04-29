@@ -12,11 +12,11 @@ let package = Package(
     targets: [
         .target(
             name: "Xylo",
-            path: "src",
-            exclude: ["main.cpp"],
-            publicHeadersPath: ".",
+            path: ".",
+            exclude: ["tests", "src/Main.cpp"],
+            publicHeadersPath: "src",
             cxxSettings: [
-                .headerSearchPath("src")
+                .headerSearchPath("include")
             ]),
     ],
     cxxLanguageStandard: .cxx1z
