@@ -16,7 +16,7 @@ void Native::Init()
 
 	for (const auto& func : cur)
 	{
-		if (!func.is_external)
+		if (func.is_external)
 			funcs.push_back(func);
 	}
 }
