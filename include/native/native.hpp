@@ -38,6 +38,8 @@ class Native
 		bool is_external;
 	};
 
+	static void DeleteAllFunc();
+
 	static void Init();
 
 	static void AddFunc(const Func& func);

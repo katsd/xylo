@@ -23,6 +23,8 @@ void RunXylo(void* xylo)
 
 void RunXyloFunc(void* xylo, const char* func_name)
 {
+	native::Native::DeleteAllFunc();
+
 	auto eval = (Xylo*)xylo;
 
 	eval->Run(std::string(func_name), {});

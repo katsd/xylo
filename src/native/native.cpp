@@ -9,6 +9,20 @@ using namespace xylo::native;
 
 std::vector<Native::Func> Native::funcs;
 
+CObj ctest(CObj args[], unsigned long arg_num)
+{
+	puts("Yay from C Func");
+
+	printf("%ld\n", args[0].value.ival);
+
+	return CObj{ CObjType::INT, CObjValue{ 0 }};
+}
+
+void Native::DeleteAllFunc()
+{
+	funcs.clear();
+}
+
 void Native::Init()
 {
 	auto cur = funcs;
@@ -19,6 +33,12 @@ void Native::Init()
 		if (func.is_external)
 			funcs.push_back(func);
 	}
+
+
+	// DEBUG
+	funcs.clear();
+
+	AddFunc(ctest, "ctest", 1);
 }
 
 void Native::AddFunc(const Func& func)
