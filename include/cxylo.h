@@ -9,26 +9,26 @@
 extern "C" {
 #endif
 
-enum CObjType
+typedef enum
 {
 	INT,
 	FLOAT,
 	STRING,
-};
+} CObjType;
 
-union CObjValue
+typedef union
 {
 	long ival;
 	double dval;
 	const char* str;
-};
+} CObjValue;
 
-struct CObj
+typedef struct
 {
 	CObjType type;
 
 	CObjValue value;
-};
+} CObj;
 
 void* CreateXylo(const char* source);
 
