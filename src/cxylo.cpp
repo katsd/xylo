@@ -28,7 +28,8 @@ void RunXyloFunc(void* xylo, const char* func_name)
 	eval->Run(std::string(func_name), {});
 }
 
-void AddXyloFunc(void* xylo, char* func_name, unsigned long arg_num, CObj (* func)(CObj args[], unsigned long arg_num))
+void
+AddXyloFunc(void* xylo, const char* func_name, unsigned long arg_num, CObj (* func)(CObj args[], unsigned long arg_num))
 {
 	native::Native::AddFunc(func, std::string(func_name), arg_num);
 }
