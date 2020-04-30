@@ -15,8 +15,9 @@ let package = Package(
     targets: [
         .target(
             name: "Xylo",
-            path: "src",
+            path: ".",
             exclude: ["tests", "src/main.cpp"],
+            sources: ["src", "include"],
             publicHeadersPath: "include",
             cxxSettings: [
                 .headerSearchPath("include")
