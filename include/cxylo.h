@@ -9,7 +9,9 @@
 extern "C" {
 #endif
 
-void* CreateXylo();
+void* CreateXylo(const char* source);
+
+void RunXylo(void* xylo, const char* func_name);
 
 #ifdef __cplusplus
 }
