@@ -142,7 +142,14 @@ bool CodeGen::DefineFunc(const std::unique_ptr<ast::FuncDef>& node)
 	}
 
 	func_table.push_back(func);
-	func_info[func] = FuncInfo{ func_cnt++, 0, node->is_native_func, node->native_func_id };
+
+	uint64_t func_id;
+	if (node->is_native_func)
+		func_id = node->native_func_id;
+	else
+		func_id = func_cnt++;
+
+	func_info[func] = FuncInfo{ func_id, 0, node->is_native_func, node->native_func_id };
 
 	return true;
 }
