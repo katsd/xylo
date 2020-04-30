@@ -1,0 +1,3 @@
+module xylo {
+    header "xylo.hpp"
+}
