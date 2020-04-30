@@ -14,7 +14,14 @@ void* CreateXylo(const char* source)
 	return xylo;
 }
 
-void RunXylo(void* xylo, const char* func_name)
+void RunXylo(void* xylo)
+{
+	auto eval = (Xylo*)xylo;
+
+	eval->Run();
+}
+
+void RunXyloFunc(void* xylo, const char* func_name)
 {
 	auto eval = (Xylo*)xylo;
 

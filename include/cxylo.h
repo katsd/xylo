@@ -11,7 +11,9 @@ extern "C" {
 
 void* CreateXylo(const char* source);
 
-void RunXylo(void* xylo, const char* func_name);
+void RunXylo(void* xylo);
+
+void RunXyloFunc(void* xylo, const char* func_name);
 
 #ifdef __cplusplus
 }
