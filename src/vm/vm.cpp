@@ -41,7 +41,7 @@ Obj VM::Run(uint64_t start_idx, const std::vector<Obj>& args)
 
 	std::unique_ptr<Obj> return_value = nullptr;
 
-	for (uint64_t i = args.size() - 1; i >= 0; i--)
+	for (int64_t i = args.size() - 1; i >= 0; i--)
 		PushStack(sc, stack, args[i]);
 
 	while (pc < code.size())
