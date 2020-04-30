@@ -9,12 +9,7 @@
 extern "C" {
 #endif
 
-#include "xylo.hpp"
-
-typedef struct
-{
-
-} xylo;
+void* CreateXylo();
 
 #ifdef __cplusplus
 }
