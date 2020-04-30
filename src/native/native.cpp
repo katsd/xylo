@@ -33,12 +33,6 @@ void Native::Init()
 		if (func.is_external)
 			funcs.push_back(func);
 	}
-
-
-	// DEBUG
-	funcs.clear();
-
-	AddFunc(ctest, "ctest", 1);
 }
 
 void Native::AddFunc(const Func& func)
