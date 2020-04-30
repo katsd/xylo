@@ -39,6 +39,8 @@ void RunXyloFunc(void* xylo, const char* func_name);
 void
 AddXyloFunc(const char* func_name, unsigned long arg_num, CObj (* func)(CObj args[], unsigned long arg_num));
 
+void DeleteAllXyloFunc();
+
 #ifdef __cplusplus
 }
 #endif
