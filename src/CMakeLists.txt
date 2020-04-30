@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 
-file(GLOB SOURCE ./*.cpp ./.hpp)
-
-#add_executable(xylo ${SOURCE})
-add_executable(xylo Main.cpp)
+add_executable(xylo main.cpp)
 
 target_link_libraries(xylo ast)
 target_link_libraries(xylo codegen)
@@ -12,9 +9,9 @@ target_link_libraries(xylo parser)
 target_link_libraries(xylo vm)
 target_link_libraries(xylo native)
 
-add_subdirectory(AST)
-add_subdirectory(CodeGen)
-add_subdirectory(Token)
-add_subdirectory(Parser)
-add_subdirectory(VM)
-add_subdirectory(Native)
+add_subdirectory(ast)
+add_subdirectory(codegen)
+add_subdirectory(token)
+add_subdirectory(parser)
+add_subdirectory(vm)
+add_subdirectory(native)
