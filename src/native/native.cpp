@@ -11,7 +11,14 @@ std::vector<Native::Func> Native::funcs;
 
 void Native::Init()
 {
+	auto cur = funcs;
 	funcs.clear();
+
+	for (const auto& func : cur)
+	{
+		if (!func.is_external)
+			funcs.push_back(func);
+	}
 }
 
 void Native::AddFunc(const Func& func)
