@@ -21,7 +21,12 @@ void Native::AddFunc(const Func& func)
 
 void Native::AddFunc(vm::Obj (* func)(std::unique_ptr<vm::Obj[]>&, uint64_t), std::string name, uint64_t arg_num)
 {
-	funcs.push_back({ func, std::move(name), arg_num });
+	funcs.push_back({ func, nullptr, std::move(name), arg_num, false });
+}
+
+void Native::AddFunc(CObj (* func)(CObj*, unsigned long), std::string name, unsigned long arg_num)
+{
+	funcs.push_back({ nullptr, func, std::move(name), arg_num, true });
 }
 
 std::string Native::StandardLibraryCode()
@@ -52,5 +57,45 @@ std::string Native::StandardLibraryCode()
 vm::Obj Native::Call(uint64_t func_id, std::unique_ptr<vm::Obj[]>& args)
 {
 	auto func = funcs[func_id];
-	return func.func(args, func.arg_num);
+
+	if (!func.is_external)
+		return func.func(args, func.arg_num);
+
+	CObj cargs[func.arg_num];
+	for (uint64_t i = 0; i < func.arg_num; i++)
+	{
+		switch (args[i].GetType())
+		{
+		case vm::ObjType::INST:
+			cargs[i].type = CObjType::INT;
+			cargs[i].value.ival = 0;
+			break;
+		case vm::ObjType::INT:
+			cargs[i].type = CObjType::INT;
+			cargs[i].value.ival = args[i].GetInt();
+			break;
+		case vm::ObjType::FLOAT:
+			cargs[i].type = CObjType::FLOAT;
+			cargs[i].value.dval = args[i].GetFloat();
+			break;
+		case vm::ObjType::STRING:
+			cargs[i].type = CObjType::STRING;
+			cargs[i].value.str = args[i].GetString().c_str();
+			break;
+		}
+	}
+
+	auto res = func.ext_func(cargs, func.arg_num);
+
+	switch (res.type)
+	{
+	case CObjType::INT:
+		return vm::Obj{ (int64_t)res.value.ival };
+	case CObjType::FLOAT:
+		return vm::Obj{ res.value.dval };
+	case CObjType::STRING:
+		return vm::Obj{ std::string(res.value.str) };
+	}
+
+	return vm::Obj{};
 }
