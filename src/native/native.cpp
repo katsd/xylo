@@ -42,12 +42,12 @@ void Native::AddFunc(const Func& func)
 
 void Native::AddFunc(vm::Obj (* func)(std::unique_ptr<vm::Obj[]>&, uint64_t), std::string name, uint64_t arg_num)
 {
-	funcs.push_back({ func, nullptr, std::move(name), arg_num, false });
+	funcs.push_back({ func, std::move(name), arg_num, false });
 }
 
-void Native::AddFunc(CObj (* func)(CObj*, unsigned long), std::string name, unsigned long arg_num)
+void Native::AddFunc(std::string name, unsigned long arg_num)
 {
-	funcs.push_back({ nullptr, func, std::move(name), arg_num, true });
+	funcs.push_back({ nullptr, std::move(name), arg_num, true });
 }
 
 std::string Native::StandardLibraryCode()
@@ -75,7 +75,7 @@ std::string Native::StandardLibraryCode()
 	return code;
 }
 
-vm::Obj Native::Call(uint64_t func_id, std::unique_ptr<vm::Obj[]>& args)
+vm::Obj Native::Call(uint64_t func_id, std::unique_ptr<vm::Obj[]>& args, const void* ext_xylo_instance)
 {
 	auto func = funcs[func_id];
 
@@ -106,7 +106,7 @@ vm::Obj Native::Call(uint64_t func_id, std::unique_ptr<vm::Obj[]>& args)
 		}
 	}
 
-	auto res = func.ext_func(cargs, func.arg_num);
+	auto res = CallExtFunc(ext_xylo_instance, func.func_name.c_str(), func.arg_num, cargs);
 
 	switch (res.type)
 	{

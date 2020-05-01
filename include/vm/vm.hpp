@@ -37,6 +37,8 @@ class VM
 
 	std::unique_ptr<Obj[]> global_obj_table;
 
+	const void* ext_xylo_instance;
+
 	inline Obj& GetStack(uint64_t& sc, const std::unique_ptr<Obj[]>& stack)
 	{
 		if (sc >= stack_size)
@@ -62,8 +64,9 @@ class VM
 
 	VM(std::vector<uint64_t> code,
 		std::vector<Obj> const_table,
-		std::map<std::string, uint64_t> func_start_idx)
-		: code(std::move(code)), const_table(std::move(const_table)), func_start_idx(std::move(func_start_idx))
+		std::map<std::string, uint64_t> func_start_idx,
+		const void* ext_xylo_instance)
+		: code(std::move(code)), const_table(std::move(const_table)), func_start_idx(std::move(func_start_idx)), ext_xylo_instance(ext_xylo_instance)
 	{
 		global_obj_table = std::make_unique<Obj[]>(global_obj_table_size);
 	}

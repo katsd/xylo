@@ -199,7 +199,7 @@ Obj VM::Run(uint64_t start_idx, const std::vector<Obj>& args)
 			for (int i = 0; i < arg_num; i++)
 				args[i] = GetStack(sc, stack);
 
-			auto res = native::Native::Call(func_id, args);
+			auto res = native::Native::Call(func_id, args, ext_xylo_instance);
 
 			PushStack(sc, stack, res);
 		}

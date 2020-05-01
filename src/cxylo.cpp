@@ -7,9 +7,12 @@
 #include "xylo.hpp"
 #include "cxylo.h"
 
-void* CreateXylo(const char* source)
+void* CreateXylo(const void* ext_xylo_instance, const char* source,
+	CObj (* call_ext_func)(const void* ext_xylo_instance, const char* func_name, unsigned long arg_num, CObj args[]))
 {
-	auto* xylo = new Xylo{ std::string(source) };
+	CallExtFunc = call_ext_func;
+
+	auto* xylo = new Xylo{ std::string(source), ext_xylo_instance };
 
 	return xylo;
 }
@@ -29,9 +32,9 @@ void RunXyloFunc(void* xylo, const char* func_name)
 }
 
 void
-AddXyloFunc(const char* func_name, unsigned long arg_num, CObj (* func)(CObj args[], unsigned long arg_num))
+AddXyloFunc(const char* func_name, unsigned long arg_num)
 {
-	native::Native::AddFunc(func, std::string(func_name), arg_num);
+	native::Native::AddFunc(std::string(func_name), arg_num);
 }
 
 void DeleteAllXyloFunc()
