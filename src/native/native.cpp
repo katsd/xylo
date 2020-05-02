@@ -106,6 +106,9 @@ vm::Obj Native::Call(uint64_t func_id, std::unique_ptr<vm::Obj[]>& args, const v
 		}
 	}
 
+	if (!ext_xylo_instance)
+		return vm::Obj{};
+
 	auto res = CallExtFunc(ext_xylo_instance, func.func_name.c_str(), func.arg_num, cargs);
 
 	switch (res.type)
