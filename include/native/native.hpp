@@ -20,9 +20,12 @@ class Native
 {
  public:
 	struct Func;
+	struct ExtFunc;
 
  private:
 	static std::vector<Func> funcs;
+
+	static ExtFunc extFunc;
 
  public:
 	struct Func
@@ -38,11 +41,20 @@ class Native
 		bool is_external;
 	};
 
+	struct ExtFunc
+	{
+		CObj
+		(* call_ext_func)(const void* ext_xylo_instance, const char* func_name, unsigned long arg_num, CObj args[]);
+	};
+
 	static void DeleteAllFunc();
 
 	static void Init();
 
 	static void AddFunc(const Func& func);
+
+	static void
+	SetExtFunc(CObj (* CallExtFunc)(const void* ext_xylo_instance, const char* func_name, unsigned long arg_num, CObj args[]));
 
 	static void
 	AddFunc(vm::Obj (* func)(std::unique_ptr<vm::Obj[]>& args, uint64_t arg_num), std::string name, uint64_t arg_num);

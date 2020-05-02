@@ -9,6 +9,8 @@ using namespace xylo::native;
 
 std::vector<Native::Func> Native::funcs;
 
+Native::ExtFunc Native::extFunc;
+
 CObj ctest(CObj args[], unsigned long arg_num)
 {
 	puts("Yay from C Func");
@@ -38,6 +40,11 @@ void Native::Init()
 void Native::AddFunc(const Func& func)
 {
 	AddFunc(func.func, func.func_name, func.arg_num);
+}
+
+void Native::SetExtFunc(CObj (* call_ext_func)(const void*, const char*, unsigned long, CObj*))
+{
+	extFunc.call_ext_func = call_ext_func;
 }
 
 void Native::AddFunc(vm::Obj (* func)(std::unique_ptr<vm::Obj[]>&, uint64_t), std::string name, uint64_t arg_num)
