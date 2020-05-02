@@ -52,6 +52,9 @@ class Native
 	static std::string StandardLibraryCode();
 
 	static vm::Obj Call(uint64_t func_id, std::unique_ptr<vm::Obj[]>& args, const void* ext_xylo_instance);
+
+	static CObj
+	(* CallExtFunc)(const void* ext_xylo_instance, const char* func_name, unsigned long arg_num, CObj args[]);
 };
 }
 
