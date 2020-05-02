@@ -30,6 +30,8 @@ typedef struct
 	CObjValue value;
 } CObj;
 
+static CObj (* CallExtFunc)(const void* ext_xylo_instance, const char* func_name, unsigned long arg_num, CObj args[]);
+
 void* CreateXylo(const void* ext_xylo_instance, const char* source,
 	CObj (* call_ext_func)(const void* ext_xylo_instance, const char* func_name, unsigned long arg_num, CObj args[]));
 
