@@ -10,9 +10,6 @@
 void* CreateXylo(const void* ext_xylo_instance, const char* source,
 	CObj (* call_ext_func)(const void* ext_xylo_instance, const char* func_name, unsigned long arg_num, CObj args[]))
 {
-	if (call_ext_func != nullptr)
-		CallExtFunc = call_ext_func;
-
 	native::Native::SetExtFunc(call_ext_func);
 
 	auto* xylo = new Xylo{ std::string(source), ext_xylo_instance };
