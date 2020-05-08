@@ -16,8 +16,16 @@ let package = Package(
         .target(
             name: "Xylo",
             path: ".",
-            exclude: ["tests", "src/main.cpp"],
-            sources: ["src", "include"],
+            exclude: ["tests",
+                      "src/main.cpp",
+                      "src/CMakeLists.txt",
+                      "src/ast/CMakeLists.txt",
+                      "src/codegen/CMakeLists.txt",
+                      "src/native/CMakeLists.txt",
+                      "src/parser/CMakeLists.txt",
+                      "src/token/CMakeLists.txt",
+                      "src/vm/CMakeLists.txt"],
+            sources: ["src"],
             publicHeadersPath: "include",
             cxxSettings: [
                 .headerSearchPath("include")
