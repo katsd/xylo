@@ -154,6 +154,22 @@ bool Lexer::Divide()
 
 			break;
 
+		case '#':
+			// Remove tag
+			idx++;
+			col++;
+
+			while (idx < source.size())
+			{
+				if (source[idx] == '\n' || source[idx] == ' ' || source[idx] == '\t')
+					break;
+
+				idx++;
+				col++;
+			}
+
+			break;
+
 		case '=':
 		case '!':
 		case '>':
