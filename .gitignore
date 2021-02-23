@@ -111,3 +111,4 @@ _deps
 
 build/
 .swiftpm/
+.DS_Store
