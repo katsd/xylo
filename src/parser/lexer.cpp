@@ -404,7 +404,7 @@ Lexer::Result Lexer::Tokenize()
 		{
 			token.Set(Symbol::LESS, unit.source);
 		}
-		else if (unit.source == ">=")
+		else if (unit.source == "<=")
 		{
 			token.Set(Symbol::LESS_EQ, unit.source);
 		}
