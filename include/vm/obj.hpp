@@ -85,6 +85,11 @@ struct Obj
 		Set(inst);
 	}
 
+	explicit Obj(int ival)
+	{
+		Set(int64_t(ival));
+	}
+
 	explicit Obj(int64_t ival)
 	{
 		Set(ival);
