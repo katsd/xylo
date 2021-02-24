@@ -53,14 +53,14 @@ class Xylo
 			codegen_result.code, codegen_result.const_table, codegen_result.func_start_idx, ext_xylo_instance);
 	}
 
-	void Run()
+	vm::Obj Run()
 	{
-		eval->Run();
+		return eval->Run();
 	}
 
-	void Run(const std::string& func_name, const std::vector<vm::Obj>& args)
+	vm::Obj Run(const std::string& func_name, const std::vector<vm::Obj>& args)
 	{
-		eval->Run(func_name, args);
+		return eval->Run(func_name, args);
 	}
 
 	void OutAST()
